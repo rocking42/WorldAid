@@ -444,6 +444,8 @@
 
 	    // Get pointc, convert to latitude/longitude
 	    var latlng = getEventCenter.call(this, event);
+	    var country = geo.search(latlng[0], latlng[1]);
+	    console.log(country);
 
 	    // Get new camera position
 	    var temp = new THREE.Mesh();
@@ -476,7 +478,6 @@
 	    var country = geo.search(latlng[0], latlng[1]);
 
 	    if (country !== null && country.code !== currentCountry) {
-	      console.log(country);
 
 	      // Track the current country displayed
 	      currentCountry = country.code;
