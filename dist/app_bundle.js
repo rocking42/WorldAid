@@ -409,6 +409,8 @@
 	    var country = geo.search(latlng[0], latlng[1]);
 
 	    if (country !== null && country.code !== currentCountry) {
+	      console.log(country);
+	      debugger;
 
 	      // Track the current country displayed
 	      currentCountry = country.code;
