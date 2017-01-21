@@ -1,6 +1,7 @@
 const d3 = require("d3");
 const topojson = require("topojson");
 const THREE = require("three");
+const d3_queue = require("d3-queue");
 
 
 
@@ -244,9 +245,11 @@ var geodecoder = function (features) {
         if(country.geometry.type === 'Polygon') {
           match = pointInPolygon(country.geometry.coordinates[0], [lng, lat]);
           if (match) {
+            // Attach values or undefined to country
             return {
               code: features[i].id,
-              name: features[i].properties.name
+              name: features[i].properties.name,
+              aid: features[i]["aid-given"]
             };
           }
         } else if (country.geometry.type === 'MultiPolygon') {
@@ -254,9 +257,11 @@ var geodecoder = function (features) {
           for (let j = 0; j < coords.length; j++) {
             match = pointInPolygon(coords[j][0], [lng, lat]);
             if (match) {
+              // Attach values or undefined to country
               return {
                 code: features[i].id,
-                name: features[i].properties.name
+                name: features[i].properties.name,
+                aid: features[i]["aid-given"]
               };
             }
           }
@@ -291,11 +296,16 @@ var pointInPolygon = function(poly, point) {
   return inside;
 };
 
-
-
-
-
-
+let items;
+// Store the results in a variable
+function ready(error, results) {
+  if (error) throw error;
+  items = results;
+}
+// Load the data
+d3_queue.queue()
+        .defer(d3.csv, "Data1.csv")
+        .await(ready);
 
 
 // MAIN
@@ -311,6 +321,17 @@ d3.json('world.json', function (err, data) {
   // Setup cache for country textures
   var countries = topojson.feature(data, data.objects.countries);
   var geo = geodecoder(countries.features);
+
+  // Iterate through all countries and match the data with the country
+  for(const country of countries.features) {
+    for (const item of items) {
+      if(item["aid-given"] === country.id){
+        country["aid-given"] = item;
+        console.log(country);
+      };
+    }
+  }
+  console.log(countries);
 
   var textureCache = memoize(function (cntryID, color) {
     var country = geo.find(cntryID);
@@ -374,7 +395,7 @@ d3.json('world.json', function (err, data) {
     var country = geo.search(latlng[0], latlng[1]);
 
     if (country !== null && country.code !== currentCountry) {
-
+      console.log(country);
       // Track the current country displayed
       currentCountry = country.code;
 
@@ -382,7 +403,7 @@ d3.json('world.json', function (err, data) {
       d3.select("#msg").html(country.code);
 
        // Overlay the selected country
-      map = textureCache(country.code, '#CDC290');
+      map = textureCache(country.code, '#ec8c47');
       material = new THREE.MeshPhongMaterial({map: map, transparent: true});
       if (!overlay) {
         overlay = new THREE.Mesh(new THREE.SphereGeometry(201, 40, 40), material);
