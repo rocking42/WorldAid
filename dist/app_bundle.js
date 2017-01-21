@@ -56,6 +56,7 @@
 	var d3 = __webpack_require__(2);
 	var topojson = __webpack_require__(3);
 	var THREE = __webpack_require__(4);
+	var d3_queue = __webpack_require__(5);
 
 	// UTILS
 
@@ -282,9 +283,11 @@
 	        if (country.geometry.type === 'Polygon') {
 	          match = pointInPolygon(country.geometry.coordinates[0], [lng, lat]);
 	          if (match) {
+	            // Attach values or undefined to country
 	            return {
 	              code: features[_i].id,
-	              name: features[_i].properties.name
+	              name: features[_i].properties.name,
+	              aid: features[_i]["aid-given"]
 	            };
 	          }
 	        } else if (country.geometry.type === 'MultiPolygon') {
@@ -292,9 +295,11 @@
 	          for (var j = 0; j < coords.length; j++) {
 	            match = pointInPolygon(coords[j][0], [lng, lat]);
 	            if (match) {
+	              // Attach values or undefined to country
 	              return {
 	                code: features[_i].id,
-	                name: features[_i].properties.name
+	                name: features[_i].properties.name,
+	                aid: features[_i]["aid-given"]
 	              };
 	            }
 	          }
@@ -334,6 +339,15 @@
 	  return inside;
 	};
 
+	var items = void 0;
+	// Store the results in a variable
+	function ready(error, results) {
+	  if (error) throw error;
+	  items = results;
+	}
+	// Load the data
+	d3_queue.queue().defer(d3.csv, "Data1.csv").await(ready);
+
 	// MAIN
 	d3.json('world.json', function (err, data) {
 
@@ -346,6 +360,59 @@
 	  // Setup cache for country textures
 	  var countries = topojson.feature(data, data.objects.countries);
 	  var geo = geodecoder(countries.features);
+
+	  // Iterate through all countries and match the data with the country
+	  var _iteratorNormalCompletion = true;
+	  var _didIteratorError = false;
+	  var _iteratorError = undefined;
+
+	  try {
+	    for (var _iterator = countries.features[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	      var country = _step.value;
+	      var _iteratorNormalCompletion2 = true;
+	      var _didIteratorError2 = false;
+	      var _iteratorError2 = undefined;
+
+	      try {
+	        for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	          var item = _step2.value;
+
+	          if (item["aid-given"] === country.id) {
+	            country["aid-given"] = item;
+	            console.log(country);
+	          };
+	        }
+	      } catch (err) {
+	        _didIteratorError2 = true;
+	        _iteratorError2 = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	            _iterator2.return();
+	          }
+	        } finally {
+	          if (_didIteratorError2) {
+	            throw _iteratorError2;
+	          }
+	        }
+	      }
+	    }
+	  } catch (err) {
+	    _didIteratorError = true;
+	    _iteratorError = err;
+	  } finally {
+	    try {
+	      if (!_iteratorNormalCompletion && _iterator.return) {
+	        _iterator.return();
+	      }
+	    } finally {
+	      if (_didIteratorError) {
+	        throw _iteratorError;
+	      }
+	    }
+	  }
+
+	  console.log(countries);
 
 	  var textureCache = memoize(function (cntryID, color) {
 	    var country = geo.find(cntryID);
@@ -410,7 +477,6 @@
 
 	    if (country !== null && country.code !== currentCountry) {
 	      console.log(country);
-	      debugger;
 
 	      // Track the current country displayed
 	      currentCountry = country.code;
@@ -419,7 +485,7 @@
 	      d3.select("#msg").html(country.code);
 
 	      // Overlay the selected country
-	      map = textureCache(country.code, '#CDC290');
+	      map = textureCache(country.code, '#ec8c47');
 	      material = new THREE.MeshPhongMaterial({ map: map, transparent: true });
 	      if (!overlay) {
 	        overlay = new THREE.Mesh(new THREE.SphereGeometry(201, 40, 40), material);
@@ -55221,6 +55287,141 @@
 
 	})));
 
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// https://d3js.org/d3-queue/ Version 3.0.3. Copyright 2016 Mike Bostock.
+	(function (global, factory) {
+	   true ? factory(exports) :
+	  typeof define === 'function' && define.amd ? define(['exports'], factory) :
+	  (factory((global.d3 = global.d3 || {})));
+	}(this, (function (exports) { 'use strict';
+
+	var slice = [].slice;
+
+	var noabort = {};
+
+	function Queue(size) {
+	  if (!(size >= 1)) throw new Error;
+	  this._size = size;
+	  this._call =
+	  this._error = null;
+	  this._tasks = [];
+	  this._data = [];
+	  this._waiting =
+	  this._active =
+	  this._ended =
+	  this._start = 0; // inside a synchronous task callback?
+	}
+
+	Queue.prototype = queue.prototype = {
+	  constructor: Queue,
+	  defer: function(callback) {
+	    if (typeof callback !== "function" || this._call) throw new Error;
+	    if (this._error != null) return this;
+	    var t = slice.call(arguments, 1);
+	    t.push(callback);
+	    ++this._waiting, this._tasks.push(t);
+	    poke(this);
+	    return this;
+	  },
+	  abort: function() {
+	    if (this._error == null) abort(this, new Error("abort"));
+	    return this;
+	  },
+	  await: function(callback) {
+	    if (typeof callback !== "function" || this._call) throw new Error;
+	    this._call = function(error, results) { callback.apply(null, [error].concat(results)); };
+	    maybeNotify(this);
+	    return this;
+	  },
+	  awaitAll: function(callback) {
+	    if (typeof callback !== "function" || this._call) throw new Error;
+	    this._call = callback;
+	    maybeNotify(this);
+	    return this;
+	  }
+	};
+
+	function poke(q) {
+	  if (!q._start) {
+	    try { start(q); } // let the current task complete
+	    catch (e) {
+	      if (q._tasks[q._ended + q._active - 1]) abort(q, e); // task errored synchronously
+	      else if (!q._data) throw e; // await callback errored synchronously
+	    }
+	  }
+	}
+
+	function start(q) {
+	  while (q._start = q._waiting && q._active < q._size) {
+	    var i = q._ended + q._active,
+	        t = q._tasks[i],
+	        j = t.length - 1,
+	        c = t[j];
+	    t[j] = end(q, i);
+	    --q._waiting, ++q._active;
+	    t = c.apply(null, t);
+	    if (!q._tasks[i]) continue; // task finished synchronously
+	    q._tasks[i] = t || noabort;
+	  }
+	}
+
+	function end(q, i) {
+	  return function(e, r) {
+	    if (!q._tasks[i]) return; // ignore multiple callbacks
+	    --q._active, ++q._ended;
+	    q._tasks[i] = null;
+	    if (q._error != null) return; // ignore secondary errors
+	    if (e != null) {
+	      abort(q, e);
+	    } else {
+	      q._data[i] = r;
+	      if (q._waiting) poke(q);
+	      else maybeNotify(q);
+	    }
+	  };
+	}
+
+	function abort(q, e) {
+	  var i = q._tasks.length, t;
+	  q._error = e; // ignore active callbacks
+	  q._data = undefined; // allow gc
+	  q._waiting = NaN; // prevent starting
+
+	  while (--i >= 0) {
+	    if (t = q._tasks[i]) {
+	      q._tasks[i] = null;
+	      if (t.abort) {
+	        try { t.abort(); }
+	        catch (e) { /* ignore */ }
+	      }
+	    }
+	  }
+
+	  q._active = NaN; // allow notification
+	  maybeNotify(q);
+	}
+
+	function maybeNotify(q) {
+	  if (!q._active && q._call) {
+	    var d = q._data;
+	    q._data = undefined; // allow gc
+	    q._call(q._error, d);
+	  }
+	}
+
+	function queue(concurrency) {
+	  return new Queue(arguments.length ? +concurrency : Infinity);
+	}
+
+	exports.queue = queue;
+
+	Object.defineProperty(exports, '__esModule', { value: true });
+
+	})));
 
 /***/ }
 /******/ ]);
