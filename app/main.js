@@ -339,7 +339,8 @@ d3.json('world.json', function (err, data) {
   });
 
   // Base globe with blue "water"
-  let blueMaterial = new THREE.MeshPhongMaterial({color: '#2B3B59', transparent: true});
+  let blueMaterial = new THREE.MeshPhongMaterial();
+  blueMaterial.map = THREE.ImageUtils.loadTexture('earthlight.jpg');
   let sphere = new THREE.SphereGeometry(200, segments, segments);
   let baseGlobe = new THREE.Mesh(sphere, blueMaterial);
   baseGlobe.rotation.y = Math.PI;
@@ -347,7 +348,8 @@ d3.json('world.json', function (err, data) {
   baseGlobe.addEventListener('mousemove', onGlobeMousemove);
 
   // add base map layer with all countries
-  let worldTexture = mapTexture(countries, '#647089');
+  // let worldTexture = mapTexture(countries, '#647089');
+  let worldTexture = mapTexture(countries);
   let mapMaterial  = new THREE.MeshPhongMaterial({map: worldTexture, transparent: true});
   var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
   baseMap.rotation.y = Math.PI;

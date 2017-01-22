@@ -420,7 +420,8 @@
 	  });
 
 	  // Base globe with blue "water"
-	  var blueMaterial = new THREE.MeshPhongMaterial({ color: '#2B3B59', transparent: true });
+	  var blueMaterial = new THREE.MeshPhongMaterial();
+	  blueMaterial.map = THREE.ImageUtils.loadTexture('earthlight.jpg');
 	  var sphere = new THREE.SphereGeometry(200, segments, segments);
 	  var baseGlobe = new THREE.Mesh(sphere, blueMaterial);
 	  baseGlobe.rotation.y = Math.PI;
@@ -428,7 +429,8 @@
 	  baseGlobe.addEventListener('mousemove', onGlobeMousemove);
 
 	  // add base map layer with all countries
-	  var worldTexture = mapTexture(countries, '#647089');
+	  // let worldTexture = mapTexture(countries, '#647089');
+	  var worldTexture = mapTexture(countries);
 	  var mapMaterial = new THREE.MeshPhongMaterial({ map: worldTexture, transparent: true });
 	  var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
 	  baseMap.rotation.y = Math.PI;
