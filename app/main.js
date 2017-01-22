@@ -300,23 +300,6 @@ d3.json('world.json', function (err, data) {
         result = scaleColor(country["aid-given"][2007]);
       } else {
         result = "#fff";
-      } debugger;
-          var map, material;
-          var countries = topojson.feature(data, data.objects.countries);
-          var geo = geodecoder(countries.features);
-
-            var currentCountry = country.code;
-
-             // Overlay the selected country
-            map = textureCache(country.code, result);
-            material = new THREE.MeshPhongMaterial({map: map, transparent: true});
-            if (!overlay) {
-              overlay = new THREE.Mesh(new THREE.SphereGeometry(201, 40, 40), material);
-              overlay.rotation.y = Math.PI;
-              root.add(overlay);
-            } else {
-              overlay.material = material;
-
       }
     };
 
@@ -330,11 +313,11 @@ d3.json('world.json', function (err, data) {
    function mapTexture(geojson, color) {
      var texture, context, canvas;
 
-
-     for(const geo of geojson.features) {
-       // TODO:
-       chooseColor(geo);
-     }
+     //
+    //  for(const geo of geojson.features) {
+    //    // TODO:
+    //    chooseColor(geo);
+    //  }
 
      canvas = d3.select("body").append("canvas")
        .style("display", "none")
@@ -411,7 +394,7 @@ d3.json('world.json', function (err, data) {
 
   // add base map layer with all countries
   // let worldTexture = mapTexture(countries, '#647089');
-  let worldTexture = mapTexture(countries, '#FF0000');
+  let worldTexture = mapTexture(countries);
   let mapMaterial  = new THREE.MeshPhongMaterial({map: worldTexture, transparent: true});
   var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
   baseMap.rotation.y = Math.PI;
@@ -428,7 +411,7 @@ d3.json('world.json', function (err, data) {
     // Get pointc, convert to latitude/longitude
     var latlng = getEventCenter.call(this, event);
     var country = geo.search(latlng[0], latlng[1]);
-    // console.log(country);
+    console.log(country);
 
     // Get new camera position
     var temp = new THREE.Mesh();
