@@ -9,7 +9,6 @@ const d3_queue = require("d3-queue");
 
 // adapted from memoize.js by @philogb and @addyosmani
 function memoize(fn) {
-  debugger;
   return function () {
     var args = Array.prototype.slice.call(arguments);
 
@@ -296,15 +295,17 @@ d3.json('world.json', function (err, data) {
                              .range(["#ff0000", "#00ff00"]);
 
     var chooseColor = function(country) {
-      var result;
+      let result;
       if(country["aid-given"]) {
         result = scaleColor(country["aid-given"][2007]);
-
+      } else {
+        result = "#fff";
+      } debugger;
           var map, material;
           var countries = topojson.feature(data, data.objects.countries);
           var geo = geodecoder(countries.features);
 
-            currentCountry = country.code;
+            var currentCountry = country.code;
 
              // Overlay the selected country
             map = textureCache(country.code, result);
@@ -315,9 +316,8 @@ d3.json('world.json', function (err, data) {
               root.add(overlay);
             } else {
               overlay.material = material;
-            }
 
-      } return result;
+      }
     };
 
   //  var chooseColor = function(country) {
@@ -332,7 +332,8 @@ d3.json('world.json', function (err, data) {
 
 
      for(const geo of geojson.features) {
-       console.log(chooseColor(geo));
+       // TODO:
+       chooseColor(geo);
      }
 
      canvas = d3.select("body").append("canvas")

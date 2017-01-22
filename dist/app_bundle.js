@@ -62,7 +62,6 @@
 
 	// adapted from memoize.js by @philogb and @addyosmani
 	function memoize(fn) {
-	  debugger;
 	  return function () {
 	    var args = Array.prototype.slice.call(arguments);
 
@@ -323,27 +322,28 @@
 	  })).range(["#ff0000", "#00ff00"]);
 
 	  var chooseColor = function chooseColor(country) {
-	    var result;
+	    var result = void 0;
 	    if (country["aid-given"]) {
 	      result = scaleColor(country["aid-given"][2007]);
+	    } else {
+	      result = "#fff";
+	    }debugger;
+	    var map, material;
+	    var countries = topojson.feature(data, data.objects.countries);
+	    var geo = geodecoder(countries.features);
 
-	      var map, material;
-	      var countries = topojson.feature(data, data.objects.countries);
-	      var geo = geodecoder(countries.features);
+	    var currentCountry = country.code;
 
-	      currentCountry = country.code;
-
-	      // Overlay the selected country
-	      map = textureCache(country.code, result);
-	      material = new THREE.MeshPhongMaterial({ map: map, transparent: true });
-	      if (!overlay) {
-	        overlay = new THREE.Mesh(new THREE.SphereGeometry(201, 40, 40), material);
-	        overlay.rotation.y = Math.PI;
-	        root.add(overlay);
-	      } else {
-	        overlay.material = material;
-	      }
-	    }return result;
+	    // Overlay the selected country
+	    map = textureCache(country.code, result);
+	    material = new THREE.MeshPhongMaterial({ map: map, transparent: true });
+	    if (!overlay) {
+	      overlay = new THREE.Mesh(new THREE.SphereGeometry(201, 40, 40), material);
+	      overlay.rotation.y = Math.PI;
+	      root.add(overlay);
+	    } else {
+	      overlay.material = material;
+	    }
 	  };
 
 	  //  var chooseColor = function(country) {
@@ -364,7 +364,8 @@
 	      for (var _iterator = geojson.features[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	        var _geo = _step.value;
 
-	        console.log(chooseColor(_geo));
+	        // TODO:
+	        chooseColor(_geo);
 	      }
 	    } catch (err) {
 	      _didIteratorError = true;
