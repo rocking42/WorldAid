@@ -328,6 +328,7 @@
 	      console.log(result);
 	    } else {
 	      result = "#fff";
+<<<<<<< HEAD
 	    }
 	    var map, material;
 	    var countries = topojson.feature(data, data.objects.countries);
@@ -344,6 +345,8 @@
 	      root.add(overlay);
 	    } else {
 	      overlay.material = material;
+=======
+>>>>>>> a112631ea32f996ee64dbb1e69379fe26a38f884
 	    }
 	  };
 
@@ -357,31 +360,11 @@
 	  function mapTexture(geojson, color) {
 	    var texture, context, canvas;
 
-	    var _iteratorNormalCompletion = true;
-	    var _didIteratorError = false;
-	    var _iteratorError = undefined;
-
-	    try {
-	      for (var _iterator = geojson.features[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	        var _geo = _step.value;
-
-	        // TODO:
-	        chooseColor(_geo);
-	      }
-	    } catch (err) {
-	      _didIteratorError = true;
-	      _iteratorError = err;
-	    } finally {
-	      try {
-	        if (!_iteratorNormalCompletion && _iterator.return) {
-	          _iterator.return();
-	        }
-	      } finally {
-	        if (_didIteratorError) {
-	          throw _iteratorError;
-	        }
-	      }
-	    }
+	    //
+	    //  for(const geo of geojson.features) {
+	    //    // TODO:
+	    //    chooseColor(geo);
+	    //  }
 
 	    canvas = d3.select("body").append("canvas").style("display", "none").attr("width", "2048px").attr("height", "1024px");
 
@@ -425,20 +408,20 @@
 	  var geo = geodecoder(countries.features);
 
 	  // Iterate through all countries and match the data with the country
-	  var _iteratorNormalCompletion2 = true;
-	  var _didIteratorError2 = false;
-	  var _iteratorError2 = undefined;
+	  var _iteratorNormalCompletion = true;
+	  var _didIteratorError = false;
+	  var _iteratorError = undefined;
 
 	  try {
-	    for (var _iterator2 = countries.features[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	      var country = _step2.value;
-	      var _iteratorNormalCompletion3 = true;
-	      var _didIteratorError3 = false;
-	      var _iteratorError3 = undefined;
+	    for (var _iterator = countries.features[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	      var country = _step.value;
+	      var _iteratorNormalCompletion2 = true;
+	      var _didIteratorError2 = false;
+	      var _iteratorError2 = undefined;
 
 	      try {
-	        for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-	          var item = _step3.value;
+	        for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	          var item = _step2.value;
 
 	          if (item["aid-given"] === country.id) {
 	            country["aid-given"] = item;
@@ -446,32 +429,32 @@
 	          }
 	        }
 	      } catch (err) {
-	        _didIteratorError3 = true;
-	        _iteratorError3 = err;
+	        _didIteratorError2 = true;
+	        _iteratorError2 = err;
 	      } finally {
 	        try {
-	          if (!_iteratorNormalCompletion3 && _iterator3.return) {
-	            _iterator3.return();
+	          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	            _iterator2.return();
 	          }
 	        } finally {
-	          if (_didIteratorError3) {
-	            throw _iteratorError3;
+	          if (_didIteratorError2) {
+	            throw _iteratorError2;
 	          }
 	        }
 	      }
 	    }
 	    // console.log(countries);
 	  } catch (err) {
-	    _didIteratorError2 = true;
-	    _iteratorError2 = err;
+	    _didIteratorError = true;
+	    _iteratorError = err;
 	  } finally {
 	    try {
-	      if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	        _iterator2.return();
+	      if (!_iteratorNormalCompletion && _iterator.return) {
+	        _iterator.return();
 	      }
 	    } finally {
-	      if (_didIteratorError2) {
-	        throw _iteratorError2;
+	      if (_didIteratorError) {
+	        throw _iteratorError;
 	      }
 	    }
 	  }
@@ -492,7 +475,7 @@
 
 	  // add base map layer with all countries
 	  // let worldTexture = mapTexture(countries, '#647089');
-	  var worldTexture = mapTexture(countries, '#FF0000');
+	  var worldTexture = mapTexture(countries);
 	  var mapMaterial = new THREE.MeshPhongMaterial({ map: worldTexture, transparent: true });
 	  var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
 	  baseMap.rotation.y = Math.PI;
@@ -509,7 +492,7 @@
 	    // Get pointc, convert to latitude/longitude
 	    var latlng = getEventCenter.call(this, event);
 	    var country = geo.search(latlng[0], latlng[1]);
-	    // console.log(country);
+	    console.log(country);
 
 	    // Get new camera position
 	    var temp = new THREE.Mesh();
