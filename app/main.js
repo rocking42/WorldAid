@@ -298,6 +298,7 @@ d3.json('world.json', function (err, data) {
       let result;
       if(country["aid-given"]) {
         result = scaleColor(country["aid-given"][2007]);
+        console.log(result);
       } else {
         result = "#fff";
       } debugger;

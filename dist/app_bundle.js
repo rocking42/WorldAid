@@ -325,9 +325,10 @@
 	    var result = void 0;
 	    if (country["aid-given"]) {
 	      result = scaleColor(country["aid-given"][2007]);
+	      console.log(result);
 	    } else {
 	      result = "#fff";
-	    }debugger;
+	    }
 	    var map, material;
 	    var countries = topojson.feature(data, data.objects.countries);
 	    var geo = geodecoder(countries.features);
