@@ -62,6 +62,7 @@
 
 	// adapted from memoize.js by @philogb and @addyosmani
 	function memoize(fn) {
+	  debugger;
 	  return function () {
 	    var args = Array.prototype.slice.call(arguments);
 
@@ -116,40 +117,6 @@
 	// MAP TEXTURE
 
 	var projection = d3.geo.equirectangular().translate([1024, 512]).scale(325);
-
-	function mapTexture(geojson, color) {
-	  var texture, context, canvas;
-
-	  canvas = d3.select("body").append("canvas").style("display", "none").attr("width", "2048px").attr("height", "1024px");
-
-	  context = canvas.node().getContext("2d");
-
-	  var path = d3.geo.path().projection(projection).context(context);
-
-	  context.strokeStyle = "#333";
-	  context.lineWidth = 1;
-	  context.fillStyle = color || "#CDB380";
-
-	  context.beginPath();
-
-	  path(geojson);
-
-	  if (color) {
-	    context.fill();
-	  }
-
-	  context.stroke();
-
-	  // DEBUGGING - Really expensive, disable when done.
-	  // console.log(canvas.node().toDataURL());
-
-	  texture = new THREE.Texture(canvas.node());
-	  texture.needsUpdate = true;
-
-	  canvas.remove();
-
-	  return texture;
-	}
 
 	// SCENE
 
@@ -351,6 +318,100 @@
 	// MAIN
 	d3.json('world.json', function (err, data) {
 
+	  var scaleColor = d3.scale.linear().domain(d3.extent(items, function (d) {
+	    return d[2007];
+	  })).range(["#ff0000", "#00ff00"]);
+
+	  var chooseColor = function chooseColor(country) {
+	    var result;
+	    if (country["aid-given"]) {
+	      result = scaleColor(country["aid-given"][2007]);
+
+	      var map, material;
+	      var countries = topojson.feature(data, data.objects.countries);
+	      var geo = geodecoder(countries.features);
+
+	      currentCountry = country.code;
+
+	      // Overlay the selected country
+	      map = textureCache(country.code, result);
+	      material = new THREE.MeshPhongMaterial({ map: map, transparent: true });
+	      if (!overlay) {
+	        overlay = new THREE.Mesh(new THREE.SphereGeometry(201, 40, 40), material);
+	        overlay.rotation.y = Math.PI;
+	        root.add(overlay);
+	      } else {
+	        overlay.material = material;
+	      }
+	    }return result;
+	  };
+
+	  //  var chooseColor = function(country) {
+	  //    if(country["aid-given"]) {
+	  //      let result = scaleColor(country["aid-given"][2007]);
+	  //    } return result;
+	  //  };
+
+
+	  function mapTexture(geojson, color) {
+	    var texture, context, canvas;
+
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+
+	    try {
+	      for (var _iterator = geojson.features[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	        var _geo = _step.value;
+
+	        console.log(chooseColor(_geo));
+	      }
+	    } catch (err) {
+	      _didIteratorError = true;
+	      _iteratorError = err;
+	    } finally {
+	      try {
+	        if (!_iteratorNormalCompletion && _iterator.return) {
+	          _iterator.return();
+	        }
+	      } finally {
+	        if (_didIteratorError) {
+	          throw _iteratorError;
+	        }
+	      }
+	    }
+
+	    canvas = d3.select("body").append("canvas").style("display", "none").attr("width", "2048px").attr("height", "1024px");
+
+	    context = canvas.node().getContext("2d");
+
+	    var path = d3.geo.path().projection(projection).context(context);
+
+	    context.strokeStyle = "#333";
+	    context.lineWidth = 1;
+	    context.fillStyle = color || "#CDB380";
+
+	    context.beginPath();
+
+	    path(geojson);
+
+	    if (color) {
+	      context.fill();
+	    }
+
+	    context.stroke();
+
+	    // DEBUGGING - Really expensive, disable when done.
+	    // console.log(canvas.node().toDataURL());
+
+	    texture = new THREE.Texture(canvas.node());
+	    texture.needsUpdate = true;
+
+	    canvas.remove();
+
+	    return texture;
+	  }
+
 	  d3.select("#loading").transition().duration(500).style("opacity", 0).remove();
 
 	  var currentCountry, overlay;
@@ -362,57 +423,56 @@
 	  var geo = geodecoder(countries.features);
 
 	  // Iterate through all countries and match the data with the country
-	  var _iteratorNormalCompletion = true;
-	  var _didIteratorError = false;
-	  var _iteratorError = undefined;
+	  var _iteratorNormalCompletion2 = true;
+	  var _didIteratorError2 = false;
+	  var _iteratorError2 = undefined;
 
 	  try {
-	    for (var _iterator = countries.features[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	      var country = _step.value;
-	      var _iteratorNormalCompletion2 = true;
-	      var _didIteratorError2 = false;
-	      var _iteratorError2 = undefined;
+	    for (var _iterator2 = countries.features[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	      var country = _step2.value;
+	      var _iteratorNormalCompletion3 = true;
+	      var _didIteratorError3 = false;
+	      var _iteratorError3 = undefined;
 
 	      try {
-	        for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	          var item = _step2.value;
+	        for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	          var item = _step3.value;
 
 	          if (item["aid-given"] === country.id) {
 	            country["aid-given"] = item;
-	            console.log(country);
-	          };
+	            // console.log(scaleColor(country["aid-given"][2007]));
+	          }
 	        }
 	      } catch (err) {
-	        _didIteratorError2 = true;
-	        _iteratorError2 = err;
+	        _didIteratorError3 = true;
+	        _iteratorError3 = err;
 	      } finally {
 	        try {
-	          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	            _iterator2.return();
+	          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+	            _iterator3.return();
 	          }
 	        } finally {
-	          if (_didIteratorError2) {
-	            throw _iteratorError2;
+	          if (_didIteratorError3) {
+	            throw _iteratorError3;
 	          }
 	        }
 	      }
 	    }
+	    // console.log(countries);
 	  } catch (err) {
-	    _didIteratorError = true;
-	    _iteratorError = err;
+	    _didIteratorError2 = true;
+	    _iteratorError2 = err;
 	  } finally {
 	    try {
-	      if (!_iteratorNormalCompletion && _iterator.return) {
-	        _iterator.return();
+	      if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	        _iterator2.return();
 	      }
 	    } finally {
-	      if (_didIteratorError) {
-	        throw _iteratorError;
+	      if (_didIteratorError2) {
+	        throw _iteratorError2;
 	      }
 	    }
 	  }
-
-	  console.log(countries);
 
 	  var textureCache = memoize(function (cntryID, color) {
 	    var country = geo.find(cntryID);
@@ -430,7 +490,7 @@
 
 	  // add base map layer with all countries
 	  // let worldTexture = mapTexture(countries, '#647089');
-	  var worldTexture = mapTexture(countries);
+	  var worldTexture = mapTexture(countries, '#FF0000');
 	  var mapMaterial = new THREE.MeshPhongMaterial({ map: worldTexture, transparent: true });
 	  var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
 	  baseMap.rotation.y = Math.PI;
@@ -447,7 +507,7 @@
 	    // Get pointc, convert to latitude/longitude
 	    var latlng = getEventCenter.call(this, event);
 	    var country = geo.search(latlng[0], latlng[1]);
-	    console.log(country);
+	    // console.log(country);
 
 	    // Get new camera position
 	    var temp = new THREE.Mesh();
@@ -468,6 +528,34 @@
 
 	    var tweenRot = getTween.call(camera, 'rotation', temp.rotation);
 	    d3.timer(tweenRot);
+	  }
+
+	  function colorOnLoad(event) {
+	    // console.log(countries);
+	    // // Get pointc, convert to latitude/longitude
+	    // var latlng = getEventCenter.call(this, event);
+	    // var country = geo.search(latlng[0], latlng[1]);
+	    // console.log(country);
+	    //
+	    // // Get new camera position
+	    // var temp = new THREE.Mesh();
+	    // temp.position.copy(convertToXYZ(latlng, 900));
+	    // temp.lookAt(root.position);
+	    // temp.rotateY(Math.PI);
+	    //
+	    // for (let key in temp.rotation) {
+	    //   if (temp.rotation[key] - camera.rotation[key] > Math.PI) {
+	    //     temp.rotation[key] -= Math.PI * 2;
+	    //   } else if (camera.rotation[key] - temp.rotation[key] > Math.PI) {
+	    //     temp.rotation[key] += Math.PI * 2;
+	    //   }
+	    // }
+	    //
+	    // var tweenPos = getTween.call(camera, 'position', temp.position);
+	    // d3.timer(tweenPos);
+	    //
+	    // var tweenRot = getTween.call(camera, 'rotation', temp.rotation);
+	    // d3.timer(tweenRot);
 	  }
 
 	  function onGlobeMousemove(event) {
