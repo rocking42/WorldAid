@@ -482,13 +482,16 @@
 	  var sphere = new THREE.SphereGeometry(200, segments, segments);
 	  var baseGlobe = new THREE.Mesh(sphere, blueMaterial);
 	  baseGlobe.rotation.y = Math.PI;
+	  baseGlobe.name = "globe";
 	  baseGlobe.addEventListener('click', onGlobeClick);
+
 	  // baseGlobe.addEventListener('click', onGlobeMousemove);
 
 	  var outlineTexture = mapTexture(countries);
 	  var worldOutline = new THREE.MeshPhongMaterial({ map: outlineTexture, transparent: true });
 	  var theWholeWorld = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), worldOutline);
 	  theWholeWorld.rotation.y = Math.PI;
+	  theWholeWorld.name = "worldOutline";
 
 	  function addMaps(currentRoot, countries) {
 	    var _iteratorNormalCompletion2 = true;
@@ -542,14 +545,15 @@
 	  var finale = addMaps(root, countries.features);
 	  // root.add(baseMap);
 	  scene.add(finale);
-
 	  function onGlobeClick(event) {
 
 	    // Get pointc, convert to latitude/longitude
 	    var latlng = getEventCenter.call(this, event);
 	    var country = geo.search(latlng[0], latlng[1]);
-	    console.log(country);
-
+	    // console.log(country);
+	    if (country) {
+	      d3.select("#msg").text(country.code);
+	    }
 	    // Get new camera position
 	    var temp = new THREE.Mesh();
 	    temp.position.copy(convertToXYZ(latlng, 900));
@@ -613,11 +617,32 @@
 	  setEvents(camera, [baseGlobe], 'mousemove', 10);
 	});
 
+	var canvas = document.querySelector("canvas");
+	var context = canvas.getContext('2d');
+
 	function animate() {
+	  // All meshes are stored here
+	  // scene.children[1].children
+	  // example of looping through child elements and removing them
+	  // scene.children[1].remove(scene.children[1].children[1])
 	  requestAnimationFrame(animate);
 	  renderer.render(scene, camera);
 	}
+	function animate2() {
+	  cancelAnimationFrame(animate);
+	  scene.children[1].children.forEach(function (item) {
+	    if (!item.name) {
+	      scene.children[1].remove(item);
+	    }
+	  });
+	}
+
 	animate();
+
+	document.querySelector(".clearMap").addEventListener("click", function () {
+	  console.log("happy");
+	  animate2();
+	});
 
 /***/ },
 /* 2 */
