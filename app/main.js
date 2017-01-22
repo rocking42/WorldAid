@@ -561,12 +561,13 @@ function animate() {
   renderer.render(scene, camera);
 }
 function animate2() {
-  cancelAnimationFrame(animate);
-  scene.children[1].children.forEach((item) => {
-    if (!item.name) {
-      scene.children[1].remove(item);
-    }
-  });
+  scene.children[1].remove(scene.children[1].children);
+  // cancelAnimationFrame(animate);
+  // scene.children[1].children.forEach((item) => {
+  //   if (!item.name) {
+  //     scene.children[1].remove(item);
+  //   }
+  // });
 }
 
 animate();
