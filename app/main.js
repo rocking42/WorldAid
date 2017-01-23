@@ -367,7 +367,7 @@ function ready(error, results) {
 }
 // Load the data
 d3_queue.queue()
-    .defer(d3.csv, "/../assets/Data1.csv")
-    .defer(d3.csv, "/../assets/Data4.csv")
-    .defer(d3.json, "/../assets/world.json")
+    .defer(d3.csv, "../assets/Data1.csv")
+    .defer(d3.csv, "../assets/Data4.csv")
+    .defer(d3.json, "../assets/world.json")
     .awaitAll(ready);
