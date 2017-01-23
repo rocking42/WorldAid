@@ -1,27 +1,26 @@
 {
-  "name": "can-it-help",
-  "version": "1.0.0",
-  "description": "A way to vidualise coutries aid contribution",
+  "name": "data-vis-app",
+  "version": "0.0.5",
+  "description": "aid-giving-recieving-data-vis",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "d3": "^3.5.17",
+    "d3-queue": "^3.0.3",
+    "three": "^0.84.0",
+    "three-orbit-controls": "^82.1.0",
+    "topojson": "^2.2.0"
+  },
   "devDependencies": {
     "babel": "^6.5.2",
     "babel-core": "^6.22.1",
     "babel-loader": "^6.2.10",
     "babel-preset-es2015": "^6.22.0",
-    "babel-preset-react": "^6.16.0",
     "html-webpack-plugin": "^2.26.0",
-    "webpack": "^1.14.0",
-    "webpack-dev-server": "^1.16.2"
-  },
-  "dependencies": {
-    "d3": "^3.5.17",
-    "d3-queue": "^3.0.3",
-    "three": "^0.84.0",
-    "topojson": "^2.2.0"
+    "webpack": "^1.14.0"
   }
 }
