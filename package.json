@@ -22,6 +22,7 @@
     "d3": "^3.5.17",
     "d3-queue": "^3.0.3",
     "three": "^0.84.0",
+    "three-orbit-controls": "^82.1.0",
     "topojson": "^2.2.0"
   }
 }

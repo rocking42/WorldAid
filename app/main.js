@@ -2,6 +2,7 @@ const d3 = require("d3");
 const topojson = require("topojson");
 const THREE = require("three");
 const d3_queue = require("d3-queue");
+const OrbitControls = require('three-orbit-controls')(THREE)
 
 
 
@@ -541,13 +542,19 @@ function ready(error, results) {
   setEvents(camera, [baseGlobe], 'click');
   setEvents(camera, [baseGlobe], 'mousemove', 10);
 
+  let controls = new OrbitControls(
+    camera,
+    renderer.domElement
+  );
+
   function animate() {
+    controls.update();
     // All meshes are stored here
     // scene.children[1].children
     // example of looping through child elements and removing them
     // scene.children[1].remove(scene.children[1].children[1])
-    requestAnimationFrame(animate);
     renderer.render(scene, camera);
+    requestAnimationFrame(animate);
   }
 
   function removeGroups() {
@@ -593,4 +600,4 @@ function ready(error, results) {
          .defer(d3.csv, "Data1.csv")
          .defer(d3.csv, "Data3.csv")
          .defer(d3.json, "world.json")
-         .awaitAll(ready);  
+         .awaitAll(ready);
