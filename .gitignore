@@ -1,3 +1,5 @@
 node_modules
 node_modules/*
 npm-debug.log
+app_bundle.js
+app_bundle.js/*

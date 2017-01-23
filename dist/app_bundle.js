@@ -325,9 +325,6 @@
 
 	  context.stroke();
 
-	  // DEBUGGING - Really expensive, disable when done.
-	  // console.log(canvas.node().toDataURL());
-
 	  texture = new THREE.Texture(canvas.node());
 	  texture.needsUpdate = true;
 
@@ -359,7 +356,6 @@
 	  var chooseColor = function chooseColor(country) {
 	    var result = void 0;
 	    if (country["aid-given"]) {
-	      console.log(country["aid-given"][2006]);
 	      result = scaleColor(country["aid-given"][2006]);
 	    }
 	    return result;
@@ -368,7 +364,6 @@
 	  var colorInNeed = function colorInNeed(country) {
 	    var result = void 0;
 	    if (country["aid-received"]) {
-	      console.log(country["aid-received"]);
 	      result = scaleInNeed(country["aid-received"]);
 	    }
 	    return result;
@@ -380,7 +375,6 @@
 	      color = chooseColor(country);
 	    } else if (country["aid-received"]) {
 	      color = colorInNeed(country);
-	      console.log(color);
 	    }
 	    var texture, context, canvas;
 	    canvas = d3.select("body").append("canvas").style("display", "none").attr("width", "2048px").attr("height", "1024px");
@@ -437,7 +431,6 @@
 
 	          if (item["aid-given"] === country.id) {
 	            country["aid-given"] = item;
-	            // console.log(scaleColor(country["aid-given"][2006]));
 	          }
 	        }
 	      } catch (err) {
@@ -604,7 +597,6 @@
 	    var latlng = getEventCenter.call(this, event);
 
 	    var country = geo.search(latlng[0], latlng[1]);
-	    // console.log(country);
 	    if (country) {
 	      d3.select("#msg").text(country.code);
 	      if (country["aid"]) {
@@ -644,7 +636,6 @@
 
 	    // Look for country at that latitude/longitude
 	    var country = geo.search(latlng[0], latlng[1]);
-	    console.log(country);
 	    if (country !== null && country.code !== currentCountry) {
 
 	      // Track the current country displayed
@@ -669,16 +660,21 @@
 	  setEvents(camera, [baseGlobe], 'click');
 	  setEvents(camera, [baseGlobe], 'mousemove', 10);
 
+	  var fps = 30;
 	  function animate() {
 	    // All meshes are stored here
 	    // scene.children[1].children
 	    // example of looping through child elements and removing them
 	    // scene.children[1].remove(scene.children[1].children[1])
-	    requestAnimationFrame(animate);
-	    renderer.render(scene, camera);
+	    setTimeout(function () {
+	      requestAnimationFrame(animate);
+	      renderer.render(scene, camera);
+	    }, 1000 / fps);
 	  }
+	  var receivingAid = addMapsInNeed(new THREE.Group(), countries.features);
+	  var donaters = addMaps(new THREE.Group(), countries.features);
 
-	  function removeGroups() {
+	  function removeGroups(toRemove) {
 	    if (scene.children[1].children[2]) {
 	      scene.children[1].remove(scene.children[1].children[2]);
 	    }
@@ -687,33 +683,29 @@
 	  function animate2() {
 	    removeGroups();
 	    window.setTimeout(function () {
-	      var receivingAid = addMapsInNeed(new THREE.Group(), countries.features);
 	      scene.children[1].add(receivingAid);
-	    }, 2000);
+	    }, 200);
 	  }
 
 	  function animate3() {
 	    removeGroups();
 	    window.setTimeout(function () {
-	      var donaters = addMaps(new THREE.Group(), countries.features);
 	      scene.children[1].add(donaters);
-	    }, 2000);
+	    }, 200);
 	  }
 
 	  animate();
 
 	  document.querySelector(".clearMap").addEventListener("click", function () {
-	    console.log("happy");
 	    animate2();
 	  });
 	  document.querySelector(".showDonate").addEventListener("click", function () {
-	    console.log("happy");
 	    animate3();
 	  });
 	}
 
 	// Load the data
-	d3_queue.queue().defer(d3.csv, "Data1.csv").defer(d3.csv, "Data3.csv").defer(d3.json, "world.json").awaitAll(ready);
+	d3_queue.queue().defer(d3.csv, "Data1.csv").defer(d3.csv, "Data4.csv").defer(d3.json, "world.json").awaitAll(ready);
 
 /***/ },
 /* 2 */
