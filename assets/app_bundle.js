@@ -486,7 +486,7 @@
 	    });
 	}
 	// Load the data
-	d3_queue.queue().defer(d3.csv, "Data1.csv").defer(d3.csv, "Data4.csv").defer(d3.json, "world.json").awaitAll(ready);
+	d3_queue.queue().defer(d3.csv, "../assets/Data1.csv").defer(d3.csv, "../assets/Data4.csv").defer(d3.json, "../assets/world.json").awaitAll(ready);
 
 /***/ },
 /* 2 */
