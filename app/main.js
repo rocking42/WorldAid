@@ -565,32 +565,32 @@ function ready(error, results) {
     }, 2000)
   }
 
-  function animate3() {
-    removeGroups();
-    window.setTimeout(() => {
-      const donaters = addMaps(new THREE.Group(), countries.features);
-      scene.children[1].add(donaters);
-    }, 2000)
+   function animate3() {
+     removeGroups();
+     window.setTimeout(() => {
+       const donaters = addMaps(new THREE.Group(), countries.features);
+       scene.children[1].add(donaters);
+     }, 2000)
+   }
+
+   animate();
+
+   document.querySelector(".clearMap").addEventListener("click", function() {
+     console.log("happy");
+     animate2();
+   });
+   document.querySelector(".showDonate").addEventListener("click", function() {
+     console.log("happy");
+     animate3();
+   });
+
   }
 
-  animate();
-
-  document.querySelector(".clearMap").addEventListener("click", function() {
-    console.log("happy");
-    animate2();
-  });
-  document.querySelector(".showDonate").addEventListener("click", function() {
-    console.log("happy");
-    animate3();
-  });
-
-}
 
 
-
-// Load the data
-d3_queue.queue()
-        .defer(d3.csv, "Data1.csv")
-        .defer(d3.csv, "Data3.csv")
-        .defer(d3.json, "world.json")
-        .awaitAll(ready);
+  // Load the data
+  d3_queue.queue()
+         .defer(d3.csv, "Data1.csv")
+         .defer(d3.csv, "Data3.csv")
+         .defer(d3.json, "world.json")
+         .awaitAll(ready);  
