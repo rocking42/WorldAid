@@ -28,3 +28,35 @@ export function onWindowResize() {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 }
+
+const fps = 30;
+export function animate() {
+  setTimeout(function() {
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+  }, 1000 / fps);
+}
+
+// Function to aid in garbage collection
+// export function frameA() {
+//     requestAnimationFrame(frameB);
+//     renderer.render(scene, camera);
+//   };
+// export function frameB() {
+//     requestAnimationFrame(frameA);
+//     renderer.render(scene, camera);
+//   };
+
+
+export function removeGroups( toRemove ) {
+  if (scene.children[1].children[2]) {
+    scene.children[1].remove(scene.children[1].children[2]);
+  }
+}
+
+export function addSelected(highlighted) {
+  removeGroups();
+  window.setTimeout(() => {
+    scene.children[1].add(highlighted);
+  }, 0);
+}
