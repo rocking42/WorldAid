@@ -59,9 +59,6 @@ var getTween = function (prop, to, time) {
 };
 
 
-
-
-
 // MAP TEXTURE
 
 var projection = d3.geo.equirectangular()
@@ -212,7 +209,8 @@ var geodecoder = function (features) {
             return {
               code: features[i].id,
               name: features[i].properties.name,
-              aid: features[i]["aid-given"]
+              aid: features[i]["aid-given"],
+              recieved: features[i]["aid-received"]
             };
           }
         } else if (country.geometry.type === 'MultiPolygon') {
@@ -224,7 +222,8 @@ var geodecoder = function (features) {
               return {
                 code: features[i].id,
                 name: features[i].properties.name,
-                aid: features[i]["aid-given"]
+                aid: features[i]["aid-given"],
+                recieved: features[i]["aid-received"]
               };
             }
           }
@@ -259,112 +258,99 @@ var pointInPolygon = function(poly, point) {
   return inside;
 };
 
-let items;
+
+
+function mapTexture(geojson, color) {
+  color = '#f00'
+  var texture, context, canvas;
+  canvas = d3.select("body").append("canvas")
+    .style("display", "none")
+    .attr("width", "2048px")
+    .attr("height", "1024px");
+
+  context = canvas.node().getContext("2d");
+
+  var path = d3.geo.path()
+    .projection(projection)
+    .context(context);
+
+  context.strokeStyle = "#333";
+  context.lineWidth = 1;
+
+
+  context.beginPath();
+
+  path(geojson);
+
+  context.stroke();
+
+  // DEBUGGING - Really expensive, disable when done.
+  // console.log(canvas.node().toDataURL());
+
+  texture = new THREE.Texture(canvas.node());
+  texture.needsUpdate = true;
+
+  canvas.remove();
+
+  return texture;
+}
+
+
+
+
+
+
+let items, inNeed, data;
 // Store the results in a variable
 function ready(error, results) {
   if (error) throw error;
-  items = results;
-}
-// Load the data
-d3_queue.queue()
-        .defer(d3.csv, "Data1.csv")
-        .await(ready);
+  items = results[0];
+  inNeed = results[1];
+  data = results[2];
+
+  var scaleColor = d3.scale.log()
+                           .domain(d3.extent(items, (d) => {
+                            return +d[2006];
+                           }))
+                           .interpolate(d3.interpolateHcl)
+                           .range([d3.rgb("#e5f5e0"), d3.rgb('#31a354')]);
+
+  var scaleInNeed = d3.scale.log()
+                           .domain(d3.extent(inNeed, (d) => {
+                            if(+d[2006] > 1350000000) {
+                              return +d[2006];
+                            }
+                           }))
+                           .interpolate(d3.interpolateHcl)
+                           .range([d3.rgb("#fee8c8"), d3.rgb('#e34a33')]);
+
+  var chooseColor = function(country) {
+    let result;
+    if(country["aid-given"]) {
+      console.log(country["aid-given"][2006]);
+      result = scaleColor(country["aid-given"][2006]);
+    }
+    return result;
+  };
+
+  var colorInNeed = function(country) {
+    let result;
+    if(country["aid-received"]) {
+      console.log(country["aid-received"]);
+      result = scaleInNeed(country["aid-received"]);
+    }
+    return result;
+  };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// MAIN
-d3.json('world.json', function (err, data) {
-
-    var scaleColor = d3.scale.log()
-                             .domain(d3.extent(items, (data) => {
-                              return +data[2006];
-                             }))
-                             .interpolate(d3.interpolateHcl)
-                             .range([d3.rgb("#ff0000"), d3.rgb('#00ff00')]);
-                            //  .range(["#ff0000", "#ffffff","#33cc00"]);
-
-    var chooseColor = function(country) {
-      let result;
-      if(country["aid-given"]) {
-        console.log(country["aid-given"][2006]);
-        result = scaleColor(country["aid-given"][2006]);
-      } else {
-        result = "#fff";
-      }
-      return result;
-    };
-
-  //  var chooseColor = function(country) {
-  //    if(country["aid-given"]) {
-  //      let result = scaleColor(country["aid-given"][2006]);
-  //    } return result;
-  //  };
-
-
-   function mapTexture(geojson, color) {
-     color = '#f00'
-     var texture, context, canvas;
-     canvas = d3.select("body").append("canvas")
-       .style("display", "none")
-       .attr("width", "2048px")
-       .attr("height", "1024px");
-
-     context = canvas.node().getContext("2d");
-
-     var path = d3.geo.path()
-       .projection(projection)
-       .context(context);
-
-     context.strokeStyle = "#333";
-     context.lineWidth = 1;
-
-
-     context.beginPath();
-
-
-    //  for(const country of geojson.features) {
-    //    if (country["aid-given"]) {
-    //      console.log("happy");
-    //      path(country);
-    //    }
-    //  }
-
-     path(geojson);
-    //  path(geojson.features[3]);
-    //  path(geojson.features[4]);
-    //  path(geojson.features[5]);
-      // context.fill();
-
-
-     context.stroke();
-
-     // DEBUGGING - Really expensive, disable when done.
-     // console.log(canvas.node().toDataURL());
-
-     texture = new THREE.Texture(canvas.node());
-     texture.needsUpdate = true;
-
-     canvas.remove();
-
-     return texture;
-   }
    function countTexture(country) {
-     var color = chooseColor(country);
+     let color;
+     if (country["aid-given"]) {
+       color = chooseColor(country);
+     } else if (country["aid-received"]) {
+       color = colorInNeed(country);
+       console.log(color);
+     }
      var texture, context, canvas;
      canvas = d3.select("body").append("canvas")
        .style("display", "none")
@@ -418,8 +404,12 @@ d3.json('world.json', function (err, data) {
         // console.log(scaleColor(country["aid-given"][2006]));
       }
     }
+    for (const need of inNeed) {
+      if (need["aid-received"] === country.id && +need[2006] > 1350000000) {
+        country["aid-received"] = +need[2006];
+      }
+    }
   }
-  // console.log(countries);
 
   var textureCache = memoize(function (cntryID, color) {
     var country = geo.find(cntryID);
@@ -442,47 +432,61 @@ d3.json('world.json', function (err, data) {
   const theWholeWorld = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), worldOutline);
   theWholeWorld.rotation.y = Math.PI;
   theWholeWorld.name = "worldOutline";
+  // var group = new THREE.Group();
+  // var groupInNeed = new THREE.Group();
 
+  function addMaps(group, countries) {
+    for (const country2 of countries) {
+      if (country2["aid-given"]) {
+        let worldTexture2 = countTexture(country2);
+        let mapMaterial2  = new THREE.MeshPhongMaterial({map: worldTexture2, transparent: true});
+        var baseMap2 = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial2);
+        baseMap2.rotation.y = Math.PI;
+        group.add( baseMap2 );
+      }
+    }
+    return group
+  }
 
-  function addMaps(currentRoot, countries) {
+  function addMapsInNeed(groupInNeed, countries) {
     for (const country of countries) {
-      if (country["aid-given"]) {
+      if (country["aid-received"]) {
         let worldTexture = countTexture(country);
         let mapMaterial  = new THREE.MeshPhongMaterial({map: worldTexture, transparent: true});
         var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
         baseMap.rotation.y = Math.PI;
-        currentRoot.add(baseMap)
+        groupInNeed.add( baseMap );
       }
     }
-    return currentRoot;
+    return groupInNeed
   }
-  // add base map layer with all countries
-  // let worldTexture = mapTexture(countries);
-  // let worldTexture2 = mapTexture2(countries);
-  // let mapMaterial  = new THREE.MeshPhongMaterial({map: worldTexture, transparent: true});
-  // let mapMaterial2  = new THREE.MeshPhongMaterial({map: worldTexture2, transparent: true});
-  // var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
-  // var baseMap2 = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial2);
-  // baseMap.rotation.y = Math.PI;
-  // baseMap2.rotation.y = Math.PI;
+
+
 
   // create a container node and add the two meshes
   var root = new THREE.Object3D();
   root.scale.set(2.5, 2.5, 2.5);
   root.add(baseGlobe);
   root.add(theWholeWorld);
-  var finale = addMaps(root, countries.features);
-  // root.add(baseMap);
-  scene.add(finale);
+
+  scene.add(root);
   function onGlobeClick(event) {
 
     // Get pointc, convert to latitude/longitude
     var latlng = getEventCenter.call(this, event);
+
     var country = geo.search(latlng[0], latlng[1]);
     // console.log(country);
     if (country) {
       d3.select("#msg").text(country.code);
+      if (country["aid"]) {
+        d3.select("#stats").text(country["aid"][2006])
+      }
+      if (country["recieved"]) {
+        d3.select("#stats").text(country["recieved"])
+      }
     }
+
     // Get new camera position
     var temp = new THREE.Mesh();
     temp.position.copy(convertToXYZ(latlng, 900));
@@ -503,14 +507,6 @@ d3.json('world.json', function (err, data) {
     var tweenRot = getTween.call(camera, 'rotation', temp.rotation);
     d3.timer(tweenRot);
   }
-  // function reRenderTheWorld() {
-  //   for (let i = 0 ; i < countries.features.length ; i++ ) {
-  //     const country = countries.features[i];
-  //     colorOnLoad(country, i/10);
-  //   }
-  //   console.log("done");
-  // }
-  // reRenderTheWorld();
 
   function onGlobeMousemove(event) {
     var map, material;
@@ -544,32 +540,57 @@ d3.json('world.json', function (err, data) {
 
   setEvents(camera, [baseGlobe], 'click');
   setEvents(camera, [baseGlobe], 'mousemove', 10);
-});
 
-var canvas = document.querySelector("canvas");
-var context = canvas.getContext('2d');
+  function animate() {
+    // All meshes are stored here
+    // scene.children[1].children
+    // example of looping through child elements and removing them
+    // scene.children[1].remove(scene.children[1].children[1])
+    requestAnimationFrame(animate);
+    renderer.render(scene, camera);
+  }
 
-
-function animate() {
-  // All meshes are stored here
-  // scene.children[1].children
-  // example of looping through child elements and removing them
-  // scene.children[1].remove(scene.children[1].children[1])
-  requestAnimationFrame(animate);
-  renderer.render(scene, camera);
-}
-function animate2() {
-  cancelAnimationFrame(animate);
-  scene.children[1].children.forEach((item) => {
-    if (!item.name) {
-      scene.children[1].remove(item);
+  function removeGroups() {
+    if (scene.children[1].children[2]) {
+      scene.children[1].remove(scene.children[1].children[2]);
     }
+  }
+
+
+  function animate2() {
+    removeGroups();
+    window.setTimeout(() => {
+      const receivingAid = addMapsInNeed(new THREE.Group(), countries.features);
+      scene.children[1].add(receivingAid);
+    }, 2000)
+  }
+
+  function animate3() {
+    removeGroups();
+    window.setTimeout(() => {
+      const donaters = addMaps(new THREE.Group(), countries.features);
+      scene.children[1].add(donaters);
+    }, 2000)
+  }
+
+  animate();
+
+  document.querySelector(".clearMap").addEventListener("click", function() {
+    console.log("happy");
+    animate2();
   });
+  document.querySelector(".showDonate").addEventListener("click", function() {
+    console.log("happy");
+    animate3();
+  });
+
 }
 
-animate();
 
-document.querySelector(".clearMap").addEventListener("click", function() {
-  console.log("happy");
-  animate2();
-});
+
+// Load the data
+d3_queue.queue()
+        .defer(d3.csv, "Data1.csv")
+        .defer(d3.csv, "Data3.csv")
+        .defer(d3.json, "world.json")
+        .awaitAll(ready);

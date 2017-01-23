@@ -253,7 +253,8 @@
 	            return {
 	              code: features[_i].id,
 	              name: features[_i].properties.name,
-	              aid: features[_i]["aid-given"]
+	              aid: features[_i]["aid-given"],
+	              recieved: features[_i]["aid-received"]
 	            };
 	          }
 	        } else if (country.geometry.type === 'MultiPolygon') {
@@ -265,7 +266,8 @@
 	              return {
 	                code: features[_i].id,
 	                name: features[_i].properties.name,
-	                aid: features[_i]["aid-given"]
+	                aid: features[_i]["aid-given"],
+	                recieved: features[_i]["aid-received"]
 	              };
 	            }
 	          }
@@ -305,83 +307,81 @@
 	  return inside;
 	};
 
-	var items = void 0;
+	function mapTexture(geojson, color) {
+	  color = '#f00';
+	  var texture, context, canvas;
+	  canvas = d3.select("body").append("canvas").style("display", "none").attr("width", "2048px").attr("height", "1024px");
+
+	  context = canvas.node().getContext("2d");
+
+	  var path = d3.geo.path().projection(projection).context(context);
+
+	  context.strokeStyle = "#333";
+	  context.lineWidth = 1;
+
+	  context.beginPath();
+
+	  path(geojson);
+
+	  context.stroke();
+
+	  // DEBUGGING - Really expensive, disable when done.
+	  // console.log(canvas.node().toDataURL());
+
+	  texture = new THREE.Texture(canvas.node());
+	  texture.needsUpdate = true;
+
+	  canvas.remove();
+
+	  return texture;
+	}
+
+	var items = void 0,
+	    inNeed = void 0,
+	    data = void 0;
 	// Store the results in a variable
 	function ready(error, results) {
 	  if (error) throw error;
-	  items = results;
-	}
-	// Load the data
-	d3_queue.queue().defer(d3.csv, "Data1.csv").await(ready);
+	  items = results[0];
+	  inNeed = results[1];
+	  data = results[2];
 
-	// MAIN
-	d3.json('world.json', function (err, data) {
+	  var scaleColor = d3.scale.log().domain(d3.extent(items, function (d) {
+	    return +d[2006];
+	  })).interpolate(d3.interpolateHcl).range([d3.rgb("#e5f5e0"), d3.rgb('#31a354')]);
 
-	  var scaleColor = d3.scale.log().domain(d3.extent(items, function (data) {
-	    return +data[2006];
-	  })).interpolate(d3.interpolateHcl).range([d3.rgb("#ff0000"), d3.rgb('#00ff00')]);
-	  //  .range(["#ff0000", "#ffffff","#33cc00"]);
+	  var scaleInNeed = d3.scale.log().domain(d3.extent(inNeed, function (d) {
+	    if (+d[2006] > 1350000000) {
+	      return +d[2006];
+	    }
+	  })).interpolate(d3.interpolateHcl).range([d3.rgb("#fee8c8"), d3.rgb('#e34a33')]);
 
 	  var chooseColor = function chooseColor(country) {
 	    var result = void 0;
 	    if (country["aid-given"]) {
 	      console.log(country["aid-given"][2006]);
 	      result = scaleColor(country["aid-given"][2006]);
-	    } else {
-	      result = "#fff";
 	    }
 	    return result;
 	  };
 
-	  //  var chooseColor = function(country) {
-	  //    if(country["aid-given"]) {
-	  //      let result = scaleColor(country["aid-given"][2006]);
-	  //    } return result;
-	  //  };
+	  var colorInNeed = function colorInNeed(country) {
+	    var result = void 0;
+	    if (country["aid-received"]) {
+	      console.log(country["aid-received"]);
+	      result = scaleInNeed(country["aid-received"]);
+	    }
+	    return result;
+	  };
 
-
-	  function mapTexture(geojson, color) {
-	    color = '#f00';
-	    var texture, context, canvas;
-	    canvas = d3.select("body").append("canvas").style("display", "none").attr("width", "2048px").attr("height", "1024px");
-
-	    context = canvas.node().getContext("2d");
-
-	    var path = d3.geo.path().projection(projection).context(context);
-
-	    context.strokeStyle = "#333";
-	    context.lineWidth = 1;
-
-	    context.beginPath();
-
-	    //  for(const country of geojson.features) {
-	    //    if (country["aid-given"]) {
-	    //      console.log("happy");
-	    //      path(country);
-	    //    }
-	    //  }
-
-	    path(geojson);
-	    //  path(geojson.features[3]);
-	    //  path(geojson.features[4]);
-	    //  path(geojson.features[5]);
-	    // context.fill();
-
-
-	    context.stroke();
-
-	    // DEBUGGING - Really expensive, disable when done.
-	    // console.log(canvas.node().toDataURL());
-
-	    texture = new THREE.Texture(canvas.node());
-	    texture.needsUpdate = true;
-
-	    canvas.remove();
-
-	    return texture;
-	  }
 	  function countTexture(country) {
-	    var color = chooseColor(country);
+	    var color = void 0;
+	    if (country["aid-given"]) {
+	      color = chooseColor(country);
+	    } else if (country["aid-received"]) {
+	      color = colorInNeed(country);
+	      console.log(color);
+	    }
 	    var texture, context, canvas;
 	    canvas = d3.select("body").append("canvas").style("display", "none").attr("width", "2048px").attr("height", "1024px");
 
@@ -427,13 +427,13 @@
 	  try {
 	    for (var _iterator = countries.features[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	      var country = _step.value;
-	      var _iteratorNormalCompletion3 = true;
-	      var _didIteratorError3 = false;
-	      var _iteratorError3 = undefined;
+	      var _iteratorNormalCompletion4 = true;
+	      var _didIteratorError4 = false;
+	      var _iteratorError4 = undefined;
 
 	      try {
-	        for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-	          var item = _step3.value;
+	        for (var _iterator4 = items[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+	          var item = _step4.value;
 
 	          if (item["aid-given"] === country.id) {
 	            country["aid-given"] = item;
@@ -441,21 +441,47 @@
 	          }
 	        }
 	      } catch (err) {
-	        _didIteratorError3 = true;
-	        _iteratorError3 = err;
+	        _didIteratorError4 = true;
+	        _iteratorError4 = err;
 	      } finally {
 	        try {
-	          if (!_iteratorNormalCompletion3 && _iterator3.return) {
-	            _iterator3.return();
+	          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+	            _iterator4.return();
 	          }
 	        } finally {
-	          if (_didIteratorError3) {
-	            throw _iteratorError3;
+	          if (_didIteratorError4) {
+	            throw _iteratorError4;
+	          }
+	        }
+	      }
+
+	      var _iteratorNormalCompletion5 = true;
+	      var _didIteratorError5 = false;
+	      var _iteratorError5 = undefined;
+
+	      try {
+	        for (var _iterator5 = inNeed[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+	          var need = _step5.value;
+
+	          if (need["aid-received"] === country.id && +need[2006] > 1350000000) {
+	            country["aid-received"] = +need[2006];
+	          }
+	        }
+	      } catch (err) {
+	        _didIteratorError5 = true;
+	        _iteratorError5 = err;
+	      } finally {
+	        try {
+	          if (!_iteratorNormalCompletion5 && _iterator5.return) {
+	            _iterator5.return();
+	          }
+	        } finally {
+	          if (_didIteratorError5) {
+	            throw _iteratorError5;
 	          }
 	        }
 	      }
 	    }
-	    // console.log(countries);
 	  } catch (err) {
 	    _didIteratorError = true;
 	    _iteratorError = err;
@@ -492,22 +518,24 @@
 	  var theWholeWorld = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), worldOutline);
 	  theWholeWorld.rotation.y = Math.PI;
 	  theWholeWorld.name = "worldOutline";
+	  // var group = new THREE.Group();
+	  // var groupInNeed = new THREE.Group();
 
-	  function addMaps(currentRoot, countries) {
+	  function addMaps(group, countries) {
 	    var _iteratorNormalCompletion2 = true;
 	    var _didIteratorError2 = false;
 	    var _iteratorError2 = undefined;
 
 	    try {
 	      for (var _iterator2 = countries[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	        var country = _step2.value;
+	        var country2 = _step2.value;
 
-	        if (country["aid-given"]) {
-	          var worldTexture = countTexture(country);
-	          var mapMaterial = new THREE.MeshPhongMaterial({ map: worldTexture, transparent: true });
-	          var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
-	          baseMap.rotation.y = Math.PI;
-	          currentRoot.add(baseMap);
+	        if (country2["aid-given"]) {
+	          var worldTexture2 = countTexture(country2);
+	          var mapMaterial2 = new THREE.MeshPhongMaterial({ map: worldTexture2, transparent: true });
+	          var baseMap2 = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial2);
+	          baseMap2.rotation.y = Math.PI;
+	          group.add(baseMap2);
 	        }
 	      }
 	    } catch (err) {
@@ -525,35 +553,68 @@
 	      }
 	    }
 
-	    return currentRoot;
+	    return group;
 	  }
-	  // add base map layer with all countries
-	  // let worldTexture = mapTexture(countries);
-	  // let worldTexture2 = mapTexture2(countries);
-	  // let mapMaterial  = new THREE.MeshPhongMaterial({map: worldTexture, transparent: true});
-	  // let mapMaterial2  = new THREE.MeshPhongMaterial({map: worldTexture2, transparent: true});
-	  // var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
-	  // var baseMap2 = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial2);
-	  // baseMap.rotation.y = Math.PI;
-	  // baseMap2.rotation.y = Math.PI;
+
+	  function addMapsInNeed(groupInNeed, countries) {
+	    var _iteratorNormalCompletion3 = true;
+	    var _didIteratorError3 = false;
+	    var _iteratorError3 = undefined;
+
+	    try {
+	      for (var _iterator3 = countries[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	        var country = _step3.value;
+
+	        if (country["aid-received"]) {
+	          var worldTexture = countTexture(country);
+	          var mapMaterial = new THREE.MeshPhongMaterial({ map: worldTexture, transparent: true });
+	          var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
+	          baseMap.rotation.y = Math.PI;
+	          groupInNeed.add(baseMap);
+	        }
+	      }
+	    } catch (err) {
+	      _didIteratorError3 = true;
+	      _iteratorError3 = err;
+	    } finally {
+	      try {
+	        if (!_iteratorNormalCompletion3 && _iterator3.return) {
+	          _iterator3.return();
+	        }
+	      } finally {
+	        if (_didIteratorError3) {
+	          throw _iteratorError3;
+	        }
+	      }
+	    }
+
+	    return groupInNeed;
+	  }
 
 	  // create a container node and add the two meshes
 	  var root = new THREE.Object3D();
 	  root.scale.set(2.5, 2.5, 2.5);
 	  root.add(baseGlobe);
 	  root.add(theWholeWorld);
-	  var finale = addMaps(root, countries.features);
-	  // root.add(baseMap);
-	  scene.add(finale);
+
+	  scene.add(root);
 	  function onGlobeClick(event) {
 
 	    // Get pointc, convert to latitude/longitude
 	    var latlng = getEventCenter.call(this, event);
+
 	    var country = geo.search(latlng[0], latlng[1]);
 	    // console.log(country);
 	    if (country) {
 	      d3.select("#msg").text(country.code);
+	      if (country["aid"]) {
+	        d3.select("#stats").text(country["aid"][2006]);
+	      }
+	      if (country["recieved"]) {
+	        d3.select("#stats").text(country["recieved"]);
+	      }
 	    }
+
 	    // Get new camera position
 	    var temp = new THREE.Mesh();
 	    temp.position.copy(convertToXYZ(latlng, 900));
@@ -574,14 +635,6 @@
 	    var tweenRot = getTween.call(camera, 'rotation', temp.rotation);
 	    d3.timer(tweenRot);
 	  }
-	  // function reRenderTheWorld() {
-	  //   for (let i = 0 ; i < countries.features.length ; i++ ) {
-	  //     const country = countries.features[i];
-	  //     colorOnLoad(country, i/10);
-	  //   }
-	  //   console.log("done");
-	  // }
-	  // reRenderTheWorld();
 
 	  function onGlobeMousemove(event) {
 	    var map, material;
@@ -615,34 +668,52 @@
 
 	  setEvents(camera, [baseGlobe], 'click');
 	  setEvents(camera, [baseGlobe], 'mousemove', 10);
-	});
 
-	var canvas = document.querySelector("canvas");
-	var context = canvas.getContext('2d');
+	  function animate() {
+	    // All meshes are stored here
+	    // scene.children[1].children
+	    // example of looping through child elements and removing them
+	    // scene.children[1].remove(scene.children[1].children[1])
+	    requestAnimationFrame(animate);
+	    renderer.render(scene, camera);
+	  }
 
-	function animate() {
-	  // All meshes are stored here
-	  // scene.children[1].children
-	  // example of looping through child elements and removing them
-	  // scene.children[1].remove(scene.children[1].children[1])
-	  requestAnimationFrame(animate);
-	  renderer.render(scene, camera);
-	}
-	function animate2() {
-	  cancelAnimationFrame(animate);
-	  scene.children[1].children.forEach(function (item) {
-	    if (!item.name) {
-	      scene.children[1].remove(item);
+	  function removeGroups() {
+	    if (scene.children[1].children[2]) {
+	      scene.children[1].remove(scene.children[1].children[2]);
 	    }
+	  }
+
+	  function animate2() {
+	    removeGroups();
+	    window.setTimeout(function () {
+	      var receivingAid = addMapsInNeed(new THREE.Group(), countries.features);
+	      scene.children[1].add(receivingAid);
+	    }, 2000);
+	  }
+
+	  function animate3() {
+	    removeGroups();
+	    window.setTimeout(function () {
+	      var donaters = addMaps(new THREE.Group(), countries.features);
+	      scene.children[1].add(donaters);
+	    }, 2000);
+	  }
+
+	  animate();
+
+	  document.querySelector(".clearMap").addEventListener("click", function () {
+	    console.log("happy");
+	    animate2();
+	  });
+	  document.querySelector(".showDonate").addEventListener("click", function () {
+	    console.log("happy");
+	    animate3();
 	  });
 	}
 
-	animate();
-
-	document.querySelector(".clearMap").addEventListener("click", function () {
-	  console.log("happy");
-	  animate2();
-	});
+	// Load the data
+	d3_queue.queue().defer(d3.csv, "Data1.csv").defer(d3.csv, "Data3.csv").defer(d3.json, "world.json").awaitAll(ready);
 
 /***/ },
 /* 2 */
