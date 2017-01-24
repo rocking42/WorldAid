@@ -13,11 +13,13 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 export var camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 5000);
-camera.position.z = 1220;
+camera.position.z = 600;
+camera.position.x = -750;
+camera.position.y = 400;
 
 export var scene = new THREE.Scene();
 
-export var light = new THREE.HemisphereLight('#ffffff', '#666666', 1.5);
+export var light = new THREE.HemisphereLight('0xffffff', '0xffffff', 1.5);
 light.position.set(0, 1000, 0);
 scene.add(light);
 

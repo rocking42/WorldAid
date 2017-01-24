@@ -1,6 +1,10 @@
+@import url('https://fonts.googleapis.com/css?family=Oxygen|VT323');
+
+
 body, html {
   width: 100vw;
   background-color: #333;
+  background: url("galaxy.png");
   margin: 0px;
   font-family: helvetica, arial;
   color: #333;
@@ -10,25 +14,28 @@ body, html {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+
 }
 
-#convasContainer {
-  width: 75vh;
-  position: absolute;
-  right: 0;
-}
 
 #info {
+  font-family: 'VT323', monospace;
   color: white;
   position: absolute;
   padding: 15px;
-  left: 30vw;
-  top: 25px;
+  left: 30%;
+  top: 1rem;
   z-index: 1;
+  height: 100vh;
+}
+
+button {
+  position: relative;
+  bottom: 5px;
 }
 
 #msg {
-  font: 40px helvetica, arial;
+  font: 40px 'VT323', monospace;;
 }
 
 #info h3 {
@@ -48,11 +55,11 @@ body, html {
 }
 
 #d3stuff {
-  width: 27vw;
-  border-right: 1px ridge #555;
+  width: 25vw;
+  border-right: 1px ridge #999;
   position: absolute;
   height: 100vh;
-  background-color: ghostwhite;
+  background-color: rgba(50, 50, 50, 0.5);
   z-index: 1;
   overflow: hidden;
 }
