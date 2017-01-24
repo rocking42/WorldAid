@@ -26,12 +26,29 @@ body, html {
   left: 30%;
   top: 1rem;
   z-index: 1;
-  height: 100vh;
 }
 
-button {
+.button {
+  text-align: center;
+  font-size: 20px;
+  margin: 1%;
+  float: left;
+  font-size: 0.8rem;
+  background: rgba(100,255,100,0);
+  border-radius: 3px;
+  transition: background 1s ease;
+}
+
+.buttons {
   position: relative;
-  bottom: 5px;
+  left: 3em;
+  margin: auto;
+  overflow: auto;
+  height: 2rem;
+}
+
+.button:hover {
+  background: rgba(255,255,255,1);
 }
 
 #msg {
@@ -55,11 +72,11 @@ button {
 }
 
 #d3stuff {
-  width: 25vw;
+  width: 27vw;
   border-right: 1px ridge #999;
   position: absolute;
   height: 100vh;
-  background-color: rgba(50, 50, 50, 0.5);
+  background-color: rgba(180, 180, 180, 0.7);
   z-index: 1;
   overflow: hidden;
 }
