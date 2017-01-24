@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>D3: Area chart</title>
+
+	<script type="text/javascript" src="d3.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+	<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+
+<style> /* set the CSS */
+	html {
+		background-color: black;
+	}
+
+	body {
+		background-color: rgba(180,180,180,0.7);
+		font: 12px Arial;
+	}
+
+	path {
+	    stroke: rgb(50, 195, 182);
+	    stroke-width: 2;
+	}
+
+	.axis path,
+	.axis line {
+	    fill: none;
+	    stroke: black;
+	    stroke-width: 1;
+	    shape-rendering: crispEdges;
+	}
+</style>
+</head>
+<body>
+
+	<h1>United States CO2 Emissions</h1>
+
+	<p>The United States&rsquo; carbon dioxide emissions (kilotons), 1961-2010. Source: <a href="http://data.worldbank.org/indicator/EN.ATM.CO2E.KT?page=6">World Bank</a>, 2014</p>
+	<div id="rating" style="font-size:24px;">Rating</div>
+	<div id="description"></div>
+
+	<script type="text/javascript">
+	// Set the dimensions and padding of the canvas / graph
+	var padding = [ 20, 10, 50, 100 ];
+		var margin = {top: 20, right: 20, bottom: 20, left: 50},
+		    width = window.innerWidth * 0.25,
+		    height = window.innerHeight * 0.50;
+
+		// Parse the date / time
+		var parseDate = d3.time.format("%Y").parse;
+
+		// Set the ranges
+		var x = d3.time.scale().range([0, width]);
+		var y = d3.scale.linear().range([height, 0]);
+
+		// Define the axes
+		var xAxis = d3.svg.axis().scale(x)
+		    .orient("bottom").ticks(5);
+
+		var yAxis = d3.svg.axis().scale(y)
+		    .orient("left").ticks(5);
+
+		// Set the area graph
+		var area = d3.svg.area()
+		.x(function(d) {
+			return x(d.year);
+		})
+		.y0(height - margin.bottom + 20)
+		.y1(function(d) {
+			return y(d.aid / 1000000);
+		});
+		// Adds the svg canvas
+		var svg = d3.select("body")
+		    .append("svg")
+		    .attr("width", width + margin.left + margin.right)
+		    .attr("height", height + margin.top + margin.bottom)
+		    .append("g")
+		    .attr("transform",
+		              "translate(" + margin.left + "," + margin.top + ")");
+
+		// Function recieves country and data
+		// returns two array being years and aid given/received
+		function countryYearsAndAid(country, dataType) {
+			const res = dataType.filter((d) => d["aid-given"] === country);
+			const money = Object.values(res[0]).map((d) => +d || 1);
+			const years = Object.keys(res[0]).map((d) => parseDate(d));
+			const yearsComp = years.splice(0, years.length - 1)
+			return [yearsComp, _.compact(money)];
+		}
+
+				let country = "Australia"
+				// Get the data
+				d3.csv("data/Data1cop.csv", function(error, data) {
+						// Get the two arrays
+						const [years, aid] = countryYearsAndAid(country, data);
+
+						var desCountry = years.map((year, i) => {
+							let item = {
+								year,
+								aid: aid[i]
+							}
+							return item;
+						});
+		    	// Scale the range of the data
+					x.domain(d3.extent(desCountry, function(d) { return d.year; }));
+    			y.domain([0, d3.max(desCountry, function(d) { return d.aid / 1000000; })]);
+		    	// Add the valueline path.
+		    	// var path = svg.append("path")
+		      //   	.attr("class", "line")
+					// 		.attr("d", valueline(desCountry))
+
+				path = svg.data([ desCountry ])
+					.append("path")
+					.attr("class", "area usa")
+					.attr("d", area)
+					.attr("fill", "rgba(50, 195, 182, 0)")
+					.attr("stroke", "none");
+
+
+					var totalLength = path.node().getTotalLength();
+					path.attr("stroke-dasharray", totalLength + " " + totalLength)
+  				.attr("stroke-dashoffset", totalLength)
+					.transition().duration(500)
+					.ease("linear")
+    			.attr("stroke-dashoffset", 0)
+					.transition().duration(200)
+					.attr("fill", "rgba(50, 195, 182, 1)");
+
+		    	// Add the X Axis
+			    svg.append("g")
+			        .attr("class", "x axis")
+			        .attr("transform", "translate(0," + height + ")")
+			        .call(xAxis);
+
+			    // Add the Y Axis
+			    svg.append("g")
+			        .attr("class", "y axis")
+			        .call(yAxis);
+		});
+
+		d3.csv("data/stuff.csv", function(error, data) {
+			const rank = data.filter((item) => item.country === country)
+			d3.select("#rating").text(`${rank[0].ranking}/96`);
+		});
+
+		// $.getJSON("https://en.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch=aus&format=json&prop=extracts&exintro&explaintext&exsentences=1&exlimit=max&callback=?", function(nice) {
+		// 	debugger;
+		// })
+		const url = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${country}&limit=1&namespace=0&format=json&callback=?`
+		$.getJSON( url, function( data ) {
+			d3.select("#description").text(data[2][0]);
+		});
+	</script>
+</body>
+</html>

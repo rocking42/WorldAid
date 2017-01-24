@@ -1,6 +1,10 @@
+@import url('https://fonts.googleapis.com/css?family=Oxygen|VT323');
+
+
 body, html {
   width: 100vw;
   background-color: #333;
+  background: url("galaxy.png");
   margin: 0px;
   font-family: helvetica, arial;
   color: #333;
@@ -10,19 +14,45 @@ body, html {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+
 }
 
+
 #info {
+  font-family: 'VT323', monospace;
   color: white;
   position: absolute;
   padding: 15px;
-  left: 25px;
-  top: 25px;
+  left: 30%;
+  top: 1rem;
   z-index: 1;
 }
 
+.button {
+  text-align: center;
+  font-size: 20px;
+  margin: 1%;
+  float: left;
+  font-size: 0.8rem;
+  background: rgba(100,255,100,0);
+  border-radius: 3px;
+  transition: background 1s ease;
+}
+
+.buttons {
+  position: relative;
+  left: 3em;
+  margin: auto;
+  overflow: auto;
+  height: 2rem;
+}
+
+.button:hover {
+  background: rgba(255,255,255,1);
+}
+
 #msg {
-  font: 40px helvetica, arial;
+  font: 40px 'VT323', monospace;;
 }
 
 #info h3 {
@@ -39,4 +69,21 @@ body, html {
   left: 0;
   right: 0;
   margin: auto;
+}
+
+#d3stuff {
+  width: 27vw;
+  border-right: 1px ridge #999;
+  position: absolute;
+  height: 100vh;
+  background-color: rgba(180, 180, 180, 0.7);
+  z-index: 1;
+  overflow: hidden;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
 }
