@@ -11,6 +11,7 @@ const HTMLWebpackPluginConfig = new HTMLWebpackPlugin({
 // Include it as a plugin
 
 module.exports = {
+  devtool: "sourcemap",
   entry: [
     './app/main.js'
   ],
