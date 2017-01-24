@@ -206,18 +206,19 @@ function ready(error, results) {
         renderer.domElement
     );
 
-    // const donaters = addMaps(new THREE.Group(), countries.features);
-    // const receivingAid = addMapsInNeed(new THREE.Group(), countries.features);
+
+    // donaters: addMaps(new THREE.Group(), countries.features),
+    // receivingAid: addMapsInNeed(new THREE.Group(), countries.features)
 
     animate();
     // requestAnimationFrame(frameA);
-
     // document.querySelector(".clearMap").addEventListener("click", function() {
     //   addSelected(receivingAid);
     // });
     // document.querySelector(".showDonate").addEventListener("click", function() {
     //   addSelected(donaters);
     // });
+
 
 }
 // Load the data
