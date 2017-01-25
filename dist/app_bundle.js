@@ -314,24 +314,15 @@
 	        var country = geo.search(latlng[0], latlng[1]);
 	        // console.log(country.code);
 	        if (_.includes(receivingAid, country.code) && receivingAidActivated) {
-	            d3.select("#msg").text(country.code + " is recieving aid");
+	            d3.select("#msg").text(country.code);
+	            d3.select("#stats").text("Funds Recieved: " + country["recieved"]);
 	        } else if (_.includes(donating, country.code) && donatersActivated) {
-	            d3.select("#msg").text(country.code + " is a donator");
+	            d3.select("#msg").text(country.code);
+	            d3.select("#stats").text("Funds Donated: " + country["aid"][2006]);
 	        } else if (receivingAidActivated) {
 	            d3.select("#msg").text("select a reciever");
 	        } else if (donatersActivated) {
 	            d3.select("#msg").text("select a donator");
-	        }
-	
-	        if (country) {
-	            // d3.select("#msg").text(country.code);
-	            d3.select(".header").text(country.code);
-	            if (country["aid"]) {
-	                d3.select("#stats").text(country["aid"][2006]);
-	            }
-	            if (country["recieved"]) {
-	                d3.select("#stats").text(country["recieved"]);
-	            }
 	        }
 	    }
 	
@@ -359,19 +350,6 @@
 	        donatersActivated = true;
 	        receivingAidActivated = false;
 	    });
-	}
-	// Load the data
-<<<<<<< HEAD
-	d3_queue.queue().defer(d3.csv, "../assets/data/aidGiven.csv").defer(d3.csv, "../assets/data/aidReceivedShort.csv").defer(d3.json, "../assets/data/world.json").defer(d3.csv, "../assets/data/crossSector.csv").defer(d3.csv, "../assets/data/ecoInfraStruct.csv").defer(d3.csv, "../assets/data/eduAid.csv").defer(d3.csv, "../assets/data/govAndCivil.csv").defer(d3.csv, "../assets/data/health.csv").defer(d3.csv, "../assets/data/policiesAid.csv").defer(d3.csv, "../assets/data/prodSectorAid.csv").defer(d3.csv, "../assets/data/socialServ.csv").defer(d3.csv, "../assets/data/waterAndSanitize.csv").defer(d3.csv, "../assets/data/countryRanking.csv").defer(d3.csv, "../assets/data/aidReceivedShort.csv").awaitAll(ready);
-=======
-	d3_queue.queue().defer(d3.csv, "../assets/Data1.csv").defer(d3.csv, "../assets/Data5.csv").defer(d3.json, "../assets/world.json").awaitAll(ready);
-=======
-	    // document.querySelector(".clearMap").addEventListener("click", function() {
-	    //   addSelected(receivingAid);
-	    // });
-	    // document.querySelector(".showDonate").addEventListener("click", function() {
-	    //   addSelected(donaters);
-	    // });
 	
 	    // Get the two arrays
 	
@@ -412,7 +390,6 @@
 	}
 	// Load the data
 	d3_queue.queue().defer(d3.csv, "../assets/data/aidGiven.csv").defer(d3.csv, "../assets/data/aidReceivedShort.csv").defer(d3.json, "../assets/data/world.json").defer(d3.csv, "../assets/data/crossSector.csv").defer(d3.csv, "../assets/data/ecoInfraStruct.csv").defer(d3.csv, "../assets/data/eduAid.csv").defer(d3.csv, "../assets/data/govAndCivil.csv").defer(d3.csv, "../assets/data/health.csv").defer(d3.csv, "../assets/data/policiesAid.csv").defer(d3.csv, "../assets/data/prodSectorAid.csv").defer(d3.csv, "../assets/data/socialServ.csv").defer(d3.csv, "../assets/data/waterAndSanitize.csv").defer(d3.csv, "../assets/data/countryRanking.csv").defer(d3.csv, "../assets/data/aidReceivedLong.csv").awaitAll(ready);
->>>>>>> f08771d5982de8197c639ff6fc1e86089db155af
 	
 	// RECEIVING LINE GRAPH
 	// // Get the two arrays

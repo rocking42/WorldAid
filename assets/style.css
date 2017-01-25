@@ -22,14 +22,18 @@ body, html {
 
 #info {
   text-align: center;
-  width: 37vw;
+  width: 100%;
   font-family: 'Fira Sans', sans-serif;
-  color: white;
-  position: absolute;
-  padding: 15px;
-  left: 30%;
   top: 1rem;
   z-index: 1;
+}
+
+#msg {
+  font: 3rem 'Fira Sans', sans-serif;
+}
+
+#info h3 {
+  margin: 0.1rem;
 }
 
 .button {
@@ -96,7 +100,7 @@ body, html {
 	height: 42%; /* should be 40% but there's a gap in Chrome Version 34.0.1847.131 */
 	left: 0;
 	top: -40%;
-	background: #49a7df;
+	background: #59a7ef;
 	-webkit-transform-origin: 0% 100%;
 	-webkit-transform: rotateX(90deg);
 	-moz-transform-origin: 0% 100%;
@@ -112,14 +116,6 @@ body, html {
 	-moz-transform: rotateX(0deg);
 	-ms-transform: rotateX(0deg);
 	transform: rotateX(0deg);
-}
-
-#msg {
-  font: 40px 'Fira Sans', sans-serif;
-}
-
-#info h3 {
-  margin: 1px;
 }
 
 #loading {
