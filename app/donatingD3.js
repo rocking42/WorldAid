@@ -50,10 +50,10 @@ export const areaDonate = d3.svg.area()
   });
 
 //Easy colors accessible via a 10-step ordinal scale
-export const colorDonate = d3.scale.category10();
+export const colorDonate = d3.scale.category20c();
 
 //Create the SVG
-export const svgDonate = d3.select("body")
+export const svgDonate = d3.select("#d3stuff")
       .append("svg")
       .attr("id", "donaterSvg")
       .attr("width", w)
