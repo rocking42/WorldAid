@@ -73,15 +73,15 @@ import {
     findStackedData
 } from './donatingD3'
 
-const receivingAid = ["Nigeria","Iraq","Afghanistan","Pakistan","Congo, Dem. Rep.","Sudan","Ethiopia","Vietnam","Tanzania","Cameroon","Mozambique","Serbia","Uganda","Zambia","West Bank and Gaza","Indonesia","India","China","Ghana","Bangladesh","Morocco","Colombia","Kenya","Burkina Faso","Egypt","Mali","Senegal","Bolivia"];
+const receivingAid = ["Nigeria", "Iraq", "Afghanistan", "Pakistan", "Congo, Dem. Rep.", "Sudan", "Ethiopia", "Vietnam", "Tanzania", "Cameroon", "Mozambique", "Serbia", "Uganda", "Zambia", "West Bank and Gaza", "Indonesia", "India", "China", "Ghana", "Bangladesh", "Morocco", "Colombia", "Kenya", "Burkina Faso", "Egypt", "Mali", "Senegal", "Bolivia"];
 
-const donating = ["Australia","Austria","Belgium","Canada","Denmark","Finland","France","Germany","Greece","Ireland","Italy","Japan","Luxembourg","Netherlands","New Zealand","Norway","Portugal","Spain","Sweden","Switzerland","United Kingdom","United States"];
+const donating = ["Australia", "Austria", "Belgium", "Canada", "Denmark", "Finland", "France", "Germany", "Greece", "Ireland", "Italy", "Japan", "Luxembourg", "Netherlands", "New Zealand", "Norway", "Portugal", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"];
 
 
 // Store the results in a variable
 function ready(error, results) {
     if (error) throw error;
-    const [items, inNeed, dataWorld, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize, countryRanking, aidReceivedAll] = [results[0],results[1],results[2],results[3],results[4],results[5],results[6],results[7],results[8],results[9],results[10],results[11],results[12],results[13]];
+    const [items, inNeed, dataWorld, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize, countryRanking, aidReceivedAll] = [results[0], results[1], results[2], results[3], results[4], results[5], results[6], results[7], results[8], results[9], results[10], results[11], results[12], results[13]];
     let segments = 155;
 
     scaleColor.domain(d3.extent(items, (d) => {
@@ -122,6 +122,7 @@ function ready(error, results) {
         var country = geo.find(cntryID);
         return mapTexture(country, color);
     });
+
 
     // Base globe with blue "water"
     let blueMaterial = new THREE.MeshPhongMaterial();
@@ -174,10 +175,10 @@ function ready(error, results) {
     }
 
     // color legend
-    function legend ( colorDescription, colorScheme ) {
+    function legend(colorDescription, colorScheme) {
         const legend = $("#legendMenu");
         legend.html("");
-        console.log( colorDescription, colorScheme );
+        console.log(colorDescription, colorScheme);
         colorScheme.forEach((color, i) => {
             const div = $("<div></div>").attr("class", "legendDiv");
             const tag = $(`<span></span>`).attr("class", "legendTag").css("background", color).appendTo(div);
@@ -194,6 +195,12 @@ function ready(error, results) {
     root.add(theWholeWorld);
 
     scene.add(root);
+
+    $(".btn-3d").on("click", function() {
+      $(".btn-3d").removeClass("activeButton");
+      $(this).addClass("activeButton");
+    });
+
     function onGlobeClick(event) {
         // Get pointc, convert to latitude/longitude
         var latlng = getEventCenter.call(this, event);
@@ -203,11 +210,11 @@ function ready(error, results) {
             changeCountryLine(country.code, aidReceivedAll, "aid-received");
             d3.select("#donaterSvg").style("display", "none");
             let url = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${country.code}&limit=1&namespace=0&format=json&callback=?`
-            $.getJSON( url, function( data ) {
+            $.getJSON(url, function(data) {
                 d3.select("#d3stuff .countryInfo").text(data[2][0]).style("display", "inline-block");
             });
             d3.select("#msg").text(country.code);
-            d3.select("#stats").text("Funds Recieved: " + country["recieved"]);
+            d3.select("#stats").text(`Funds Recieved: ${country["recieved"]}$`);
             d3.select(".countryRank").style("display", "block");
             let rank = (countryRanking.filter((item) => item.country === country.code))
             rank.length > 0 ? rank = rank[0].ranking : rank = "?";
@@ -220,11 +227,11 @@ function ready(error, results) {
             d3.select("#d3stuff .countryInfo").style("display", "none");
             d3.select("#donaterSvg").style("display", "inline");
             d3.select("#msg").text(country.code);
-            d3.select("#stats").text("Funds Donated: " + country["aid"][2006]);
+            d3.select("#stats").text(`Funds Donated: ${country["aid"][2006]}`);
         } else if (receivingAidActivated) {
-            d3.select("#msg").text("select a reciever");
+            d3.select("#msg").text(`select a reciever`);
         } else if (donatersActivated) {
-            d3.select("#msg").text("select a donator");
+            d3.select("#msg").text(`select a donator`);
         }
     }
 
@@ -245,59 +252,72 @@ function ready(error, results) {
 
     let receivingAidActivated = false;
     document.querySelector(".clearMap").addEventListener("click", function() {
-    //   addSelected(receivingAid);
-      receivingAidActivated = true;
-      donatersActivated = false
+        //   addSelected(receivingAid);
+        if (!receivingAidActivated) {
+            receivingAidActivated = true;
+            donatersActivated = false;
+            $(".rangeBarDonating").removeClass("active");
+            $(".rangeBarRecieving").addClass("active");
+        }
+
     });
 
     let donatersActivated = false;
     document.querySelector(".showDonate").addEventListener("click", function() {
-    //   addSelected(donaters);
-      donatersActivated = true;
-      receivingAidActivated = false;
+        //   addSelected(donaters);
+        if (!donatersActivated) {
+            receivingAidActivated = false;
+            donatersActivated = true;
+            $(".rangeBarRecieving").removeClass("active");
+            $(".rangeBarDonating").addClass("active");
+        }
     });
 
 
     const desCountry = findLineInfo("Germany", items, "aid-given")
-    // Scale the range of the data
-    x.domain(d3.extent(desCountry, function(d) { return d.year; }));
-    y.domain([0, d3.max(desCountry, function(d) { return d.aid / 1000000; })]);
+        // Scale the range of the data
+    x.domain(d3.extent(desCountry, function(d) {
+        return d.year;
+    }));
+    y.domain([0, d3.max(desCountry, function(d) {
+        return d.aid / 1000000;
+    })]);
 
-    const path = svgRecieve.data([ desCountry ])
-    .append("path")
-    .attr("class", "area usa")
-    .attr("d", (d) => areaReceive(d))
-    .attr("fill", "rgba(50, 195, 182, 0)")
-    .attr("stroke", "none");
+    const path = svgRecieve.data([desCountry])
+        .append("path")
+        .attr("class", "area usa")
+        .attr("d", (d) => areaReceive(d))
+        .attr("fill", "rgba(50, 195, 182, 0)")
+        .attr("stroke", "none");
 
     var totalLength = path.node().getTotalLength();
     path.attr("stroke-dasharray", totalLength + " " + totalLength)
-    .attr("stroke-dashoffset", totalLength)
-    .transition().duration(500)
-    .ease("linear")
-    .attr("stroke-dashoffset", 0)
-    .transition().duration(200)
-    .attr("fill", "rgba(50, 195, 182, 1)");
+        .attr("stroke-dashoffset", totalLength)
+        .transition().duration(500)
+        .ease("linear")
+        .attr("stroke-dashoffset", 0)
+        .transition().duration(200)
+        .attr("fill", "rgba(50, 195, 182, 1)");
 
     // Add the X Axis
     svgRecieve.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxisReceive);
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxisReceive);
 
     // Add the Y Axis
     svgRecieve.append("g")
-    .attr("class", "y axis")
-    .call(yAxisReceive);
+        .attr("class", "y axis")
+        .call(yAxisReceive);
 
     const dataset = findStackedData("Germany", crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
 
     function displayNewStack(country) {
         const dataset2 = findStackedData(country, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
         var path = d3.selectAll("#donaterSvg path").data(dataset2)
-                            .attr("stroke", (d, i) => colorDonate(i))
-                            .attr("fill", "#fff")
-                            .attr("d", (d) => areaDonate(d.aid) )
+            .attr("stroke", (d, i) => colorDonate(i))
+            .attr("fill", "#fff")
+            .attr("d", (d) => areaDonate(d.aid))
 
         const pathLength = path.node().getTotalLength();
         path.attr("stroke-dasharray", pathLength + " " + pathLength)
@@ -306,7 +326,7 @@ function ready(error, results) {
             .ease("linear")
             .attr("stroke-dashoffset", 0)
             .transition().duration(200)
-            .attr("fill", (d, i) => colorDonate(i) )
+            .attr("fill", (d, i) => colorDonate(i))
     }
     //New array with all the years, for referencing later
     const yearsDonate = ["1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981","1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992","1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007"];
@@ -334,7 +354,7 @@ function ready(error, results) {
         }
     }
 
-    yScaleDonate.domain([ d3.max(totals), 0 ]);
+    yScaleDonate.domain([d3.max(totals), 0]);
     //Areas
     //
     //Now that we are creating multiple paths, we can use the
@@ -345,22 +365,23 @@ function ready(error, results) {
     var selection = svgDonate.selectAll("path")
         .data(dataset)
 
-        var paths = selection.enter()
+    var paths = selection.enter()
         .append("path")
         .attr("class", "area")
         .attr("stroke", (d, i) => {
-            return colorDonate(i)})
+            return colorDonate(i)
+        })
         .attr("fill", "#fff")
-        .attr("d", (d) => areaDonate(d.aid) )
+        .attr("d", (d) => areaDonate(d.aid))
 
-        var totalLength = paths.node().getTotalLength();
-        paths.attr("stroke-dasharray", totalLength + " " + totalLength)
-            .attr("stroke-dashoffset", totalLength)
-            .transition().duration(300)
-            .ease("linear")
+    var totalLength = paths.node().getTotalLength();
+    paths.attr("stroke-dasharray", totalLength + " " + totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition().duration(300)
+        .ease("linear")
         .attr("stroke-dashoffset", 0)
-            .transition().duration(200)
-            .attr("fill", (d, i) => colorDonate(i) );
+        .transition().duration(200)
+        .attr("fill", (d, i) => colorDonate(i));
 
     //Append a title with the country name (so we get easy tooltips)
     paths.append("title")

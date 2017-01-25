@@ -94,10 +94,11 @@ body, html {
 	-webkit-transform-style: preserve-3d;
 	-moz-transform-style: preserve-3d;
 	transform-style: preserve-3d;
+  transition: color 0.5s ease;
 }
 
 .btn-3d:active {
-  background: #55b7f3;
+  background: #88b7f3;
 }
 
 .btn-effect {
@@ -128,6 +129,11 @@ body, html {
 	-moz-transform: rotateX(0deg);
 	-ms-transform: rotateX(0deg);
 	transform: rotateX(0deg);
+}
+
+.activeButton {
+  background: #663399;
+  color: ghostwhite;
 }
 
 #loading {
@@ -182,7 +188,7 @@ body, html {
   top: 0;
 }
 
-.legendTag {
+.legendTag, .color {
   width: 1rem;
   height: 1rem;
   border: 1px outset black;
@@ -199,4 +205,79 @@ body, html {
 .legendDiv {
   width: 100%;
   margin: 0.5rem;
+}
+
+.rangeBarDonating {
+  display: none;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.rangeBarDonating, .rangeBarRecieving {
+  display: none;
+  position: absolute;
+  bottom: 1rem;
+  right: 10rem;
+}
+
+.active {
+  display: block !important;
+}
+
+.rangeBarRecieving .color1 {
+  background-color: #8c2d04;
+}
+
+.rangeBarRecieving .color2 {
+  background-color: #d94801;
+}
+
+.rangeBarRecieving .color3 {
+  background-color: #f16913;
+}
+
+.rangeBarRecieving .color4 {
+  background-color: #fd8d3c;
+}
+
+.rangeBarRecieving .color5 {
+  background-color: #fdae6b;
+}
+
+.rangeBarRecieving .color6 {
+  background-color: #fdd0a2;
+}
+
+.rangeBarRecieving .color7 {
+  background-color: #feedde;
+}
+
+
+.rangeBarDonating .color1 {
+  background-color: #005a32;
+}
+
+.rangeBarDonating .color2 {
+  background-color: #238b45;
+}
+
+.rangeBarDonating .color3 {
+  background-color: #41ab5d;
+}
+
+.rangeBarDonating .color4 {
+  background-color: #74c476;
+}
+
+.rangeBarDonating .color5 {
+  background-color: #a1d99b;
+}
+
+.rangeBarDonating .color6 {
+  background-color: #c7e9c0;
+}
+
+.rangeBarDonating .color7 {
+  background-color: #edf8e9;
 }

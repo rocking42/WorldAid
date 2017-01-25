@@ -299,12 +299,12 @@
 	    // color legend
 	    function legend(colorDescription, colorScheme) {
 	        var legend = $("#legendMenu");
+	        legend.html("");
 	        console.log(colorDescription, colorScheme);
 	        colorScheme.forEach(function (color, i) {
 	            var div = $("<div></div>").attr("class", "legendDiv");
 	            var tag = $("<span></span>").attr("class", "legendTag").css("background", color).appendTo(div);
 	            var span = $("<span>&nbsp;- " + colorDescription[i] + "</span>").attr("class", "legendSpan").appendTo(div);
-	            legend.html("");
 	            legend.append(div);
 	            console.log("hello");
 	        });
@@ -317,6 +317,12 @@
 	    root.add(theWholeWorld);
 	
 	    _scene.scene.add(root);
+	
+	    $(".btn-3d").on("click", function () {
+	        $(".btn-3d").removeClass("activeButton");
+	        $(this).addClass("activeButton");
+	    });
+	
 	    function onGlobeClick(event) {
 	        // Get pointc, convert to latitude/longitude
 	        var latlng = _helpers.getEventCenter.call(this, event);
@@ -367,15 +373,23 @@
 	    var receivingAidActivated = false;
 	    document.querySelector(".clearMap").addEventListener("click", function () {
 	        //   addSelected(receivingAid);
-	        receivingAidActivated = true;
-	        donatersActivated = false;
+	        if (!receivingAidActivated) {
+	            receivingAidActivated = true;
+	            donatersActivated = false;
+	            $(".rangeBarDonating").removeClass("active");
+	            $(".rangeBarRecieving").addClass("active");
+	        }
 	    });
 	
 	    var donatersActivated = false;
 	    document.querySelector(".showDonate").addEventListener("click", function () {
 	        //   addSelected(donaters);
-	        donatersActivated = true;
-	        receivingAidActivated = false;
+	        if (!donatersActivated) {
+	            receivingAidActivated = false;
+	            donatersActivated = true;
+	            $(".rangeBarRecieving").removeClass("active");
+	            $(".rangeBarDonating").addClass("active");
+	        }
 	    });
 	
 	    var desCountry = (0, _receivingD.findLineInfo)("Germany", items, "aid-given");
