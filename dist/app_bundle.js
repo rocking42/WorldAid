@@ -303,7 +303,6 @@
 	    root.add(theWholeWorld);
 	
 	    _scene.scene.add(root);
-	
 	    function onGlobeClick(event) {
 	
 	        // Get pointc, convert to latitude/longitude
@@ -313,11 +312,23 @@
 	        // console.log(country.code);
 	        if (_.includes(receivingAid, country.code) && receivingAidActivated) {
 	            (0, _receivingD.changeCountryLine)(country.code, aidReceivedAll, "aid-received");
+	            d3.select("#donaterSvg").style("display", "none");
+	            var url = "https://en.wikipedia.org/w/api.php?action=opensearch&search=" + country.code + "&limit=1&namespace=0&format=json&callback=?";
+	            $.getJSON(url, function (data) {
+	                d3.select("#d3stuff .countryInfo").text(data[2][0]).style("display", "inline-block");
+	            });
 	            d3.select("#msg").text(country.code);
 	            d3.select("#stats").text("Funds Recieved: " + country["recieved"]);
+	            var rank = countryRanking.filter(function (item) {
+	                return item.country === country.code;
+	            });
+	            rank = rank[0].ranking || "N/A";
+	            d3.select(".contryRank").text(rank + "/96");
 	        } else if (_.includes(donating, country.code) && donatersActivated) {
 	            (0, _receivingD.changeCountryLine)(country.code, items, "aid-given");
 	            displayNewStack(country.code);
+	            d3.select("#d3stuff .countryInfo").style("display", "none");
+	            d3.select("#donaterSvg").style("display", "inline");
 	            d3.select("#msg").text(country.code);
 	            d3.select("#stats").text("Funds Donated: " + country["aid"][2006]);
 	        } else if (receivingAidActivated) {
