@@ -566,6 +566,19 @@
 	camera.position.x = -750;
 	camera.position.y = 400;
 	
+	function checkRotation() {
+	  var rotSpeed = 0.001;
+	
+	  var x = camera.position.x,
+	      y = camera.position.y,
+	      z = camera.position.z;
+	
+	  camera.position.x = x * Math.cos(rotSpeed) + z * Math.sin(rotSpeed);
+	  camera.position.z = z * Math.cos(rotSpeed) - x * Math.sin(rotSpeed);
+	
+	  camera.lookAt(scene.position);
+	}
+	
 	var scene = exports.scene = new THREE.Scene();
 	
 	var light = exports.light = new THREE.HemisphereLight('0xffffff', '0xffffff', 1.5);
@@ -584,6 +597,8 @@
 	function animate() {
 	  setTimeout(function () {
 	    requestAnimationFrame(animate);
+	
+	    checkRotation();
 	    renderer.render(scene, camera);
 	  }, 1000 / fps);
 	}
@@ -597,7 +612,6 @@
 	//     requestAnimationFrame(frameA);
 	//     renderer.render(scene, camera);
 	//   };
-	
 	
 	function removeGroups(toRemove) {
 	  if (scene.children[1].children[2]) {
@@ -53787,8 +53801,8 @@
 	// Set the dimensions and padding of the canvas / graph
 	// var paddingDonate = [ 20, 10, 50, 100 ];
 	var margin = exports.margin = { top: 20, right: 20, bottom: 20, left: 50 },
-	    width = exports.width = window.innerWidth * 0.25,
-	    height = exports.height = window.innerHeight * 0.50;
+	    width = exports.width = window.innerWidth * 0.22,
+	    height = exports.height = window.innerHeight * 0.40;
 	
 	// Parse the date / time
 	var parseDate = exports.parseDate = d3.time.format("%Y").parse;
@@ -53844,8 +53858,8 @@
 	}).order("reverse");
 	
 	//Width, height, padding
-	var w = exports.w = 700;
-	var h = exports.h = window.innerHeight / 2;
+	var w = exports.w = window.innerWidth / 2.7;
+	var h = exports.h = window.innerHeight * 0.50;
 	var padding = exports.padding = [20, 10, 50, 100]; //Top, right, bottom, left
 	
 	//Set up date format function (years)
@@ -53875,10 +53889,10 @@
 	});
 	
 	//Easy colors accessible via a 10-step ordinal scale
-	var colorDonate = exports.colorDonate = d3.scale.category20c();
+	var colorDonate = exports.colorDonate = d3.scale.ordinal().domain(["crossSectorAid", "economicalInfastructure", "educationalAid", "govAndCivil", "healthAid", "populationPoliciesAid", "productionSectorAid", "socialServicesAid", "waterAndSanitationAid"]).range(["#3e6ab2", "#528ff2", "#a7c3f2", "#e6eaf2", "#f78604", "#f2b46d", "#e8c9a7", "#a7e8ce", "#42e5a4"]);
 	
 	//Create the SVG
-	var svgDonate = exports.svgDonate = d3.select("#d3stuff").append("svg").attr("id", "donaterSvg").attr("width", w).attr("height", h);
+	var svgDonate = exports.svgDonate = d3.select("#colorGraph").append("svg").attr("id", "donaterSvg").attr("width", w).attr("height", h);
 	
 	function findStackedData(country) {
 	  // Get all the data for a country and store in an array
