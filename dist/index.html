@@ -5,24 +5,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../assets/grid.css">
     <link rel="stylesheet" href="../assets/style.css">
     <title>Document</title>
 </head>
 
 <body>
-    <div id="info">
-        <div id="msg">Choose a Country</div>
-        <div id="stats"></div>
-    </div>
 
+    <div class="container">
 
-    <div id="loading">Loading...</div>
+        <div class="col lg-col-3">
+            <div id="d3stuff">
+                    <button class="clearMap button btn-3d btn-effect" id="rightButton">Recieving Aid</button>
+                    <button class="showDonate button btn-3d btn-effect" id="leftButton">Donating Aid</button>
 
-    <div id="d3stuff">
-            <button class="clearMap button btn-3d btn-effect" id="rightButton">Recieving Aid</button>
-            <button class="showDonate button btn-3d btn-effect" id="leftButton">Donating Aid</button>
-    </div>
+                    <div id="info">
+                        <div id="msg">Choose a Country</div>
+                        <div id="stats"></div>
+                    </div>
+            </div>
+        </div>
+        <div class="col lg-col-9">
+            <div id="loading">Loading...</div>
+        </div>
+
     
+
 <script type="text/javascript" src="app_bundle.js"></script></body>
 
 </html>

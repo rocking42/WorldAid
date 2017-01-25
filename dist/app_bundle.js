@@ -314,24 +314,15 @@
 	        var country = geo.search(latlng[0], latlng[1]);
 	        // console.log(country.code);
 	        if (_.includes(receivingAid, country.code) && receivingAidActivated) {
-	            d3.select("#msg").text(country.code + " is recieving aid");
+	            d3.select("#msg").text(country.code);
+	            d3.select("#stats").text("Funds Recieved: " + country["recieved"]);
 	        } else if (_.includes(donating, country.code) && donatersActivated) {
-	            d3.select("#msg").text(country.code + " is a donator");
+	            d3.select("#msg").text(country.code);
+	            d3.select("#stats").text("Funds Donated: " + country["aid"][2006]);
 	        } else if (receivingAidActivated) {
 	            d3.select("#msg").text("select a reciever");
 	        } else if (donatersActivated) {
 	            d3.select("#msg").text("select a donator");
-	        }
-	
-	        if (country) {
-	            // d3.select("#msg").text(country.code);
-	            d3.select(".header").text(country.code);
-	            if (country["aid"]) {
-	                d3.select("#stats").text(country["aid"][2006]);
-	            }
-	            if (country["recieved"]) {
-	                d3.select("#stats").text(country["recieved"]);
-	            }
 	        }
 	    }
 	
