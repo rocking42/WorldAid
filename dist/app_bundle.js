@@ -287,15 +287,15 @@
 	
 	    var controls = new OrbitControls(_scene.camera, _scene.renderer.domElement);
 	
-	    // const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given")
-	    // const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received")
+	    var donaters = (0, _textureAdd.addMaps)(new THREE.Group(), countries.features, "aid-given");
+	    var aidLayers = (0, _textureAdd.addMaps)(new THREE.Group(), countries.features, "aid-received");
 	
 	    (0, _scene.animate)();
 	    // requestAnimationFrame(frameA);
 	
 	    var receivingAidActivated = false;
 	    document.querySelector(".clearMap").addEventListener("click", function () {
-	        //   addSelected(receivingAid);
+	        (0, _scene.addSelected)(aidLayers);
 	        if (!receivingAidActivated) {
 	            $("#legendMenu").html("");
 	            receivingAidActivated = true;
@@ -307,7 +307,7 @@
 	
 	    var donatersActivated = false;
 	    document.querySelector(".showDonate").addEventListener("click", function () {
-	        //   addSelected(donaters);
+	        (0, _scene.addSelected)(donaters);
 	        if (!donatersActivated) {
 	            legend(_donatingD.colorDescription, _donatingD.colorScheme);
 	            receivingAidActivated = false;

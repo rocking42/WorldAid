@@ -213,15 +213,15 @@ function ready(error, results) {
         renderer.domElement
     );
 
-    // const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given")
-    // const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received")
+    const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given")
+    const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received")
 
     animate();
     // requestAnimationFrame(frameA);
 
     let receivingAidActivated = false;
     document.querySelector(".clearMap").addEventListener("click", function() {
-        //   addSelected(receivingAid);
+          addSelected(aidLayers);
         if (!receivingAidActivated) {
             $("#legendMenu").html("");
             receivingAidActivated = true;
@@ -233,7 +233,7 @@ function ready(error, results) {
 
     let donatersActivated = false;
     document.querySelector(".showDonate").addEventListener("click", function() {
-        //   addSelected(donaters);
+          addSelected(donaters);
         if (!donatersActivated) {
             legend(colorDescription, colorScheme);
             receivingAidActivated = false;
