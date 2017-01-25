@@ -244,7 +244,7 @@ function ready(error, results) {
     });
 
     const desCountry = findLineInfo("Germany", items, "aid-given")
-        // Scale the range of the data
+        // Scale the range of the datas
     x.domain(d3.extent(desCountry, function(d) {
         return d.year;
     }));
