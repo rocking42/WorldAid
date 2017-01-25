@@ -279,26 +279,7 @@ function ready(error, results) {
         .call(yAxisReceive);
 
     const dataset = findStackedData("Germany", crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
-<<<<<<< HEAD
 
-    function displayNewStack(country) {
-        const dataset2 = findStackedData(country, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
-        var path = d3.selectAll("#donaterSvg path").data(dataset2)
-            .attr("stroke", (d, i) => colorDonate(i))
-            .attr("fill", "#fff")
-            .attr("d", (d) => areaDonate(d.aid))
-
-        const pathLength = path.node().getTotalLength();
-        path.attr("stroke-dasharray", pathLength + " " + pathLength)
-            .attr("stroke-dashoffset", pathLength)
-            .transition().duration(300)
-            .ease("linear")
-            .attr("stroke-dashoffset", 0)
-            .transition().duration(200)
-            .attr("fill", (d, i) => colorDonate(i))
-    }
-=======
->>>>>>> 04f61c1d48824177dac65ba7249ade690b46a064
     //New array with all the years, for referencing later
     const yearsDonate = ["1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981","1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992","1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007"];
     //Now that the data is ready, we can check its
@@ -337,9 +318,8 @@ function ready(error, results) {
     var paths = selection.enter()
         .append("path")
         .attr("class", "area")
-        .attr("stroke", (d, i) => {
-            return colorDonate(i)
-        })
+
+        .attr("stroke", (d, i) => colorDonate(i))
         .attr("fill", "#fff")
         .attr("d", (d) => areaDonate(d.aid))
 
