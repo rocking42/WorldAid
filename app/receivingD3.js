@@ -42,7 +42,7 @@ export const svgRecieve = d3.select("#recieverSvg")
 export function countryYearsAndAid(country, dataType, aidingType) {
     const res = dataType.filter((d) => d[aidingType] === country);
     const money = _.values(res[0]).map((d) => +d || 1);
-    const years = Object.keys(res[0]).map((d) => parseDate(d));
+    const years = _.keys(res[0]).map((d) => parseDate(d));
     const yearsComp = years.splice(0, years.length - 1)
     return [yearsComp, _.compact(money)];
   }

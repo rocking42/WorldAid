@@ -77,7 +77,7 @@ export function findStackedData(country, ...allData) {
   // iterate over the countries data
   countryData.forEach((item, i) => {
     // Get the values and keys arrays of each
-    const years = Object.keys(item)
+    const years = _.keys(item)
     const money = _.values(item)
     // Set the name of the aid-type
     dataResult[i]["aidType"] = years[years.length - 1];
