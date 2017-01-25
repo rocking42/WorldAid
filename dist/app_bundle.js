@@ -333,22 +333,22 @@
 	
 	    var controls = new OrbitControls(_scene.camera, _scene.renderer.domElement);
 	
-	    donaters: addMaps(new THREE.Group(), countries.features);
-	    receivingAid: addMapsInNeed(new THREE.Group(), countries.features);
+	    // const donaters =  addMaps(new THREE.Group(), countries.features)
+	    // const receivingAid = addMapsInNeed(new THREE.Group(), countries.features)
 	
 	    (0, _scene.animate)();
 	    // requestAnimationFrame(frameA);
 	
 	    var receivingAidActivated = false;
 	    document.querySelector(".clearMap").addEventListener("click", function () {
-	        (0, _scene.addSelected)(receivingAid);
+	        //   addSelected(receivingAid);
 	        receivingAidActivated = true;
 	        donatersActivated = false;
 	    });
 	
 	    var donatersActivated = false;
 	    document.querySelector(".showDonate").addEventListener("click", function () {
-	        (0, _scene.addSelected)(donaters);
+	        //   addSelected(donaters);
 	        donatersActivated = true;
 	        receivingAidActivated = false;
 	    });
@@ -376,15 +376,16 @@
 	            return d.aid / 1000000;
 	        })]);
 	        _receivingD.yAxisReceive.scale(_receivingD.y);
-	        var path = d3.selectAll("#recieverSvg path").data([thisData]).attr("fill", "#fff").attr("stroke", "black").attr("d", function (d) {
+	        var path = d3.selectAll("#recieverSvg path").data([thisData]).attr("fill", "rgba(50, 195, 182, 0)").attr("stroke", "black").attr("d", function (d) {
 	            return (0, _receivingD.areaReceive)(d);
 	        });
 	
 	        var pathReceive = path.node().getTotalLength();
 	        path.attr("stroke-dasharray", pathReceive + " " + pathReceive).attr("stroke-dashoffset", pathReceive).transition().duration(300).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", function (d, i) {
-	            return "red";
-	        });
-	        d3.select("y").call(_receivingD.yAxisReceive);
+	            return "rgba(50, 195, 182, 1)";
+	        }).attr("stroke", "rgba(50, 195, 182, 1)");
+	        _receivingD.svgRecieve.selectAll("g.y.axis").remove();
+	        _receivingD.svgRecieve.append("g").attr("class", "y axis").call(_receivingD.yAxisReceive);
 	    }
 	
 	    var desCountry = findLineInfo("Australia", items);
@@ -474,13 +475,6 @@
 	    paths.attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).transition().duration(300).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", function (d, i) {
 	        return (0, _donatingD.colorDonate)(i);
 	    });
-	
-	    var stackCountry = ["Australia", "United States", "France", "Germany"];
-	    // d3.select(".showDonate").on("click", function() {
-	    //     displayNewStack(stackCountry[Math.floor(Math.random() * 4)])
-	    // })
-	    // selection.enter().append("path");
-	
 	
 	    //Append a title with the country name (so we get easy tooltips)
 	    paths.append("title").text(function (d) {
@@ -53917,7 +53911,7 @@
 	var colorDonate = exports.colorDonate = d3.scale.ordinal().domain(["crossSectorAid", "economicalInfastructure", "educationalAid", "govAndCivil", "healthAid", "populationPoliciesAid", "productionSectorAid", "socialServicesAid", "waterAndSanitationAid"]).range(["#3e6ab2", "#528ff2", "#a7c3f2", "#e6eaf2", "#f78604", "#f2b46d", "#e8c9a7", "#a7e8ce", "#42e5a4"]);
 	
 	//Create the SVG
-	var svgDonate = exports.svgDonate = d3.select("#colorGraph").append("svg").attr("id", "donaterSvg").attr("width", w).attr("height", h);
+	var svgDonate = exports.svgDonate = d3.select("#d3stuff").append("svg").attr("id", "donaterSvg").attr("width", w).attr("height", h);
 	
 	function findStackedData(country) {
 	  // Get all the data for a country and store in an array
