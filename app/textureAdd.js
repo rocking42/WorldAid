@@ -105,3 +105,19 @@ export function countTexture(country) {
 
     return texture;
 }
+var segments = 155;
+export function addMaps(group, countries, aidType) {
+    for (const country of countries) {
+        if (country[aidType]) {
+            let worldTexture = countTexture(country);
+            let mapMaterial = new THREE.MeshPhongMaterial({
+                map: worldTexture,
+                transparent: true
+            });
+            var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
+            baseMap.rotation.y = Math.PI;
+            group.add(baseMap);
+        }
+    }
+    return group
+}

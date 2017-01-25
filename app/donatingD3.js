@@ -96,3 +96,22 @@ export function findStackedData(country, ...allData) {
   });
   return stack(dataResult);
 }
+
+
+export function displayNewStack(country, ...dataSources) {
+    const dataset2 = findStackedData(country, ...dataSources);
+
+    var path = d3.selectAll("#donaterSvg path").data(dataset2)
+                        .attr("stroke", (d, i) => colorDonate(i))
+                        .attr("fill", "#fff")
+                        .attr("d", (d) => areaDonate(d.aid) )
+
+    const pathLength = path.node().getTotalLength();
+    path.attr("stroke-dasharray", pathLength + " " + pathLength)
+        .attr("stroke-dashoffset", pathLength)
+        .transition().duration(300)
+        .ease("linear")
+        .attr("stroke-dashoffset", 0)
+        .transition().duration(200)
+        .attr("fill", (d, i) => colorDonate(i) )
+}
