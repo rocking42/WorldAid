@@ -78,6 +78,10 @@
 	var $ = __webpack_require__(16);
 	
 	
+	var receivingAid = ["Nigeria", "Iraq", "Afghanistan", "Pakistan", "Congo, Dem. Rep.", "Sudan", "Ethiopia", "Vietnam", "Tanzania", "Cameroon", "Mozambique", "Serbia", "Uganda", "Zambia", "West Bank and Gaza", "Indonesia", "India", "China", "Ghana", "Bangladesh", "Morocco", "Colombia", "Kenya", "Burkina Faso", "Egypt", "Mali", "Senegal", "Bolivia"];
+	
+	var donating = ["Australia", "Austria", "Belgium", "Canada", "Denmark", "Finland", "France", "Germany", "Greece", "Ireland", "Italy", "Japan", "Luxembourg", "Netherlands", "New Zealand", "Norway", "Portugal", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"];
+	
 	// Store the results in a variable
 	function ready(error, results) {
 	    if (error) throw error;
@@ -209,8 +213,6 @@
 	    baseGlobe.name = "globe";
 	    baseGlobe.addEventListener('click', onGlobeClick);
 	
-	    // baseGlobe.addEventListener('click', onGlobeMousemove);
-	
 	    var outlineTexture = (0, _textureAdd.mapTexture)(countries);
 	    var worldOutline = new THREE.MeshPhongMaterial({
 	        map: outlineTexture,
@@ -310,9 +312,19 @@
 	        var latlng = _helpers.getEventCenter.call(this, event);
 	
 	        var country = geo.search(latlng[0], latlng[1]);
-	        // console.log(country);
+	        // console.log(country.code);
+	        if (_.includes(receivingAid, country.code) && receivingAidActivated) {
+	            d3.select("#msg").text(country.code + " is recieving aid");
+	        } else if (_.includes(donating, country.code) && donatersActivated) {
+	            d3.select("#msg").text(country.code + " is a donator");
+	        } else if (receivingAidActivated) {
+	            d3.select("#msg").text("select a reciever");
+	        } else if (donatersActivated) {
+	            d3.select("#msg").text("select a donator");
+	        }
+	
 	        if (country) {
-	            d3.select("#msg").text(country.code);
+	            // d3.select("#msg").text(country.code);
 	            d3.select(".header").text(country.code);
 	            if (country["aid"]) {
 	                d3.select("#stats").text(country["aid"][2006]);
@@ -320,39 +332,6 @@
 	            if (country["recieved"]) {
 	                d3.select("#stats").text(country["recieved"]);
 	            }
-	        }
-	    }
-	
-	    function onGlobeMousemove(event) {
-	        var map, material;
-	
-	        // Get pointc, convert to latitude/longitude
-	        var latlng = _helpers.getEventCenter.call(this, event);
-	
-	        // Look for country at that latitude/longitude
-	        var country = geo.search(latlng[0], latlng[1]);
-	        console.log(country);
-	        if (country !== null && country.code !== currentCountry) {
-	
-	            // Track the current country displayed
-	            currentCountry = country.code;
-	
-	            // Update the html
-	            d3.select("#msg").html(country.code);
-	
-	            // Overlay the selected country
-	            map = textureCache(country.code);
-	            material = new THREE.MeshPhongMaterial({
-	                map: map,
-	                transparent: true
-	            });
-	            // if (!overlay) {
-	            //   overlay = new THREE.Mesh(new THREE.SphereGeometry(201, 40, 40), material);
-	            //   overlay.rotation.y = Math.PI;
-	            //   root.add(overlay);
-	            // } else {
-	            //   overlay.material = material;
-	            // }
 	        }
 	    }
 	
@@ -366,6 +345,25 @@
 	
 	    (0, _scene.animate)();
 	    // requestAnimationFrame(frameA);
+<<<<<<< HEAD
+	
+	    var receivingAidActivated = false;
+	    document.querySelector(".clearMap").addEventListener("click", function () {
+	        //   addSelected(receivingAid);
+	        receivingAidActivated = true;
+	        donatersActivated = false;
+	    });
+	
+	    var donatersActivated = false;
+	    document.querySelector(".showDonate").addEventListener("click", function () {
+	        //   addSelected(donaters);
+	        donatersActivated = true;
+	        receivingAidActivated = false;
+	    });
+	}
+	// Load the data
+	d3_queue.queue().defer(d3.csv, "../assets/Data1.csv").defer(d3.csv, "../assets/Data5.csv").defer(d3.json, "../assets/world.json").awaitAll(ready);
+=======
 	    // document.querySelector(".clearMap").addEventListener("click", function() {
 	    //   addSelected(receivingAid);
 	    // });
@@ -717,6 +715,7 @@
 	// }
 	//
 	// document.getElementById("doSomething").addEventListener("click", doSomething);
+>>>>>>> c706e6c2290c1d6384deb1c6a061870118e73fad
 
 /***/ },
 /* 2 */

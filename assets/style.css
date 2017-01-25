@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Fira+Sans|Oxygen|VT323');
 
+html {
+  font-size: 15px;
+}
+
 body, html {
   width: 100vw;
   background-color: #333;
@@ -17,6 +21,8 @@ body, html {
 
 
 #info {
+  text-align: center;
+  width: 37vw;
   font-family: 'Fira Sans', sans-serif;
   color: white;
   position: absolute;
@@ -27,30 +33,89 @@ body, html {
 }
 
 .button {
-  text-align: center;
-  font-size: 20px;
-  margin: 1%;
-  float: left;
-  font-size: 0.8rem;
-  background: rgba(100,255,100,0);
-  border-radius: 3px;
-  transition: background 1s ease;
+  border: none;
+	font-family: inherit;
+	font-size: 0.7em;
+	color: inherit;
+	background: none;
+	cursor: pointer;
+	padding: 0.7em;
+	/*display: inline-block;*/
+	float: left;
+	margin: 0.3	em 0;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	font-weight: 700;
+	outline: none;
+	position: relative;
+	-webkit-transition: all 0.3s;
+	-moz-transition: all 0.3s;
+	transition: all 0.3s;
+  z-index: 5;
+  width: 50%;
 }
 
 .buttons {
   position: relative;
-  left: 3em;
-  margin: auto;
+  margin: 1% auto;
   overflow: auto;
   height: 2rem;
 }
 
-.button:hover {
-  background: rgba(255,255,255,1);
+.button:after {
+  content: '';
+	position: absolute;
+	z-index: -1;
+	-webkit-transition: all 0.3s;
+	-moz-transition: all 0.3s;
+	transition: all 0.3s;
+}
+
+.btn-3d {
+  display: block;
+	background: #5cbcf6;
+	outline: 1px solid transparent; /* FF jagged edges fix */
+	-webkit-transform-style: preserve-3d;
+	-moz-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+}
+
+.btn-3d:active {
+  background: #55b7f3;
+}
+
+.btn-effect {
+	-webkit-transform: rotateX(-15deg);
+	-moz-transform: rotateX(-15deg);
+	-ms-transform: rotateX(-15deg);
+	transform: rotateX(-15deg);
+}
+
+.btn-effect:after {
+	width: 100%;
+	height: 42%; /* should be 40% but there's a gap in Chrome Version 34.0.1847.131 */
+	left: 0;
+	top: -40%;
+	background: #49a7df;
+	-webkit-transform-origin: 0% 100%;
+	-webkit-transform: rotateX(90deg);
+	-moz-transform-origin: 0% 100%;
+	-moz-transform: rotateX(90deg);
+	-ms-transform-origin: 0% 100%;
+	-ms-transform: rotateX(90deg);
+	transform-origin: 0% 100%;
+	transform: rotateX(90deg);
+}
+
+.btn-effect:active {
+	-webkit-transform: rotateX(0deg);
+	-moz-transform: rotateX(0deg);
+	-ms-transform: rotateX(0deg);
+	transform: rotateX(0deg);
 }
 
 #msg {
-  font: 40px 'VT323', monospace;;
+  font: 40px 'Fira Sans', sans-serif;
 }
 
 #info h3 {
@@ -74,7 +139,7 @@ body, html {
   border-right: 1px ridge #999;
   position: absolute;
   height: 100vh;
-  background-color: rgba(180, 180, 180, 0.7);
+  background-color: rgba(180, 180, 180, 0.9);
   z-index: 1;
   overflow: hidden;
 }
