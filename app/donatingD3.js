@@ -1,5 +1,5 @@
 const d3 = require("d3");
-const values = require('object.values');
+const _  = require("lodash");
 //Set up stack method
 export const stack = d3.layout.stack()
         .values(function(d) {
@@ -60,9 +60,7 @@ export const colorDonate = d3.scale.ordinal()
                                    .domain(domain)
                                    .range(colorScheme);
 //Create the SVG
-export const svgDonate = d3.select("#d3stuff")
-      .append("svg")
-      .attr("id", "donaterSvg")
+export const svgDonate = d3.select("#donaterSvg")
       .attr("width", w)
       .attr("height", h);
 
@@ -71,7 +69,7 @@ export function findStackedData(country, ...allData) {
   const countryData = [];
   allData.forEach((indArray) => {
     countryData.push( indArray.filter((item) => {
-      return values(item)[values(item).length - 1] === country
+      return _.values(item)[_.values(item).length - 1] === country
     })[0] );
   });
   // Setup the returned data-structure
@@ -80,7 +78,7 @@ export function findStackedData(country, ...allData) {
   countryData.forEach((item, i) => {
     // Get the values and keys arrays of each
     const years = Object.keys(item)
-    const money = values(item)
+    const money = _.values(item)
     // Set the name of the aid-type
     dataResult[i]["aidType"] = years[years.length - 1];
     // Zip the arrays together

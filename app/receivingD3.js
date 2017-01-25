@@ -1,5 +1,5 @@
 const d3 = require("d3");
-const values = require('object.values');
+const _  = require("lodash");
 // Set the dimensions and padding of the canvas / graph
 // var paddingDonate = [ 20, 10, 50, 100 ];
 export const margin = {top: 20, right: 20, bottom: 20, left: 60},
@@ -30,9 +30,7 @@ export const areaReceive = d3.svg.area()
     return y(d.aid / 1000000);
   });
   // Adds the svg canvas
-export const svgRecieve = d3.select("#d3stuff")
-      .append("svg")
-      .attr("id", "recieverSvg")
+export const svgRecieve = d3.select("#recieverSvg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -43,7 +41,7 @@ export const svgRecieve = d3.select("#d3stuff")
   // returns two array being years and aid given/received
 export function countryYearsAndAid(country, dataType, aidingType) {
     const res = dataType.filter((d) => d[aidingType] === country);
-    const money = values(res[0]).map((d) => +d || 1);
+    const money = _.values(res[0]).map((d) => +d || 1);
     const years = Object.keys(res[0]).map((d) => parseDate(d));
     const yearsComp = years.splice(0, years.length - 1)
     return [yearsComp, _.compact(money)];
