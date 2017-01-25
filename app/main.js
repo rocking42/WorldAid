@@ -38,7 +38,9 @@ import {
     chooseColor,
     colorInNeed,
     countTexture,
-    mapTexture
+    mapTexture,
+    addMaps,
+    addMapsInNeed
 } from './textureAdd';
 import {
     margin,
@@ -70,7 +72,8 @@ import {
     areaDonate,
     colorDonate,
     svgDonate,
-    findStackedData
+    findStackedData,
+    displayNewStack
 } from './donatingD3'
 
 const receivingAid = ["Nigeria", "Iraq", "Afghanistan", "Pakistan", "Congo, Dem. Rep.", "Sudan", "Ethiopia", "Vietnam", "Tanzania", "Cameroon", "Mozambique", "Serbia", "Uganda", "Zambia", "West Bank and Gaza", "Indonesia", "India", "China", "Ghana", "Bangladesh", "Morocco", "Colombia", "Kenya", "Burkina Faso", "Egypt", "Mali", "Senegal", "Bolivia"];
@@ -142,38 +145,6 @@ function ready(error, results) {
     theWholeWorld.rotation.y = Math.PI;
     theWholeWorld.name = "worldOutline";
 
-    function addMaps(group, countries) {
-        for (const country of countries) {
-            if (country["aid-given"]) {
-                let worldTexture = countTexture(country);
-                let mapMaterial = new THREE.MeshPhongMaterial({
-                    map: worldTexture,
-                    transparent: true
-                });
-                var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
-                baseMap.rotation.y = Math.PI;
-                group.add(baseMap);
-            }
-        }
-        return group
-    }
-
-    function addMapsInNeed(groupInNeed, countries) {
-        for (const country of countries) {
-            if (country["aid-received"]) {
-                let worldTexture = countTexture(country);
-                let mapMaterial = new THREE.MeshPhongMaterial({
-                    map: worldTexture,
-                    transparent: true
-                });
-                var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
-                baseMap.rotation.y = Math.PI;
-                groupInNeed.add(baseMap);
-            }
-        }
-        return groupInNeed
-    }
-
     // color legend
     function legend(colorDescription, colorScheme) {
         const legend = $("#legendMenu");
@@ -205,7 +176,7 @@ function ready(error, results) {
         // Get pointc, convert to latitude/longitude
         var latlng = getEventCenter.call(this, event);
         var country = geo.search(latlng[0], latlng[1]);
-        // console.log(country.code);
+        console.log(country.code);
         if (_.includes(receivingAid, country.code) && receivingAidActivated) {
             changeCountryLine(country.code, aidReceivedAll, "aid-received");
             d3.select("#donaterSvg").style("display", "none");
@@ -222,7 +193,7 @@ function ready(error, results) {
         } else if (_.includes(donating, country.code) && donatersActivated) {
             changeCountryLine(country.code, items, "aid-given");
             legend(colorDescription, colorScheme);
-            displayNewStack(country.code);
+            displayNewStack(country.code, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
             d3.select(".countryRank").style("display", "none");
             d3.select("#d3stuff .countryInfo").style("display", "none");
             d3.select("#donaterSvg").style("display", "inline");
@@ -243,9 +214,8 @@ function ready(error, results) {
         renderer.domElement
     );
 
-
-    // const donaters =  addMaps(new THREE.Group(), countries.features)
-    // const receivingAid = addMapsInNeed(new THREE.Group(), countries.features)
+    // const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given")
+    // const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received")
 
     animate();
     // requestAnimationFrame(frameA);
@@ -259,7 +229,6 @@ function ready(error, results) {
             $(".rangeBarDonating").removeClass("active");
             $(".rangeBarRecieving").addClass("active");
         }
-
     });
 
     let donatersActivated = false;
@@ -272,7 +241,6 @@ function ready(error, results) {
             $(".rangeBarDonating").addClass("active");
         }
     });
-
 
     const desCountry = findLineInfo("Germany", items, "aid-given")
         // Scale the range of the data
@@ -311,6 +279,7 @@ function ready(error, results) {
         .call(yAxisReceive);
 
     const dataset = findStackedData("Germany", crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
+<<<<<<< HEAD
 
     function displayNewStack(country) {
         const dataset2 = findStackedData(country, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
@@ -328,10 +297,10 @@ function ready(error, results) {
             .transition().duration(200)
             .attr("fill", (d, i) => colorDonate(i))
     }
+=======
+>>>>>>> 04f61c1d48824177dac65ba7249ade690b46a064
     //New array with all the years, for referencing later
     const yearsDonate = ["1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981","1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992","1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007"];
-    //Stack the data!
-
     //Now that the data is ready, we can check its
     //min and max values to set our scales' domains!
     xScaleDonate.domain([
