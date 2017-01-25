@@ -58,9 +58,6 @@ export const colorDescription = ["Cross Sector Aid", "Economical Infastructure",
 export const colorDonate = d3.scale.ordinal()
                                    .domain(domain)
                                    .range(colorScheme);
-
-
-
 //Create the SVG
 export const svgDonate = d3.select("#d3stuff")
       .append("svg")

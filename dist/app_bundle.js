@@ -357,22 +357,22 @@
 	
 	    var controls = new OrbitControls(_scene.camera, _scene.renderer.domElement);
 	
-	    var donaters = addMaps(new THREE.Group(), countries.features);
-	    var receivingAid = addMapsInNeed(new THREE.Group(), countries.features);
+	    // const donaters =  addMaps(new THREE.Group(), countries.features)
+	    // const receivingAid = addMapsInNeed(new THREE.Group(), countries.features)
 	
 	    (0, _scene.animate)();
 	    // requestAnimationFrame(frameA);
 	
 	    var receivingAidActivated = false;
 	    document.querySelector(".clearMap").addEventListener("click", function () {
-	        (0, _scene.addSelected)(receivingAid);
+	        //   addSelected(receivingAid);
 	        receivingAidActivated = true;
 	        donatersActivated = false;
 	    });
 	
 	    var donatersActivated = false;
 	    document.querySelector(".showDonate").addEventListener("click", function () {
-	        (0, _scene.addSelected)(donaters);
+	        //   addSelected(donaters);
 	        donatersActivated = true;
 	        receivingAidActivated = false;
 	    });

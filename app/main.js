@@ -199,6 +199,7 @@ function ready(error, results) {
         var country = geo.search(latlng[0], latlng[1]);
         // console.log(country.code);
         if (_.includes(receivingAid, country.code) && receivingAidActivated) {
+            console.log("heppy");
             changeCountryLine(country.code, aidReceivedAll, "aid-received");
             d3.select("#donaterSvg").style("display", "none");
             let url = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${country.code}&limit=1&namespace=0&format=json&callback=?`
@@ -212,7 +213,7 @@ function ready(error, results) {
             rank.length > 0 ? rank = rank[0].ranking : rank = "?";
             d3.select(".countryRank").text(`${rank}/96`);
         } else if (_.includes(donating, country.code) && donatersActivated) {
-            changeCountryLine(country.code, items);
+            changeCountryLine(country.code, items, "aid-given");
             legend(colorDescription, colorScheme);
             displayNewStack(country.code);
             d3.select(".countryRank").style("display", "none");
@@ -227,8 +228,8 @@ function ready(error, results) {
         }
     }
 
-    setEvents(camera, [baseGlobe], 'click');
-    setEvents(camera, [baseGlobe], 'mousemove', 10);
+    // setEvents(camera, [baseGlobe], 'click');
+    // setEvents(camera, [baseGlobe], 'mousemove', 10);
 
     let controls = new OrbitControls(
         camera,
@@ -236,22 +237,22 @@ function ready(error, results) {
     );
 
 
-    const donaters =  addMaps(new THREE.Group(), countries.features)
-    const receivingAid = addMapsInNeed(new THREE.Group(), countries.features)
+    // const donaters =  addMaps(new THREE.Group(), countries.features)
+    // const receivingAid = addMapsInNeed(new THREE.Group(), countries.features)
 
     animate();
     // requestAnimationFrame(frameA);
 
     let receivingAidActivated = false;
     document.querySelector(".clearMap").addEventListener("click", function() {
-      addSelected(receivingAid);
+    //   addSelected(receivingAid);
       receivingAidActivated = true;
       donatersActivated = false
     });
 
     let donatersActivated = false;
     document.querySelector(".showDonate").addEventListener("click", function() {
-      addSelected(donaters);
+    //   addSelected(donaters);
       donatersActivated = true;
       receivingAidActivated = false;
     });
