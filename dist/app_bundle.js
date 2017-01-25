@@ -54056,11 +54056,11 @@
 	.range([padding[0], h - padding[2]]);
 	
 	//Define axes
-	var xAxisDonate = exports.xAxisDonate = d3.svg.axis().scale(xScale).orient("bottom").ticks(10).tickFormat(function (d) {
+	var xAxisDonate = exports.xAxisDonate = d3.svg.axis().scale(xScaleDonate).orient("bottom").ticks(10).tickFormat(function (d) {
 	  return dateFormat(d);
 	});
 	
-	var yAxisDonate = exports.yAxisDonate = d3.svg.axis().scale(yScale).orient("left").ticks(5);
+	var yAxisDonate = exports.yAxisDonate = d3.svg.axis().scale(yScaleDonate).orient("left").ticks(5);
 	
 	//Define area generator
 	var areaDonate = exports.areaDonate = d3.svg.area().interpolate("basis").x(function (d) {

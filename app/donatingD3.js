@@ -24,7 +24,7 @@ export const yScaleDonate = d3.scale.linear()
 
 //Define axes
 export const xAxisDonate = d3.svg.axis()
-        .scale(xScale)
+        .scale(xScaleDonate)
         .orient("bottom")
         .ticks(10)
         .tickFormat(function(d) {
@@ -32,7 +32,7 @@ export const xAxisDonate = d3.svg.axis()
         });
 
 export const yAxisDonate = d3.svg.axis()
-        .scale(yScale)
+        .scale(yScaleDonate)
         .orient("left")
         .ticks(5);
 
