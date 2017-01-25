@@ -19,6 +19,15 @@ body, html {
   user-select: none;
 }
 
+#donaterSvg {
+
+}
+
+
+#donaterSvg path:hover {
+  fill: orange;
+}
+
 
 #info {
   text-align: center;

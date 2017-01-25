@@ -29,7 +29,7 @@ export const areaReceive = d3.svg.area()
     return y(d.aid / 1000000);
   });
   // Adds the svg canvas
-export const svgRecieve = d3.select("body")
+export const svgRecieve = d3.select("#d3stuff")
       .append("svg")
       .attr("id", "recieverSvg")
       .attr("width", width + margin.left + margin.right)
