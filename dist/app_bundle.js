@@ -304,7 +304,8 @@
 	            var div = $("<div></div>").attr("class", "legendDiv");
 	            var tag = $("<span></span>").attr("class", "legendTag").css("background", color).appendTo(div);
 	            var span = $("<span>&nbsp;- " + colorDescription[i] + "</span>").attr("class", "legendSpan").appendTo(div);
-	            legend.html(div);
+	            legend.html("");
+	            legend.append(div);
 	            console.log("hello");
 	        });
 	    }
@@ -53548,7 +53549,6 @@
 	exports.getPoint = getPoint;
 	exports.getEventCenter = getEventCenter;
 	exports.convertToXYZ = convertToXYZ;
-	exports.legend = legend;
 	// MAP TEXTURE
 	
 	var projection = exports.projection = d3.geo.equirectangular().translate([1024, 512]).scale(325);
@@ -53683,19 +53683,6 @@
 	
 	    return inside;
 	};
-	
-	// color legend
-	function legend(colorDescription, colorScheme) {
-	    var legend = $("#legendMenu");
-	    console.log(colorDescription, colorScheme);
-	    colorScheme.forEach(function (color, i) {
-	        var div = $("<div></div>").attr("class", "legendDiv");
-	        var tag = $("<span></span>").attr("class", "legendTag").css("background", color).appendTo(div);
-	        var span = $("<span>&nbsp;- " + colorDescription[i] + "</span>").attr("class", "legendSpan").appendTo(div);
-	        legend.append(div);
-	        console.log("hello");
-	    });
-	}
 
 /***/ },
 /* 8 */

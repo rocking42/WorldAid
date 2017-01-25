@@ -181,7 +181,8 @@ function ready(error, results) {
             const div = $("<div></div>").attr("class", "legendDiv");
             const tag = $(`<span></span>`).attr("class", "legendTag").css("background", color).appendTo(div);
             const span = $(`<span>&nbsp;- ${colorDescription[i]}</span>`).attr("class", "legendSpan").appendTo(div);
-            legend.html(div);
+            legend.html("");
+            legend.append(div);
             console.log("hello");
         });
     }
