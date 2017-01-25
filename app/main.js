@@ -56,6 +56,8 @@ import {
     findLineInfo
 } from './receivingD3'
 import {
+    colorScheme,
+    colorDescription,
     stack,
     w,
     h,
@@ -171,6 +173,19 @@ function ready(error, results) {
         return groupInNeed
     }
 
+    // color legend
+    function legend ( colorDescription, colorScheme ) {
+        const legend = $("#legendMenu");
+        console.log( colorDescription, colorScheme );
+        colorScheme.forEach((color, i) => {
+            const div = $("<div></div>").attr("class", "legendDiv");
+            const tag = $(`<span></span>`).attr("class", "legendTag").css("background", color).appendTo(div);
+            const span = $(`<span>&nbsp;- ${colorDescription[i]}</span>`).attr("class", "legendSpan").appendTo(div);
+            legend.html(div);
+            console.log("hello");
+        });
+    }
+
     // create a container node and add the two meshes
     var root = new THREE.Object3D();
     root.scale.set(2.5, 2.5, 2.5);
@@ -179,10 +194,8 @@ function ready(error, results) {
 
     scene.add(root);
     function onGlobeClick(event) {
-
         // Get pointc, convert to latitude/longitude
         var latlng = getEventCenter.call(this, event);
-
         var country = geo.search(latlng[0], latlng[1]);
         // console.log(country.code);
         if (_.includes(receivingAid, country.code) && receivingAidActivated) {
@@ -199,7 +212,8 @@ function ready(error, results) {
             rank.length > 0 ? rank = rank[0].ranking : rank = "?";
             d3.select(".countryRank").text(`${rank}/96`);
         } else if (_.includes(donating, country.code) && donatersActivated) {
-            changeCountryLine(country.code, items, "aid-given");
+            changeCountryLine(country.code, items);
+            legend(colorDescription, colorScheme);
             displayNewStack(country.code);
             d3.select(".countryRank").style("display", "none");
             d3.select("#d3stuff .countryInfo").style("display", "none");
@@ -222,22 +236,22 @@ function ready(error, results) {
     );
 
 
-    // const donaters =  addMaps(new THREE.Group(), countries.features)
-    // const receivingAid = addMapsInNeed(new THREE.Group(), countries.features)
+    const donaters =  addMaps(new THREE.Group(), countries.features)
+    const receivingAid = addMapsInNeed(new THREE.Group(), countries.features)
 
     animate();
     // requestAnimationFrame(frameA);
 
     let receivingAidActivated = false;
     document.querySelector(".clearMap").addEventListener("click", function() {
-    //   addSelected(receivingAid);
+      addSelected(receivingAid);
       receivingAidActivated = true;
       donatersActivated = false
     });
 
     let donatersActivated = false;
     document.querySelector(".showDonate").addEventListener("click", function() {
-    //   addSelected(donaters);
+      addSelected(donaters);
       donatersActivated = true;
       receivingAidActivated = false;
     });

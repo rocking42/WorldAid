@@ -296,6 +296,19 @@
 	        return groupInNeed;
 	    }
 	
+	    // color legend
+	    function legend(colorDescription, colorScheme) {
+	        var legend = $("#legendMenu");
+	        console.log(colorDescription, colorScheme);
+	        colorScheme.forEach(function (color, i) {
+	            var div = $("<div></div>").attr("class", "legendDiv");
+	            var tag = $("<span></span>").attr("class", "legendTag").css("background", color).appendTo(div);
+	            var span = $("<span>&nbsp;- " + colorDescription[i] + "</span>").attr("class", "legendSpan").appendTo(div);
+	            legend.html(div);
+	            console.log("hello");
+	        });
+	    }
+	
 	    // create a container node and add the two meshes
 	    var root = new THREE.Object3D();
 	    root.scale.set(2.5, 2.5, 2.5);
@@ -304,10 +317,8 @@
 	
 	    _scene.scene.add(root);
 	    function onGlobeClick(event) {
-	
 	        // Get pointc, convert to latitude/longitude
 	        var latlng = _helpers.getEventCenter.call(this, event);
-	
 	        var country = geo.search(latlng[0], latlng[1]);
 	        // console.log(country.code);
 	        if (_.includes(receivingAid, country.code) && receivingAidActivated) {
@@ -319,14 +330,17 @@
 	            });
 	            d3.select("#msg").text(country.code);
 	            d3.select("#stats").text("Funds Recieved: " + country["recieved"]);
+	            d3.select(".countryRank").style("display", "block");
 	            var rank = countryRanking.filter(function (item) {
 	                return item.country === country.code;
 	            });
-	            rank = rank[0].ranking || "N/A";
-	            d3.select(".contryRank").text(rank + "/96");
+	            rank.length > 0 ? rank = rank[0].ranking : rank = "?";
+	            d3.select(".countryRank").text(rank + "/96");
 	        } else if (_.includes(donating, country.code) && donatersActivated) {
-	            (0, _receivingD.changeCountryLine)(country.code, items, "aid-given");
+	            (0, _receivingD.changeCountryLine)(country.code, items);
+	            legend(_donatingD.colorDescription, _donatingD.colorScheme);
 	            displayNewStack(country.code);
+	            d3.select(".countryRank").style("display", "none");
 	            d3.select("#d3stuff .countryInfo").style("display", "none");
 	            d3.select("#donaterSvg").style("display", "inline");
 	            d3.select("#msg").text(country.code);
@@ -343,22 +357,22 @@
 	
 	    var controls = new OrbitControls(_scene.camera, _scene.renderer.domElement);
 	
-	    // const donaters =  addMaps(new THREE.Group(), countries.features)
-	    // const receivingAid = addMapsInNeed(new THREE.Group(), countries.features)
+	    var donaters = addMaps(new THREE.Group(), countries.features);
+	    var receivingAid = addMapsInNeed(new THREE.Group(), countries.features);
 	
 	    (0, _scene.animate)();
 	    // requestAnimationFrame(frameA);
 	
 	    var receivingAidActivated = false;
 	    document.querySelector(".clearMap").addEventListener("click", function () {
-	        //   addSelected(receivingAid);
+	        (0, _scene.addSelected)(receivingAid);
 	        receivingAidActivated = true;
 	        donatersActivated = false;
 	    });
 	
 	    var donatersActivated = false;
 	    document.querySelector(".showDonate").addEventListener("click", function () {
-	        //   addSelected(donaters);
+	        (0, _scene.addSelected)(donaters);
 	        donatersActivated = true;
 	        receivingAidActivated = false;
 	    });
@@ -53537,6 +53551,7 @@
 	exports.getPoint = getPoint;
 	exports.getEventCenter = getEventCenter;
 	exports.convertToXYZ = convertToXYZ;
+	exports.legend = legend;
 	// MAP TEXTURE
 	
 	var projection = exports.projection = d3.geo.equirectangular().translate([1024, 512]).scale(325);
@@ -53671,6 +53686,19 @@
 	
 	    return inside;
 	};
+	
+	// color legend
+	function legend(colorDescription, colorScheme) {
+	    var legend = $("#legendMenu");
+	    console.log(colorDescription, colorScheme);
+	    colorScheme.forEach(function (color, i) {
+	        var div = $("<div></div>").attr("class", "legendDiv");
+	        var tag = $("<span></span>").attr("class", "legendTag").css("background", color).appendTo(div);
+	        var span = $("<span>&nbsp;- " + colorDescription[i] + "</span>").attr("class", "legendSpan").appendTo(div);
+	        legend.append(div);
+	        console.log("hello");
+	    });
+	}
 
 /***/ },
 /* 8 */
@@ -53794,7 +53822,7 @@
 	// var paddingDonate = [ 20, 10, 50, 100 ];
 	var margin = exports.margin = { top: 20, right: 20, bottom: 20, left: 50 },
 	    width = exports.width = window.innerWidth * 0.22,
-	    height = exports.height = window.innerHeight * 0.40;
+	    height = exports.height = window.innerHeight * 0.38;
 	
 	// Parse the date / time
 	var parseDate = exports.parseDate = d3.time.format("%Y").parse;
@@ -53804,7 +53832,7 @@
 	var y = exports.y = d3.scale.linear().range([height, 0]);
 	
 	// Define the axes
-	var xAxisReceive = exports.xAxisReceive = d3.svg.axis().scale(x).orient("bottom").ticks(5);
+	var xAxisReceive = exports.xAxisReceive = d3.svg.axis().scale(x).orient("bottom").ticks(10).tickSize(0);
 	
 	var yAxisReceive = exports.yAxisReceive = d3.svg.axis().scale(y).orient("left").ticks(5);
 	
@@ -53886,7 +53914,7 @@
 	
 	//Width, height, padding
 	var w = exports.w = window.innerWidth / 2.7;
-	var h = exports.h = window.innerHeight * 0.50;
+	var h = exports.h = window.innerHeight * 0.47;
 	var padding = exports.padding = [20, 10, 50, 100]; //Top, right, bottom, left
 	
 	//Set up date format function (years)
@@ -53915,8 +53943,13 @@
 	  return yScaleDonate(d.y0 + d.y); //Updated
 	});
 	
+	var domain = exports.domain = ["crossSectorAid", "economicalInfastructure", "educationalAid", "govAndCivil", "healthAid", "populationPoliciesAid", "productionSectorAid", "socialServicesAid", "waterAndSanitationAid"];
+	var colorScheme = exports.colorScheme = ["#3e6ab2", "#528ff2", "#a7c3f2", "#e6eaf2", "#f78604", "#f2b46d", "#e8c9a7", "#a7e8ce", "#42e5a4"];
+	
+	var colorDescription = exports.colorDescription = ["Cross Sector Aid", "Economical Infastructure", "Educational Aid", "Gov And Civil", "Health Aid", "Population Policies Aid", "Production Sector Aid", "Social Services Aid", "Water And Sanitation Aid"];
+	
 	//Easy colors accessible via a 10-step ordinal scale
-	var colorDonate = exports.colorDonate = d3.scale.ordinal().domain(["crossSectorAid", "economicalInfastructure", "educationalAid", "govAndCivil", "healthAid", "populationPoliciesAid", "productionSectorAid", "socialServicesAid", "waterAndSanitationAid"]).range(["#3e6ab2", "#528ff2", "#a7c3f2", "#e6eaf2", "#f78604", "#f2b46d", "#e8c9a7", "#a7e8ce", "#42e5a4"]);
+	var colorDonate = exports.colorDonate = d3.scale.ordinal().domain(domain).range(colorScheme);
 	
 	//Create the SVG
 	var svgDonate = exports.svgDonate = d3.select("#d3stuff").append("svg").attr("id", "donaterSvg").attr("width", w).attr("height", h);

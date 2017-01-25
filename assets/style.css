@@ -173,3 +173,30 @@ body, html {
 #donaterSvg path:hover {
   fill: orange;
 }
+
+#legendMenu {
+  width: 20rem;
+  /*border: 0.2rem solid black;*/
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.legendTag {
+  width: 1rem;
+  height: 1rem;
+  border: 1px outset black;
+  border-radius: 0.2rem;
+  display: inline-block;
+}
+
+.legendSpan {
+  height: 1rem;
+  font-family: 'Roboto', sans-serif;
+  letter-spacing: 0.05rem;
+}
+
+.legendDiv {
+  width: 100%;
+  margin: 0.5rem;
+}

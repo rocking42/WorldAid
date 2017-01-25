@@ -130,3 +130,16 @@ export var pointInPolygon = function(poly, point) {
 
     return inside;
 };
+
+// color legend
+export function legend ( colorDescription, colorScheme ) {
+    const legend = $("#legendMenu");
+    console.log( colorDescription, colorScheme );
+    colorScheme.forEach((color, i) => {
+        const div = $("<div></div>").attr("class", "legendDiv");
+        const tag = $(`<span></span>`).attr("class", "legendTag").css("background", color).appendTo(div);
+        const span = $(`<span>&nbsp;- ${colorDescription[i]}</span>`).attr("class", "legendSpan").appendTo(div);
+        legend.append(div);
+        console.log("hello");
+    });
+}
