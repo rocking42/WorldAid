@@ -317,6 +317,8 @@
 	            d3.select("#msg").text(country.code);
 	            d3.select("#stats").text("Funds Recieved: " + country["recieved"]);
 	        } else if (_.includes(donating, country.code) && donatersActivated) {
+	            changeCountryLine(country.code, items);
+	            displayNewStack(country.code);
 	            d3.select("#msg").text(country.code);
 	            d3.select("#stats").text("Funds Donated: " + country["aid"][2006]);
 	        } else if (receivingAidActivated) {
@@ -331,40 +333,61 @@
 	
 	    var controls = new OrbitControls(_scene.camera, _scene.renderer.domElement);
 	
-	    // donaters: addMaps(new THREE.Group(), countries.features),
-	    // receivingAid: addMapsInNeed(new THREE.Group(), countries.features)
+	    donaters: addMaps(new THREE.Group(), countries.features);
+	    receivingAid: addMapsInNeed(new THREE.Group(), countries.features);
 	
 	    (0, _scene.animate)();
 	    // requestAnimationFrame(frameA);
 	
 	    var receivingAidActivated = false;
 	    document.querySelector(".clearMap").addEventListener("click", function () {
-	        //   addSelected(receivingAid);
+	        (0, _scene.addSelected)(receivingAid);
 	        receivingAidActivated = true;
 	        donatersActivated = false;
 	    });
 	
 	    var donatersActivated = false;
 	    document.querySelector(".showDonate").addEventListener("click", function () {
-	        //   addSelected(donaters);
+	        (0, _scene.addSelected)(donaters);
 	        donatersActivated = true;
 	        receivingAidActivated = false;
 	    });
 	
 	    // Get the two arrays
+	    function findLineInfo(country, data) {
+	        var _countryYearsAndAid = (0, _receivingD.countryYearsAndAid)(country, data),
+	            _countryYearsAndAid2 = _slicedToArray(_countryYearsAndAid, 2),
+	            years = _countryYearsAndAid2[0],
+	            aid = _countryYearsAndAid2[1];
 	
-	    var _countryYearsAndAid = (0, _receivingD.countryYearsAndAid)("Australia", items),
-	        _countryYearsAndAid2 = _slicedToArray(_countryYearsAndAid, 2),
-	        years = _countryYearsAndAid2[0],
-	        aid = _countryYearsAndAid2[1];
+	        var countryData = years.map(function (year, i) {
+	            var item = {
+	                year: year,
+	                aid: aid[i]
+	            };
+	            return item;
+	        });
+	        return countryData;
+	    }
 	
-	    var desCountry = years.map(function (year, i) {
-	        var item = {
-	            year: year,
-	            aid: aid[i]
-	        };
-	        return item;
-	    });
+	    function changeCountryLine(country, data) {
+	        var thisData = findLineInfo(country, data);
+	        _receivingD.y.domain([0, d3.max(thisData, function (d) {
+	            return d.aid / 1000000;
+	        })]);
+	        _receivingD.yAxisReceive.scale(_receivingD.y);
+	        var path = d3.selectAll("#recieverSvg path").data([thisData]).attr("fill", "#fff").attr("stroke", "black").attr("d", function (d) {
+	            return (0, _receivingD.areaReceive)(d);
+	        });
+	
+	        var pathReceive = path.node().getTotalLength();
+	        path.attr("stroke-dasharray", pathReceive + " " + pathReceive).attr("stroke-dashoffset", pathReceive).transition().duration(300).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", function (d, i) {
+	            return "red";
+	        });
+	        d3.select("y").call(_receivingD.yAxisReceive);
+	    }
+	
+	    var desCountry = findLineInfo("Australia", items);
 	    // Scale the range of the data
 	    _receivingD.x.domain(d3.extent(desCountry, function (d) {
 	        return d.year;
@@ -377,7 +400,9 @@
 	    //   	.attr("class", "line")
 	    // 		.attr("d", valueline(desCountry))
 	
-	    var path = _receivingD.svgRecieve.data([desCountry]).append("path").attr("class", "area usa").attr("d", _receivingD.areaReceive).attr("fill", "rgba(50, 195, 182, 0)").attr("stroke", "none");
+	    var path = _receivingD.svgRecieve.data([desCountry]).append("path").attr("class", "area usa").attr("d", function (d) {
+	        return (0, _receivingD.areaReceive)(d);
+	    }).attr("fill", "rgba(50, 195, 182, 0)").attr("stroke", "none");
 	
 	    var totalLength = path.node().getTotalLength();
 	    path.attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).transition().duration(500).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", "rgba(50, 195, 182, 1)");
@@ -391,8 +416,8 @@
 	    var dataset = (0, _donatingD.findStackedData)("Germany", crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
 	
 	    function displayNewStack(country) {
-	        var dataset2 = (0, _donatingD.findStackedData)(country, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policiesAid, prodSectorAid, socialServ, waterAndSanitize);
-	        var path = d3.selectAll("path").data(dataset2).attr("stroke", function (d, i) {
+	        var dataset2 = (0, _donatingD.findStackedData)(country, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
+	        var path = d3.selectAll("#donaterSvg path").data(dataset2).attr("stroke", function (d, i) {
 	            return (0, _donatingD.colorDonate)(i);
 	        }).attr("fill", "#fff").attr("d", function (d) {
 	            return (0, _donatingD.areaDonate)(d.aid);
@@ -451,9 +476,9 @@
 	    });
 	
 	    var stackCountry = ["Australia", "United States", "France", "Germany"];
-	    d3.select("button").on("click", function () {
-	        displayNewStack(stackCountry[Math.floor(Math.random() * 4)]);
-	    });
+	    // d3.select(".showDonate").on("click", function() {
+	    //     displayNewStack(stackCountry[Math.floor(Math.random() * 4)])
+	    // })
 	    // selection.enter().append("path");
 	
 	

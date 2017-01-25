@@ -188,6 +188,8 @@ function ready(error, results) {
             d3.select("#msg").text(country.code);
             d3.select("#stats").text("Funds Recieved: " + country["recieved"]);
         } else if (_.includes(donating, country.code) && donatersActivated) {
+            changeCountryLine(country.code, items)
+            displayNewStack(country.code);
             d3.select("#msg").text(country.code);
             d3.select("#stats").text("Funds Donated: " + country["aid"][2006]);
         } else if (receivingAidActivated) {
@@ -206,8 +208,8 @@ function ready(error, results) {
     );
 
 
-    // donaters: addMaps(new THREE.Group(), countries.features),
-    // receivingAid: addMapsInNeed(new THREE.Group(), countries.features)
+    // const donaters =  addMaps(new THREE.Group(), countries.features)
+    // const receivingAid = addMapsInNeed(new THREE.Group(), countries.features)
 
     animate();
     // requestAnimationFrame(frameA);
@@ -228,15 +230,43 @@ function ready(error, results) {
 
 
     // Get the two arrays
-    const [years, aid] = countryYearsAndAid("Australia", items);
+    function findLineInfo(country, data) {
+        const [years, aid] = countryYearsAndAid(country, data);
 
-    const desCountry = years.map((year, i) => {
-        let item = {
-            year,
-            aid: aid[i]
-        }
-        return item;
-    });
+        const countryData = years.map((year, i) => {
+            let item = {
+                year,
+                aid: aid[i]
+            }
+            return item;
+        });
+        return countryData
+    }
+
+    function changeCountryLine(country, data) {
+        const thisData = findLineInfo(country, data);
+        y.domain([0, d3.max(thisData, function(d) { return d.aid / 1000000; })]);
+        yAxisReceive.scale(y)
+        var path = d3.selectAll("#recieverSvg path")
+            .data([thisData])
+            .attr("fill", "rgba(50, 195, 182, 0)")
+            .attr("stroke", "black")
+            .attr("d", (d) => areaReceive(d))
+
+        const pathReceive = path.node().getTotalLength();
+        path.attr("stroke-dasharray", pathReceive + " " + pathReceive)
+          .attr("stroke-dashoffset", pathReceive)
+          .transition().duration(300)
+          .ease("linear")
+          .attr("stroke-dashoffset", 0)
+          .transition().duration(200)
+          .attr("fill", (d, i) => "rgba(50, 195, 182, 1)" )
+          .attr("stroke", "rgba(50, 195, 182, 1)");
+        svgRecieve.selectAll("g.y.axis").remove();
+        svgRecieve.append("g").attr("class", "y axis").call(yAxisReceive);
+    }
+
+    const desCountry = findLineInfo("Australia", items)
     // Scale the range of the data
     x.domain(d3.extent(desCountry, function(d) { return d.year; }));
     y.domain([0, d3.max(desCountry, function(d) { return d.aid / 1000000; })]);
@@ -248,7 +278,7 @@ function ready(error, results) {
     const path = svgRecieve.data([ desCountry ])
     .append("path")
     .attr("class", "area usa")
-    .attr("d", areaReceive)
+    .attr("d", (d) => areaReceive(d))
     .attr("fill", "rgba(50, 195, 182, 0)")
     .attr("stroke", "none");
 
@@ -273,18 +303,11 @@ function ready(error, results) {
     .attr("class", "y axis")
     .call(yAxisReceive);
 
-
-
-
-
-
-
-
     const dataset = findStackedData("Germany", crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
 
     function displayNewStack(country) {
-        const dataset2 = findStackedData(country, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policiesAid, prodSectorAid, socialServ, waterAndSanitize);
-        var path = d3.selectAll("path").data(dataset2)
+        const dataset2 = findStackedData(country, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
+        var path = d3.selectAll("#donaterSvg path").data(dataset2)
                             .attr("stroke", (d, i) => colorDonate(i))
                             .attr("fill", "#fff")
                             .attr("d", (d) => areaDonate(d.aid) )
@@ -354,12 +377,6 @@ function ready(error, results) {
         .attr("stroke-dashoffset", 0)
             .transition().duration(200)
             .attr("fill", (d, i) => colorDonate(i) );
-
-    let stackCountry = ["Australia", "United States", "France", "Germany"]
-    d3.select("button").on("click", function() {
-        displayNewStack(stackCountry[Math.floor(Math.random() * 4)])
-    })
-    // selection.enter().append("path");
 
 
     //Append a title with the country name (so we get easy tooltips)
