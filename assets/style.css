@@ -174,12 +174,12 @@ body, html {
 #recieverSvg {
   position: relative;
   left: -1%;
-  top: -50px;
+  top: -30px;
 	width: 30rem;
 }
 
 #donaterSvg path:hover {
-  fill: orange;
+  fill: rgb(33, 9, 48);
 }
 
 #legendMenu {

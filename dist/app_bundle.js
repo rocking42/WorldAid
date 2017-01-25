@@ -287,15 +287,15 @@
 	
 	    var controls = new OrbitControls(_scene.camera, _scene.renderer.domElement);
 	
-	    var donaters = (0, _textureAdd.addMaps)(new THREE.Group(), countries.features, "aid-given");
-	    var aidLayers = (0, _textureAdd.addMaps)(new THREE.Group(), countries.features, "aid-received");
+	    // const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given")
+	    // const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received")
 	
 	    (0, _scene.animate)();
 	    // requestAnimationFrame(frameA);
 	
 	    var receivingAidActivated = false;
 	    document.querySelector(".clearMap").addEventListener("click", function () {
-	        (0, _scene.addSelected)(aidLayers);
+	        //   addSelected(aidLayers);
 	        if (!receivingAidActivated) {
 	            $("#legendMenu").html("");
 	            receivingAidActivated = true;
@@ -307,7 +307,7 @@
 	
 	    var donatersActivated = false;
 	    document.querySelector(".showDonate").addEventListener("click", function () {
-	        (0, _scene.addSelected)(donaters);
+	        //   addSelected(donaters);
 	        if (!donatersActivated) {
 	            legend(_donatingD.colorDescription, _donatingD.colorScheme);
 	            receivingAidActivated = false;
@@ -338,6 +338,8 @@
 	
 	    // Add the Y Axis
 	    _receivingD.svgRecieve.append("g").attr("class", "y axis").call(_receivingD.yAxisReceive);
+	
+	    _receivingD.svgRecieve.append("text").attr("text-anchor", "end").attr("x", -25).attr("y", _receivingD.height + 5).text("MIL");
 	
 	    var dataset = (0, _donatingD.findStackedData)("Germany", crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
 	
@@ -392,6 +394,8 @@
 	    _donatingD.svgDonate.append("g").attr("class", "x axis").attr("transform", "translate(0," + (_donatingD.h - _donatingD.padding[2]) + ")").call(_donatingD.xAxisDonate);
 	
 	    _donatingD.svgDonate.append("g").attr("class", "y axis").attr("transform", "translate(" + _donatingD.padding[3] + ",0)").call(_donatingD.yAxisDonate);
+	
+	    _donatingD.svgDonate.append("text").attr("text-anchor", "end").attr("x", 80).attr("y", _receivingD.height + 28).text("%");
 	}
 	// Load the data
 	d3_queue.queue().defer(d3.csv, "../assets/data/aidGiven.csv").defer(d3.csv, "../assets/data/aidReceivedShort.csv").defer(d3.json, "../assets/data/world.json").defer(d3.csv, "../assets/data/crossSector.csv").defer(d3.csv, "../assets/data/ecoInfraStruct.csv").defer(d3.csv, "../assets/data/eduAid.csv").defer(d3.csv, "../assets/data/govAndCivil.csv").defer(d3.csv, "../assets/data/health.csv").defer(d3.csv, "../assets/data/policiesAid.csv").defer(d3.csv, "../assets/data/prodSectorAid.csv").defer(d3.csv, "../assets/data/socialServ.csv").defer(d3.csv, "../assets/data/waterAndSanitize.csv").defer(d3.csv, "../assets/data/countryRanking.csv").defer(d3.csv, "../assets/data/aidReceivedLong.csv").awaitAll(ready);
