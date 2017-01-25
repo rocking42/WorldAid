@@ -49,10 +49,17 @@ export const areaDonate = d3.svg.area()
     return yScaleDonate(d.y0 + d.y);  //Updated
   });
 
+export const domain = ["crossSectorAid", "economicalInfastructure", "educationalAid", "govAndCivil", "healthAid", "populationPoliciesAid", "productionSectorAid", "socialServicesAid", "waterAndSanitationAid"];
+export const colorScheme = ["#3e6ab2", "#528ff2", "#a7c3f2", "#e6eaf2", "#f78604", "#f2b46d", "#e8c9a7", "#a7e8ce", "#42e5a4"];
+
+export const colorDescription = ["Cross Sector Aid", "Economical Infastructure", "Educational Aid", "Gov And Civil", "Health Aid", "Population Policies Aid", "Production Sector Aid", "Social Services Aid", "Water And Sanitation Aid"];
+
 //Easy colors accessible via a 10-step ordinal scale
 export const colorDonate = d3.scale.ordinal()
-                                   .domain(["crossSectorAid", "economicalInfastructure", "educationalAid", "govAndCivil", "healthAid", "populationPoliciesAid", "productionSectorAid", "socialServicesAid", "waterAndSanitationAid"])
-                                   .range(["#3e6ab2", "#528ff2", "#a7c3f2", "#e6eaf2", "#f78604", "#f2b46d", "#e8c9a7", "#a7e8ce", "#42e5a4"]);
+                                   .domain(domain)
+                                   .range(colorScheme);
+
+
 
 //Create the SVG
 export const svgDonate = d3.select("#d3stuff")

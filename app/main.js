@@ -30,7 +30,8 @@ import {
     projection,
     getEventCenter,
     convertToXYZ,
-    geodecoder
+    geodecoder,
+    legend
 } from './helpers';
 import {
     scaleColor,
@@ -54,6 +55,9 @@ import {
     countryYearsAndAid
 } from './receivingD3'
 import {
+    domain,
+    colorScheme,
+    colorDescription,
     stack,
     w,
     h,
@@ -178,7 +182,6 @@ function ready(error, results) {
     scene.add(root);
 
     function onGlobeClick(event) {
-
         // Get pointc, convert to latitude/longitude
         var latlng = getEventCenter.call(this, event);
 
@@ -188,7 +191,8 @@ function ready(error, results) {
             d3.select("#msg").text(country.code);
             d3.select("#stats").text("Funds Recieved: " + country["recieved"]);
         } else if (_.includes(donating, country.code) && donatersActivated) {
-            changeCountryLine(country.code, items)
+            changeCountryLine(country.code, items);
+            legend(colorDescription, colorScheme);
             displayNewStack(country.code);
             d3.select("#msg").text(country.code);
             d3.select("#stats").text("Funds Donated: " + country["aid"][2006]);
@@ -208,22 +212,22 @@ function ready(error, results) {
     );
 
 
-    // const donaters =  addMaps(new THREE.Group(), countries.features)
-    // const receivingAid = addMapsInNeed(new THREE.Group(), countries.features)
+    const donaters =  addMaps(new THREE.Group(), countries.features)
+    const receivingAid = addMapsInNeed(new THREE.Group(), countries.features)
 
     animate();
     // requestAnimationFrame(frameA);
 
     let receivingAidActivated = false;
     document.querySelector(".clearMap").addEventListener("click", function() {
-    //   addSelected(receivingAid);
+      addSelected(receivingAid);
       receivingAidActivated = true;
       donatersActivated = false
     });
 
     let donatersActivated = false;
     document.querySelector(".showDonate").addEventListener("click", function() {
-    //   addSelected(donaters);
+      addSelected(donaters);
       donatersActivated = true;
       receivingAidActivated = false;
     });
