@@ -298,8 +298,7 @@ function ready(error, results) {
         var paths = selection.enter()
         .append("path")
         .attr("class", "area")
-        .attr("stroke", (d, i) => {
-            return colorDonate(i)})
+        .attr("stroke", (d, i) => colorDonate(i))
         .attr("fill", "#fff")
         .attr("d", (d) => areaDonate(d.aid) )
 
