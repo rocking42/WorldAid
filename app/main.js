@@ -76,9 +76,7 @@ const donating = ["Australia","Austria","Belgium","Canada","Denmark","Finland","
 // Store the results in a variable
 function ready(error, results) {
     if (error) throw error;
-    const items = results[0];
-    const inNeed = results[1];
-    const data = results[2];
+    const [items, inNeed, dataWorld, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize, countryRanking, aidReceivedAll] = [results[0],results[1],results[2],results[3],results[4],results[5],results[6],results[7],results[8],results[9],results[10],results[11],results[12],results[13]];
     let segments = 155;
 
     scaleColor.domain(d3.extent(items, (d) => {
@@ -97,7 +95,7 @@ function ready(error, results) {
     var currentCountry, overlay;
 
     // Setup cache for country textures
-    var countries = topojson.feature(data, data.objects.countries);
+    var countries = topojson.feature(dataWorld, dataWorld.objects.countries);
     var geo = geodecoder(countries.features);
 
     // Iterate through all countries and match the data with the country
@@ -237,6 +235,52 @@ function ready(error, results) {
       receivingAidActivated = false;
     });
 
+    // Get the two arrays
+    const [years, aid] = countryYearsAndAid("Australia", items);
+
+    const desCountry = years.map((year, i) => {
+        let item = {
+            year,
+            aid: aid[i]
+        }
+        return item;
+    });
+    // Scale the range of the data
+    x.domain(d3.extent(desCountry, function(d) { return d.year; }));
+    y.domain([0, d3.max(desCountry, function(d) { return d.aid / 1000000; })]);
+    // Add the valueline path.
+    // var path = svgRecieve.append("path")
+    //   	.attr("class", "line")
+    // 		.attr("d", valueline(desCountry))
+
+    const path = svgRecieve.data([ desCountry ])
+    .append("path")
+    .attr("class", "area usa")
+    .attr("d", areaReceive)
+    .attr("fill", "rgba(50, 195, 182, 0)")
+    .attr("stroke", "none");
+
+
+    var totalLength = path.node().getTotalLength();
+    path.attr("stroke-dasharray", totalLength + " " + totalLength)
+    .attr("stroke-dashoffset", totalLength)
+    .transition().duration(500)
+    .ease("linear")
+    .attr("stroke-dashoffset", 0)
+    .transition().duration(200)
+    .attr("fill", "rgba(50, 195, 182, 1)");
+
+    // Add the X Axis
+    svgRecieve.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxisReceive);
+
+    // Add the Y Axis
+    svgRecieve.append("g")
+    .attr("class", "y axis")
+    .call(yAxisReceive);
+
 
 }
 // Load the data
@@ -254,7 +298,7 @@ d3_queue.queue()
     .defer(d3.csv, "../assets/data/socialServ.csv")
     .defer(d3.csv, "../assets/data/waterAndSanitize.csv")
     .defer(d3.csv, "../assets/data/countryRanking.csv")
-    .defer(d3.csv, "../assets/data/aidReceivedShort.csv")
+    .defer(d3.csv, "../assets/data/aidReceivedLong.csv")
     .awaitAll(ready);
 
 
@@ -271,11 +315,11 @@ d3_queue.queue()
 
 
 
-    // RECEIVEING LINE GRAPH
+    // RECEIVING LINE GRAPH
     // // Get the two arrays
     // const [years, aid] = countryYearsAndAid(country, data);
     //
-    // var desCountry = years.map((year, i) => {
+    // const desCountry = years.map((year, i) => {
     //     let item = {
     //         year,
     //         aid: aid[i]
@@ -286,14 +330,14 @@ d3_queue.queue()
     // x.domain(d3.extent(desCountry, function(d) { return d.year; }));
     // y.domain([0, d3.max(desCountry, function(d) { return d.aid / 1000000; })]);
     // // Add the valueline path.
-    // // var path = svg.append("path")
+    // // var path = svgRecieve.append("path")
     // //   	.attr("class", "line")
     // // 		.attr("d", valueline(desCountry))
     //
-    // path = svg.data([ desCountry ])
+    // const path = svgRecieve.data([ desCountry ])
     // .append("path")
     // .attr("class", "area usa")
-    // .attr("d", area)
+    // .attr("d", areaReceive)
     // .attr("fill", "rgba(50, 195, 182, 0)")
     // .attr("stroke", "none");
     //
@@ -311,12 +355,12 @@ d3_queue.queue()
     // svg.append("g")
     // .attr("class", "x axis")
     // .attr("transform", "translate(0," + height + ")")
-    // .call(xAxis);
+    // .call(xAxisReceive);
     //
     // // Add the Y Axis
     // svg.append("g")
     // .attr("class", "y axis")
-    // .call(yAxis);
+    // .call(yAxisReceive);
 
 
 
@@ -341,18 +385,18 @@ d3_queue.queue()
     // function displayNewStack(country) {
     //     const dataset2 = findStackedData(country, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policiesAid, prodSectorAid, socialServ, waterAndSanitize);
     //     var path = d3.selectAll("path").data(dataset2)
-    //                         .attr("stroke", (d, i) => color(i))
+    //                         .attr("stroke", (d, i) => colorDonate(i))
     //                         .attr("fill", "#fff")
-    //                         .attr("d", (d) => area(d.aid) )
+    //                         .attr("d", (d) => areaDonate(d.aid) )
     //
-    //     var pathLength = path.node().getTotalLength();
+    //     const pathLength = path.node().getTotalLength();
     //     path.attr("stroke-dasharray", pathLength + " " + pathLength)
     //         .attr("stroke-dashoffset", pathLength)
     //         .transition().duration(300)
     //         .ease("linear")
     //         .attr("stroke-dashoffset", 0)
     //         .transition().duration(200)
-    //         .attr("fill", (d, i) => color(i) )
+    //         .attr("fill", (d, i) => colorDonate(i) )
     // }
     // // Data needs to look like this
     // // const dataShouldBe = [
@@ -382,12 +426,12 @@ d3_queue.queue()
     // //to parse into a Date object.
     //
     // //New array with all the years, for referencing later
-    // var years = ["1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007"];
+    // const years = ["1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007"];
     // //Stack the data!
     //
     // //Now that the data is ready, we can check its
     // //min and max values to set our scales' domains!
-    // xScale.domain([
+    // xScaleDonate.domain([
     //     d3.min(years, function(d) {
     //         return dateFormat.parse(d);
     //     }),
@@ -401,7 +445,7 @@ d3_queue.queue()
     //
     // //Loop once for each year, and get the total value
     // //of CO2 for that year.
-    // var totals = [];
+    // const totals = [];
     //
     // for (i = 0; i < years.length; i++) {
     //     totals[i] = 0;
@@ -410,7 +454,7 @@ d3_queue.queue()
     //     }
     // }
     //
-    // yScale.domain([ d3.max(totals), 0 ]);
+    // yScaleDonate.domain([ d3.max(totals), 0 ]);
     // //Areas
     // //
     // //Now that we are creating multiple paths, we can use the
@@ -418,15 +462,15 @@ d3_queue.queue()
     // //as needed.
     //
     // //Make a path for each country
-    // var selection = svg.selectAll("path")
+    // var selection = svgDonate.selectAll("path")
     //     .data(dataset)
     //
     //     var paths = selection.enter()
     //     .append("path")
     //     .attr("class", "area")
-    //     .attr("stroke", (d, i) => color(i))
+    //     .attr("stroke", (d, i) => colorDonate(i))
     //     .attr("fill", "#fff")
-    //     .attr("d", (d) => area(d.aid) )
+    //     .attr("d", (d) => areaDonate(d.aid) )
     //
     //     var totalLength = paths.node().getTotalLength();
     //     paths.attr("stroke-dasharray", totalLength + " " + totalLength)
@@ -435,7 +479,7 @@ d3_queue.queue()
     //         .ease("linear")
     //     .attr("stroke-dashoffset", 0)
     //         .transition().duration(200)
-    //         .attr("fill", (d, i) => color(i) );
+    //         .attr("fill", (d, i) => colorDonate(i) );
     //
     // let stackCountry = ["Australia", "United States", "France", "Germany"]
     // d3.select("button").on("click", function() {
@@ -456,12 +500,12 @@ d3_queue.queue()
     // svg.append("g")
     //     .attr("class", "x axis")
     //     .attr("transform", "translate(0," + (h - padding[2]) + ")")
-    //     .call(xAxis);
+    //     .call(xAxisDonate);
     //
     // svg.append("g")
     //     .attr("class", "y axis")
     //     .attr("transform", "translate(" + padding[3] + ",0)")
-    //     .call(yAxis);
+    //     .call(yAxisDonate);
 
 
 
