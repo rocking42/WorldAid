@@ -53,8 +53,6 @@
 
 	"use strict";
 	
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-	
 	var _utils = __webpack_require__(2);
 	
 	var _scene = __webpack_require__(3);
@@ -314,10 +312,11 @@
 	        var country = geo.search(latlng[0], latlng[1]);
 	        // console.log(country.code);
 	        if (_.includes(receivingAid, country.code) && receivingAidActivated) {
+	            (0, _receivingD.changeCountryLine)(country.code, aidReceivedAll, "aid-received");
 	            d3.select("#msg").text(country.code);
 	            d3.select("#stats").text("Funds Recieved: " + country["recieved"]);
 	        } else if (_.includes(donating, country.code) && donatersActivated) {
-	            changeCountryLine(country.code, items);
+	            (0, _receivingD.changeCountryLine)(country.code, items, "aid-given");
 	            displayNewStack(country.code);
 	            d3.select("#msg").text(country.code);
 	            d3.select("#stats").text("Funds Donated: " + country["aid"][2006]);
@@ -353,42 +352,7 @@
 	        receivingAidActivated = false;
 	    });
 	
-	    // Get the two arrays
-	    function findLineInfo(country, data) {
-	        var _countryYearsAndAid = (0, _receivingD.countryYearsAndAid)(country, data),
-	            _countryYearsAndAid2 = _slicedToArray(_countryYearsAndAid, 2),
-	            years = _countryYearsAndAid2[0],
-	            aid = _countryYearsAndAid2[1];
-	
-	        var countryData = years.map(function (year, i) {
-	            var item = {
-	                year: year,
-	                aid: aid[i]
-	            };
-	            return item;
-	        });
-	        return countryData;
-	    }
-	
-	    function changeCountryLine(country, data) {
-	        var thisData = findLineInfo(country, data);
-	        _receivingD.y.domain([0, d3.max(thisData, function (d) {
-	            return d.aid / 1000000;
-	        })]);
-	        _receivingD.yAxisReceive.scale(_receivingD.y);
-	        var path = d3.selectAll("#recieverSvg path").data([thisData]).attr("fill", "rgba(50, 195, 182, 0)").attr("stroke", "black").attr("d", function (d) {
-	            return (0, _receivingD.areaReceive)(d);
-	        });
-	
-	        var pathReceive = path.node().getTotalLength();
-	        path.attr("stroke-dasharray", pathReceive + " " + pathReceive).attr("stroke-dashoffset", pathReceive).transition().duration(300).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", function (d, i) {
-	            return "rgba(50, 195, 182, 1)";
-	        }).attr("stroke", "rgba(50, 195, 182, 1)");
-	        _receivingD.svgRecieve.selectAll("g.y.axis").remove();
-	        _receivingD.svgRecieve.append("g").attr("class", "y axis").call(_receivingD.yAxisReceive);
-	    }
-	
-	    var desCountry = findLineInfo("Australia", items);
+	    var desCountry = (0, _receivingD.findLineInfo)("Germany", items, "aid-given");
 	    // Scale the range of the data
 	    _receivingD.x.domain(d3.extent(desCountry, function (d) {
 	        return d.year;
@@ -396,10 +360,6 @@
 	    _receivingD.y.domain([0, d3.max(desCountry, function (d) {
 	        return d.aid / 1000000;
 	    })]);
-	    // Add the valueline path.
-	    // var path = svgRecieve.append("path")
-	    //   	.attr("class", "line")
-	    // 		.attr("d", valueline(desCountry))
 	
 	    var path = _receivingD.svgRecieve.data([desCountry]).append("path").attr("class", "area usa").attr("d", function (d) {
 	        return (0, _receivingD.areaReceive)(d);
@@ -441,11 +401,8 @@
 	        return _donatingD.dateFormat.parse(d);
 	    })]);
 	
-	    //Need to recalcluate the max value for yScale
-	    //differently, now that everything is stacked.
-	
 	    //Loop once for each year, and get the total value
-	    //of CO2 for that year.
+	    //of All aid given for that year.
 	    var totals = [];
 	
 	    for (var i = 0; i < yearsDonate.length; i++) {
@@ -53815,7 +53772,12 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	
 	exports.countryYearsAndAid = countryYearsAndAid;
+	exports.findLineInfo = findLineInfo;
+	exports.changeCountryLine = changeCountryLine;
 	var d3 = __webpack_require__(4);
 	// Set the dimensions and padding of the canvas / graph
 	// var paddingDonate = [ 20, 10, 50, 100 ];
@@ -53846,9 +53808,9 @@
 	
 	// Function recieves country and data
 	// returns two array being years and aid given/received
-	function countryYearsAndAid(country, dataType) {
+	function countryYearsAndAid(country, dataType, aidingType) {
 	  var res = dataType.filter(function (d) {
-	    return d["aid-given"] === country;
+	    return d[aidingType] === country;
 	  });
 	  var money = Object.values(res[0]).map(function (d) {
 	    return +d || 1;
@@ -53858,6 +53820,41 @@
 	  });
 	  var yearsComp = years.splice(0, years.length - 1);
 	  return [yearsComp, _.compact(money)];
+	}
+	
+	// Get the two arrays
+	function findLineInfo(country, data, aidType) {
+	  var _countryYearsAndAid = countryYearsAndAid(country, data, aidType),
+	      _countryYearsAndAid2 = _slicedToArray(_countryYearsAndAid, 2),
+	      years = _countryYearsAndAid2[0],
+	      aid = _countryYearsAndAid2[1];
+	
+	  var countryData = years.map(function (year, i) {
+	    var item = {
+	      year: year,
+	      aid: aid[i]
+	    };
+	    return item;
+	  });
+	  return countryData;
+	}
+	
+	function changeCountryLine(country, data, aidType) {
+	  var thisData = findLineInfo(country, data, aidType);
+	  y.domain([0, d3.max(thisData, function (d) {
+	    return d.aid / 1000000;
+	  })]);
+	  yAxisReceive.scale(y);
+	  var path = d3.selectAll("#recieverSvg path").data([thisData]).attr("fill", "rgba(50, 195, 182, 0)").attr("stroke", "black").attr("d", function (d) {
+	    return areaReceive(d);
+	  });
+	
+	  var pathReceive = path.node().getTotalLength();
+	  path.attr("stroke-dasharray", pathReceive + " " + pathReceive).attr("stroke-dashoffset", pathReceive).transition().duration(300).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", function (d, i) {
+	    return "rgba(50, 195, 182, 1)";
+	  }).attr("stroke", "rgba(50, 195, 182, 1)");
+	  svgRecieve.selectAll("g.y.axis").remove();
+	  svgRecieve.append("g").attr("class", "y axis").call(yAxisReceive);
 	}
 
 /***/ },
