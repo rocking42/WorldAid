@@ -4,6 +4,7 @@ const topojson = require("topojson");
 const THREE = require("three");
 const d3_queue = require("d3-queue");
 const OrbitControls = require('three-orbit-controls')(THREE);
+const $ = require("jquery");
 import {
     memoize,
     debounce,
@@ -37,7 +38,35 @@ import {
     colorInNeed,
     countTexture,
     mapTexture
-} from './textureAdd'
+} from './textureAdd';
+import {
+    margin,
+    height,
+    width,
+    parseDate,
+    x,
+    y,
+    xAxisReceive,
+    yAxisReceive,
+    areaReceive,
+    svgRecieve,
+    countryYearsAndAid
+} from './receivingD3'
+import {
+    stack,
+    w,
+    h,
+    padding,
+    dateFormat,
+    xScaleDonate,
+    yScaleDonate,
+    xAxisDonate,
+    yAxisDonate,
+    areaDonate,
+    colorDonate,
+    svgDonate,
+    findStackedData
+} from './donatingD3'
 
 const receivingAid = ["Nigeria","Iraq","Afghanistan","Pakistan","Congo, Dem. Rep.","Sudan","Ethiopia","Vietnam","Tanzania","Cameroon","Mozambique","Serbia","Uganda","Zambia","West Bank and Gaza","Indonesia","India","China","Ghana","Bangladesh","Morocco","Colombia","Kenya","Burkina Faso","Egypt","Mali","Senegal","Bolivia"];
 
@@ -212,7 +241,375 @@ function ready(error, results) {
 }
 // Load the data
 d3_queue.queue()
-    .defer(d3.csv, "../assets/Data1.csv")
-    .defer(d3.csv, "../assets/Data5.csv")
-    .defer(d3.json, "../assets/world.json")
+    .defer(d3.csv, "../assets/data/aidGiven.csv")
+    .defer(d3.csv, "../assets/data/aidReceivedShort.csv")
+    .defer(d3.json, "../assets/data/world.json")
+    .defer(d3.csv, "../assets/data/crossSector.csv")
+    .defer(d3.csv, "../assets/data/ecoInfraStruct.csv")
+    .defer(d3.csv, "../assets/data/eduAid.csv")
+    .defer(d3.csv, "../assets/data/govAndCivil.csv")
+    .defer(d3.csv, "../assets/data/health.csv")
+    .defer(d3.csv, "../assets/data/policiesAid.csv")
+    .defer(d3.csv, "../assets/data/prodSectorAid.csv")
+    .defer(d3.csv, "../assets/data/socialServ.csv")
+    .defer(d3.csv, "../assets/data/waterAndSanitize.csv")
+    .defer(d3.csv, "../assets/data/countryRanking.csv")
+    .defer(d3.csv, "../assets/data/aidReceivedShort.csv")
     .awaitAll(ready);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // RECEIVEING LINE GRAPH
+    // // Get the two arrays
+    // const [years, aid] = countryYearsAndAid(country, data);
+    //
+    // var desCountry = years.map((year, i) => {
+    //     let item = {
+    //         year,
+    //         aid: aid[i]
+    //     }
+    //     return item;
+    // });
+    // // Scale the range of the data
+    // x.domain(d3.extent(desCountry, function(d) { return d.year; }));
+    // y.domain([0, d3.max(desCountry, function(d) { return d.aid / 1000000; })]);
+    // // Add the valueline path.
+    // // var path = svg.append("path")
+    // //   	.attr("class", "line")
+    // // 		.attr("d", valueline(desCountry))
+    //
+    // path = svg.data([ desCountry ])
+    // .append("path")
+    // .attr("class", "area usa")
+    // .attr("d", area)
+    // .attr("fill", "rgba(50, 195, 182, 0)")
+    // .attr("stroke", "none");
+    //
+    //
+    // var totalLength = path.node().getTotalLength();
+    // path.attr("stroke-dasharray", totalLength + " " + totalLength)
+    // .attr("stroke-dashoffset", totalLength)
+    // .transition().duration(500)
+    // .ease("linear")
+    // .attr("stroke-dashoffset", 0)
+    // .transition().duration(200)
+    // .attr("fill", "rgba(50, 195, 182, 1)");
+    //
+    // // Add the X Axis
+    // svg.append("g")
+    // .attr("class", "x axis")
+    // .attr("transform", "translate(0," + height + ")")
+    // .call(xAxis);
+    //
+    // // Add the Y Axis
+    // svg.append("g")
+    // .attr("class", "y axis")
+    // .call(yAxis);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // STACKED DONATERS
+    // const [crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policiesAid, prodSectorAid, socialServ, waterAndSanitize] =
+    // [data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7], data[8]]
+    // const dataset = findStackedData("Germany", crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policiesAid, prodSectorAid, socialServ, waterAndSanitize);
+    //
+    // function displayNewStack(country) {
+    //     const dataset2 = findStackedData(country, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policiesAid, prodSectorAid, socialServ, waterAndSanitize);
+    //     var path = d3.selectAll("path").data(dataset2)
+    //                         .attr("stroke", (d, i) => color(i))
+    //                         .attr("fill", "#fff")
+    //                         .attr("d", (d) => area(d.aid) )
+    //
+    //     var pathLength = path.node().getTotalLength();
+    //     path.attr("stroke-dasharray", pathLength + " " + pathLength)
+    //         .attr("stroke-dashoffset", pathLength)
+    //         .transition().duration(300)
+    //         .ease("linear")
+    //         .attr("stroke-dashoffset", 0)
+    //         .transition().duration(200)
+    //         .attr("fill", (d, i) => color(i) )
+    // }
+    // // Data needs to look like this
+    // // const dataShouldBe = [
+    // // 	{ aidType: "exampleAidType", aidGivenToHealth: [
+    // // 		{ x: "1961", y: 234234324342 },
+    // // 		{ x: "1962", y: 234234324342 },
+    // // 		{ x: "1963", y: 234234324342 }
+    // // 	]},
+    // // 	{ aidType: "exampleAidType", aidGivenToEd: [
+    // // 		{ x: "1961", y: 234234324342 },
+    // // 		{ x: "1962", y: 234234324342 },
+    // // 		{ x: "1963", y: 234234324342 }
+    // // 	]},
+    // // 	{ aidType: "exampleAidType", aidGivenToInfra: [
+    // // 		{ x: "1961", y: 234234324342 },
+    // // 		{ x: "1962", y: 234234324342 },
+    // // 		{ x: "1963", y: 234234324342 }
+    // // 	]}
+    // // ];
+    // //Note that this is an array of objects. Each object
+    // //contains two values, 'country' and 'emissions'.
+    // //The 'emissions' value is itself an array, containing
+    // //more objects, each one holding x and y values.
+    // //
+    // //The x (year) values have to be strings in this case,
+    // //because the date format function expects a string
+    // //to parse into a Date object.
+    //
+    // //New array with all the years, for referencing later
+    // var years = ["1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007"];
+    // //Stack the data!
+    //
+    // //Now that the data is ready, we can check its
+    // //min and max values to set our scales' domains!
+    // xScale.domain([
+    //     d3.min(years, function(d) {
+    //         return dateFormat.parse(d);
+    //     }),
+    //     d3.max(years, function(d) {
+    //         return dateFormat.parse(d);
+    //     })
+    // ]);
+    //
+    // //Need to recalcluate the max value for yScale
+    // //differently, now that everything is stacked.
+    //
+    // //Loop once for each year, and get the total value
+    // //of CO2 for that year.
+    // var totals = [];
+    //
+    // for (i = 0; i < years.length; i++) {
+    //     totals[i] = 0;
+    //     for (j = 0; j < dataset.length; j++) {
+    //         totals[i] += dataset[j].aid[i].y;
+    //     }
+    // }
+    //
+    // yScale.domain([ d3.max(totals), 0 ]);
+    // //Areas
+    // //
+    // //Now that we are creating multiple paths, we can use the
+    // //selectAll/data/co2/enter/append pattern to generate as many
+    // //as needed.
+    //
+    // //Make a path for each country
+    // var selection = svg.selectAll("path")
+    //     .data(dataset)
+    //
+    //     var paths = selection.enter()
+    //     .append("path")
+    //     .attr("class", "area")
+    //     .attr("stroke", (d, i) => color(i))
+    //     .attr("fill", "#fff")
+    //     .attr("d", (d) => area(d.aid) )
+    //
+    //     var totalLength = paths.node().getTotalLength();
+    //     paths.attr("stroke-dasharray", totalLength + " " + totalLength)
+    //         .attr("stroke-dashoffset", totalLength)
+    //         .transition().duration(300)
+    //         .ease("linear")
+    //     .attr("stroke-dashoffset", 0)
+    //         .transition().duration(200)
+    //         .attr("fill", (d, i) => color(i) );
+    //
+    // let stackCountry = ["Australia", "United States", "France", "Germany"]
+    // d3.select("button").on("click", function() {
+    //     displayNewStack(stackCountry[Math.floor(Math.random() * 4)])
+    // })
+    // // selection.enter().append("path");
+    //
+    //
+    // //Append a title with the country name (so we get easy tooltips)
+    // paths.append("title")
+    //     .text(function(d) {
+    //         return d.aidType;
+    //     });
+    //
+    //
+    //
+    // //Create axes
+    // svg.append("g")
+    //     .attr("class", "x axis")
+    //     .attr("transform", "translate(0," + (h - padding[2]) + ")")
+    //     .call(xAxis);
+    //
+    // svg.append("g")
+    //     .attr("class", "y axis")
+    //     .attr("transform", "translate(" + padding[3] + ",0)")
+    //     .call(yAxis);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// function doSomething() {
+//
+//     var format = d3.time.format("%m/%d/%y");
+//
+//     var margin = {
+//             top: 20,
+//             right: 30,
+//             bottom: 30,
+//             left: 40
+//         },
+//         width = 960 - margin.left - margin.right,
+//         height = 500 - margin.top - margin.bottom;
+//
+//     var x = d3.time.scale()
+//         .range([0, width]);
+//
+//     var y = d3.scale.linear()
+//         .range([height, 0]);
+//
+//     var z = d3.scale.category20c();
+//
+//     var xAxis = d3.svg.axis()
+//         .scale(x)
+//         .orient("bottom")
+//         .ticks(d3.time.days);
+//
+//     var yAxis = d3.svg.axis()
+//         .scale(y)
+//         .orient("left");
+//
+//     var stack = d3.layout.stack()
+//         .offset("zero")
+//         .values(function(d) {
+//             return d.values;
+//         })
+//         .x(function(d) {
+//             return d.date;
+//         })
+//         .y(function(d) {
+//             return d.value;
+//         });
+//
+//     var nest = d3.nest()
+//         .key(function(d) {
+//             return d.key;
+//         });
+//
+//     var area = d3.svg.area()
+//         .interpolate("cardinal")
+//         .x(function(d) {
+//             return x(d.date);
+//         })
+//         .y0(function(d) {
+//             return y(d.y0);
+//         })
+//         .y1(function(d) {
+//             return y(d.y0 + d.y);
+//         });
+//
+//     var svg = d3.select("#d3stuff").append("svg")
+//         .attr("width", width + margin.left + margin.right)
+//         .attr("height", height + margin.top + margin.bottom)
+//         .append("g")
+//         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+//
+//
+//     function countryExtent(country, dataType) {
+//         const res = dataType.filter((d) => d["aid-received"] === country);
+//         const items = Object.values(res[0]).map((d) => +d);
+//         const those = _.compact(items)
+//         return [Math.min(...those), Math.max(...those)];
+//     }
+//
+//     function countryYearsAndAid(country, dataType) {
+//         const res = dataType.filter((d) => d["aid-received"] === country);
+//         const money = Object.values(res[0]).map((d) => +d);
+//         const years = Object.keys(res[0]).map((d) => d);
+//         const yearsComp = years.splice(0, years.length - 1)
+//         return [yearsComp, _.compact(money)];
+//     }
+//
+//     d3.csv("../assets/Data3.csv", function(error, data) {
+//         if (error) throw error;
+//         // data.forEach(function(d) {
+//         //     d.date = format.parse(d.date);
+//         //     d.value = +d.value;
+//         // });
+//
+//         const newData = countryYearsAndAid("Afghanistan", data);
+//         const newYears = countryYearsAndAid[0];
+//         const newMoney = countryYearsAndAid[1];
+//         debugger
+//         var layers = stack(nest.entries(data));
+//
+//         x.domain(d3.extent(data, function(d) {
+//             return d.date;
+//         }));
+//         y.domain([0, d3.max(data, function(d) {
+//             return d.y0 + d.y;
+//         })]);
+//
+//         svg.selectAll(".layer")
+//             .data(layers)
+//             .enter().append("path")
+//             .attr("class", "layer")
+//             .attr("d", function(d) {
+//                 return area(d.values);
+//             })
+//             .style("fill", function(d, i) {
+//                 return z(i);
+//             });
+//
+//         svg.append("g")
+//             .attr("class", "x axis")
+//             .attr("transform", "translate(0," + height + ")")
+//             .call(xAxis);
+//
+//         svg.append("g")
+//             .attr("class", "y axis")
+//             .call(yAxis);
+//     });
+//     console.log("hello");
+// }
+//
+// document.getElementById("doSomething").addEventListener("click", doSomething);
