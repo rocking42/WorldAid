@@ -338,7 +338,7 @@
 	            rank.length > 0 ? rank = rank[0].ranking : rank = "?";
 	            d3.select(".countryRank").text(rank + "/96");
 	        } else if (_.includes(donating, country.code) && donatersActivated) {
-	            (0, _receivingD.changeCountryLine)(country.code, items);
+	            (0, _receivingD.changeCountryLine)(country.code, items, "aid-given");
 	            legend(_donatingD.colorDescription, _donatingD.colorScheme);
 	            displayNewStack(country.code);
 	            d3.select(".countryRank").style("display", "none");
