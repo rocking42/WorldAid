@@ -229,8 +229,8 @@ function ready(error, results) {
         }
     }
 
-    // setEvents(camera, [baseGlobe], 'click');
-    // setEvents(camera, [baseGlobe], 'mousemove', 10);
+    setEvents(camera, [baseGlobe], 'click');
+    setEvents(camera, [baseGlobe], 'mousemove', 10);
 
     let controls = new OrbitControls(
         camera,
