@@ -330,7 +330,6 @@
 	
 	    (0, _scene.animate)();
 	    // requestAnimationFrame(frameA);
-<<<<<<< HEAD
 	
 	    var receivingAidActivated = false;
 	    document.querySelector(".clearMap").addEventListener("click", function () {
@@ -345,17 +344,6 @@
 	        donatersActivated = true;
 	        receivingAidActivated = false;
 	    });
-	}
-	// Load the data
-	d3_queue.queue().defer(d3.csv, "../assets/Data1.csv").defer(d3.csv, "../assets/Data5.csv").defer(d3.json, "../assets/world.json").awaitAll(ready);
-=======
-	    // document.querySelector(".clearMap").addEventListener("click", function() {
-	    //   addSelected(receivingAid);
-	    // });
-	    // document.querySelector(".showDonate").addEventListener("click", function() {
-	    //   addSelected(donaters);
-	    // });
-	
 	}
 	// Load the data
 	d3_queue.queue().defer(d3.csv, "../assets/data/aidGiven.csv").defer(d3.csv, "../assets/data/aidReceivedShort.csv").defer(d3.json, "../assets/data/world.json").defer(d3.csv, "../assets/data/crossSector.csv").defer(d3.csv, "../assets/data/ecoInfraStruct.csv").defer(d3.csv, "../assets/data/eduAid.csv").defer(d3.csv, "../assets/data/govAndCivil.csv").defer(d3.csv, "../assets/data/health.csv").defer(d3.csv, "../assets/data/policiesAid.csv").defer(d3.csv, "../assets/data/prodSectorAid.csv").defer(d3.csv, "../assets/data/socialServ.csv").defer(d3.csv, "../assets/data/waterAndSanitize.csv").defer(d3.csv, "../assets/data/countryRanking.csv").defer(d3.csv, "../assets/data/aidReceivedShort.csv").awaitAll(ready);
@@ -664,7 +652,6 @@
 	// }
 	//
 	// document.getElementById("doSomething").addEventListener("click", doSomething);
->>>>>>> c706e6c2290c1d6384deb1c6a061870118e73fad
 
 /***/ },
 /* 2 */
