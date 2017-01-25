@@ -127,13 +127,13 @@
 	    try {
 	        for (var _iterator = countries.features[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	            var country = _step.value;
-	            var _iteratorNormalCompletion4 = true;
-	            var _didIteratorError4 = false;
-	            var _iteratorError4 = undefined;
+	            var _iteratorNormalCompletion2 = true;
+	            var _didIteratorError2 = false;
+	            var _iteratorError2 = undefined;
 	
 	            try {
-	                for (var _iterator4 = items[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-	                    var item = _step4.value;
+	                for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	                    var item = _step2.value;
 	
 	                    if (item["aid-given"] === country.id) {
 	                        country["aid-given"] = item;
@@ -141,43 +141,43 @@
 	                    }
 	                }
 	            } catch (err) {
-	                _didIteratorError4 = true;
-	                _iteratorError4 = err;
+	                _didIteratorError2 = true;
+	                _iteratorError2 = err;
 	            } finally {
 	                try {
-	                    if (!_iteratorNormalCompletion4 && _iterator4.return) {
-	                        _iterator4.return();
+	                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                        _iterator2.return();
 	                    }
 	                } finally {
-	                    if (_didIteratorError4) {
-	                        throw _iteratorError4;
+	                    if (_didIteratorError2) {
+	                        throw _iteratorError2;
 	                    }
 	                }
 	            }
 	
-	            var _iteratorNormalCompletion5 = true;
-	            var _didIteratorError5 = false;
-	            var _iteratorError5 = undefined;
+	            var _iteratorNormalCompletion3 = true;
+	            var _didIteratorError3 = false;
+	            var _iteratorError3 = undefined;
 	
 	            try {
-	                for (var _iterator5 = inNeed[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-	                    var need = _step5.value;
+	                for (var _iterator3 = inNeed[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+	                    var need = _step3.value;
 	
 	                    if (need["aid-received"] === country.id && +need[2006] > 916590000) {
 	                        country["aid-received"] = +need[2006];
 	                    }
 	                }
 	            } catch (err) {
-	                _didIteratorError5 = true;
-	                _iteratorError5 = err;
+	                _didIteratorError3 = true;
+	                _iteratorError3 = err;
 	            } finally {
 	                try {
-	                    if (!_iteratorNormalCompletion5 && _iterator5.return) {
-	                        _iterator5.return();
+	                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
+	                        _iterator3.return();
 	                    }
 	                } finally {
-	                    if (_didIteratorError5) {
-	                        throw _iteratorError5;
+	                    if (_didIteratorError3) {
+	                        throw _iteratorError3;
 	                    }
 	                }
 	            }
@@ -220,82 +220,6 @@
 	    theWholeWorld.rotation.y = Math.PI;
 	    theWholeWorld.name = "worldOutline";
 	
-	    function addMaps(group, countries) {
-	        var _iteratorNormalCompletion2 = true;
-	        var _didIteratorError2 = false;
-	        var _iteratorError2 = undefined;
-	
-	        try {
-	            for (var _iterator2 = countries[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	                var country = _step2.value;
-	
-	                if (country["aid-given"]) {
-	                    var worldTexture = (0, _textureAdd.countTexture)(country);
-	                    var mapMaterial = new THREE.MeshPhongMaterial({
-	                        map: worldTexture,
-	                        transparent: true
-	                    });
-	                    var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
-	                    baseMap.rotation.y = Math.PI;
-	                    group.add(baseMap);
-	                }
-	            }
-	        } catch (err) {
-	            _didIteratorError2 = true;
-	            _iteratorError2 = err;
-	        } finally {
-	            try {
-	                if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	                    _iterator2.return();
-	                }
-	            } finally {
-	                if (_didIteratorError2) {
-	                    throw _iteratorError2;
-	                }
-	            }
-	        }
-	
-	        return group;
-	    }
-	
-	    function addMapsInNeed(groupInNeed, countries) {
-	        var _iteratorNormalCompletion3 = true;
-	        var _didIteratorError3 = false;
-	        var _iteratorError3 = undefined;
-	
-	        try {
-	            for (var _iterator3 = countries[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-	                var country = _step3.value;
-	
-	                if (country["aid-received"]) {
-	                    var worldTexture = (0, _textureAdd.countTexture)(country);
-	                    var mapMaterial = new THREE.MeshPhongMaterial({
-	                        map: worldTexture,
-	                        transparent: true
-	                    });
-	                    var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
-	                    baseMap.rotation.y = Math.PI;
-	                    groupInNeed.add(baseMap);
-	                }
-	            }
-	        } catch (err) {
-	            _didIteratorError3 = true;
-	            _iteratorError3 = err;
-	        } finally {
-	            try {
-	                if (!_iteratorNormalCompletion3 && _iterator3.return) {
-	                    _iterator3.return();
-	                }
-	            } finally {
-	                if (_didIteratorError3) {
-	                    throw _iteratorError3;
-	                }
-	            }
-	        }
-	
-	        return groupInNeed;
-	    }
-	
 	    // color legend
 	    function legend(colorDescription, colorScheme) {
 	        var legend = $("#legendMenu");
@@ -327,7 +251,7 @@
 	        // Get pointc, convert to latitude/longitude
 	        var latlng = _helpers.getEventCenter.call(this, event);
 	        var country = geo.search(latlng[0], latlng[1]);
-	        // console.log(country.code);
+	        console.log(country.code);
 	        if (_.includes(receivingAid, country.code) && receivingAidActivated) {
 	            (0, _receivingD.changeCountryLine)(country.code, aidReceivedAll, "aid-received");
 	            d3.select("#donaterSvg").style("display", "none");
@@ -336,7 +260,7 @@
 	                d3.select("#d3stuff .countryInfo").text(data[2][0]).style("display", "inline-block");
 	            });
 	            d3.select("#msg").text(country.code);
-	            d3.select("#stats").text("Funds Recieved: " + country["recieved"]);
+	            d3.select("#stats").text("Funds Recieved: " + country["recieved"] + "$");
 	            d3.select(".countryRank").style("display", "block");
 	            var rank = countryRanking.filter(function (item) {
 	                return item.country === country.code;
@@ -345,8 +269,7 @@
 	            d3.select(".countryRank").text(rank + "/96");
 	        } else if (_.includes(donating, country.code) && donatersActivated) {
 	            (0, _receivingD.changeCountryLine)(country.code, items, "aid-given");
-	            legend(_donatingD.colorDescription, _donatingD.colorScheme);
-	            displayNewStack(country.code);
+	            (0, _donatingD.displayNewStack)(country.code, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
 	            d3.select(".countryRank").style("display", "none");
 	            d3.select("#d3stuff .countryInfo").style("display", "none");
 	            d3.select("#donaterSvg").style("display", "inline");
@@ -364,16 +287,17 @@
 	
 	    var controls = new OrbitControls(_scene.camera, _scene.renderer.domElement);
 	
-	    // const donaters =  addMaps(new THREE.Group(), countries.features)
-	    // const receivingAid = addMapsInNeed(new THREE.Group(), countries.features)
+	    var donaters = (0, _textureAdd.addMaps)(new THREE.Group(), countries.features, "aid-given");
+	    var aidLayers = (0, _textureAdd.addMaps)(new THREE.Group(), countries.features, "aid-received");
 	
 	    (0, _scene.animate)();
 	    // requestAnimationFrame(frameA);
 	
 	    var receivingAidActivated = false;
 	    document.querySelector(".clearMap").addEventListener("click", function () {
-	        //   addSelected(receivingAid);
+	        (0, _scene.addSelected)(aidLayers);
 	        if (!receivingAidActivated) {
+	            $("#legendMenu").html("");
 	            receivingAidActivated = true;
 	            donatersActivated = false;
 	            $(".rangeBarDonating").removeClass("active");
@@ -383,8 +307,9 @@
 	
 	    var donatersActivated = false;
 	    document.querySelector(".showDonate").addEventListener("click", function () {
-	        //   addSelected(donaters);
+	        (0, _scene.addSelected)(donaters);
 	        if (!donatersActivated) {
+	            legend(_donatingD.colorDescription, _donatingD.colorScheme);
 	            receivingAidActivated = false;
 	            donatersActivated = true;
 	            $(".rangeBarRecieving").removeClass("active");
@@ -416,23 +341,8 @@
 	
 	    var dataset = (0, _donatingD.findStackedData)("Germany", crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
 	
-	    function displayNewStack(country) {
-	        var dataset2 = (0, _donatingD.findStackedData)(country, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
-	        var path = d3.selectAll("#donaterSvg path").data(dataset2).attr("stroke", function (d, i) {
-	            return (0, _donatingD.colorDonate)(i);
-	        }).attr("fill", "#fff").attr("d", function (d) {
-	            return (0, _donatingD.areaDonate)(d.aid);
-	        });
-	
-	        var pathLength = path.node().getTotalLength();
-	        path.attr("stroke-dasharray", pathLength + " " + pathLength).attr("stroke-dashoffset", pathLength).transition().duration(300).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", function (d, i) {
-	            return (0, _donatingD.colorDonate)(i);
-	        });
-	    }
 	    //New array with all the years, for referencing later
 	    var yearsDonate = ["1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007"];
-	    //Stack the data!
-	
 	    //Now that the data is ready, we can check its
 	    //min and max values to set our scales' domains!
 	    _donatingD.xScaleDonate.domain([d3.min(yearsDonate, function (d) {
@@ -53713,6 +53623,7 @@
 	exports.colorInNeed = exports.chooseColor = exports.scaleInNeed = exports.scaleColor = undefined;
 	exports.mapTexture = mapTexture;
 	exports.countTexture = countTexture;
+	exports.addMaps = addMaps;
 	
 	var _helpers = __webpack_require__(7);
 	
@@ -53801,6 +53712,44 @@
 	    canvas.remove();
 	
 	    return texture;
+	}
+	var segments = 155;
+	function addMaps(group, countries, aidType) {
+	    var _iteratorNormalCompletion = true;
+	    var _didIteratorError = false;
+	    var _iteratorError = undefined;
+	
+	    try {
+	        for (var _iterator = countries[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var country = _step.value;
+	
+	            if (country[aidType]) {
+	                var worldTexture = countTexture(country);
+	                var mapMaterial = new THREE.MeshPhongMaterial({
+	                    map: worldTexture,
+	                    transparent: true
+	                });
+	                var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
+	                baseMap.rotation.y = Math.PI;
+	                group.add(baseMap);
+	            }
+	        }
+	    } catch (err) {
+	        _didIteratorError = true;
+	        _iteratorError = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion && _iterator.return) {
+	                _iterator.return();
+	            }
+	        } finally {
+	            if (_didIteratorError) {
+	                throw _iteratorError;
+	            }
+	        }
+	    }
+	
+	    return group;
 	}
 
 /***/ },
@@ -53907,6 +53856,7 @@
 	  value: true
 	});
 	exports.findStackedData = findStackedData;
+	exports.displayNewStack = displayNewStack;
 	var d3 = __webpack_require__(4);
 	//Set up stack method
 	var stack = exports.stack = d3.layout.stack().values(function (d) {
@@ -53951,7 +53901,6 @@
 	
 	//Easy colors accessible via a 10-step ordinal scale
 	var colorDonate = exports.colorDonate = d3.scale.ordinal().domain(domain).range(colorScheme);
-	
 	//Create the SVG
 	var svgDonate = exports.svgDonate = d3.select("#d3stuff").append("svg").attr("id", "donaterSvg").attr("width", w).attr("height", h);
 	
@@ -53988,6 +53937,25 @@
 	    });
 	  });
 	  return stack(dataResult);
+	}
+	
+	function displayNewStack(country) {
+	  for (var _len2 = arguments.length, dataSources = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+	    dataSources[_key2 - 1] = arguments[_key2];
+	  }
+	
+	  var dataset2 = findStackedData.apply(undefined, [country].concat(dataSources));
+	
+	  var path = d3.selectAll("#donaterSvg path").data(dataset2).attr("stroke", function (d, i) {
+	    return colorDonate(i);
+	  }).attr("fill", "#fff").attr("d", function (d) {
+	    return areaDonate(d.aid);
+	  });
+	
+	  var pathLength = path.node().getTotalLength();
+	  path.attr("stroke-dasharray", pathLength + " " + pathLength).attr("stroke-dashoffset", pathLength).transition().duration(300).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", function (d, i) {
+	    return colorDonate(i);
+	  });
 	}
 
 /***/ },

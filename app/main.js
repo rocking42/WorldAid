@@ -192,7 +192,6 @@ function ready(error, results) {
             d3.select(".countryRank").text(`${rank}/96`);
         } else if (_.includes(donating, country.code) && donatersActivated) {
             changeCountryLine(country.code, items, "aid-given");
-            legend(colorDescription, colorScheme);
             displayNewStack(country.code, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
             d3.select(".countryRank").style("display", "none");
             d3.select("#d3stuff .countryInfo").style("display", "none");
@@ -224,6 +223,7 @@ function ready(error, results) {
     document.querySelector(".clearMap").addEventListener("click", function() {
           addSelected(aidLayers);
         if (!receivingAidActivated) {
+            $("#legendMenu").html("");
             receivingAidActivated = true;
             donatersActivated = false;
             $(".rangeBarDonating").removeClass("active");
@@ -235,6 +235,7 @@ function ready(error, results) {
     document.querySelector(".showDonate").addEventListener("click", function() {
           addSelected(donaters);
         if (!donatersActivated) {
+            legend(colorDescription, colorScheme);
             receivingAidActivated = false;
             donatersActivated = true;
             $(".rangeBarRecieving").removeClass("active");
