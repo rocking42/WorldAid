@@ -325,20 +325,23 @@
 	        if (_.includes(receivingAid, country.code) && receivingAidActivated) {
 	            (0, _receivingD.changeCountryLine)(country.code, aidReceivedAll, "aid-received");
 	            d3.select("#donaterSvg").style("display", "none");
-	            var rank = countryRanking.filter(function (item) {
-	                return item.country === country.code;
-	            });
-	            d3.select(".contryRank").text(rank[0].ranking + "/96");
 	            var url = "https://en.wikipedia.org/w/api.php?action=opensearch&search=" + country.code + "&limit=1&namespace=0&format=json&callback=?";
 	            $.getJSON(url, function (data) {
 	                d3.select("#d3stuff .countryInfo").text(data[2][0]).style("display", "inline-block");
 	            });
 	            d3.select("#msg").text(country.code);
 	            d3.select("#stats").text("Funds Recieved: " + country["recieved"]);
+	            d3.select(".countryRank").style("display", "block");
+	            var rank = countryRanking.filter(function (item) {
+	                return item.country === country.code;
+	            });
+	            rank.length > 0 ? rank = rank[0].ranking : rank = "?";
+	            d3.select(".countryRank").text(rank + "/96");
 	        } else if (_.includes(donating, country.code) && donatersActivated) {
 	            (0, _receivingD.changeCountryLine)(country.code, items);
 	            legend(_donatingD.colorDescription, _donatingD.colorScheme);
 	            displayNewStack(country.code);
+	            d3.select(".countryRank").style("display", "none");
 	            d3.select("#d3stuff .countryInfo").style("display", "none");
 	            d3.select("#donaterSvg").style("display", "inline");
 	            d3.select("#msg").text(country.code);
@@ -53806,7 +53809,7 @@
 	// var paddingDonate = [ 20, 10, 50, 100 ];
 	var margin = exports.margin = { top: 20, right: 20, bottom: 20, left: 50 },
 	    width = exports.width = window.innerWidth * 0.22,
-	    height = exports.height = window.innerHeight * 0.40;
+	    height = exports.height = window.innerHeight * 0.38;
 	
 	// Parse the date / time
 	var parseDate = exports.parseDate = d3.time.format("%Y").parse;
@@ -53816,7 +53819,7 @@
 	var y = exports.y = d3.scale.linear().range([height, 0]);
 	
 	// Define the axes
-	var xAxisReceive = exports.xAxisReceive = d3.svg.axis().scale(x).orient("bottom").ticks(5);
+	var xAxisReceive = exports.xAxisReceive = d3.svg.axis().scale(x).orient("bottom").ticks(10).tickSize(0);
 	
 	var yAxisReceive = exports.yAxisReceive = d3.svg.axis().scale(y).orient("left").ticks(5);
 	
@@ -53898,7 +53901,7 @@
 	
 	//Width, height, padding
 	var w = exports.w = window.innerWidth / 2.7;
-	var h = exports.h = window.innerHeight * 0.50;
+	var h = exports.h = window.innerHeight * 0.47;
 	var padding = exports.padding = [20, 10, 50, 100]; //Top, right, bottom, left
 	
 	//Set up date format function (years)

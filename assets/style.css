@@ -26,6 +26,11 @@ body, html {
   user-select: none;
 }
 
+.countryRank {
+  font-size: 9rem;
+  text-align: center;
+  margin: 0px;
+}
 
 #info {
   text-align: center;
@@ -156,7 +161,7 @@ body, html {
 
 #donaterSvg {
   position: absolute;
-	bottom: -2rem;
+	top: 29rem;
   left: -14%;
 	width: 30rem;
 }
