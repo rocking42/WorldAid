@@ -53854,7 +53854,7 @@
 	
 	//Width, height, padding
 	var w = exports.w = 700;
-	var h = exports.h = 400;
+	var h = exports.h = window.innerHeight / 2;
 	var padding = exports.padding = [20, 10, 50, 100]; //Top, right, bottom, left
 	
 	//Set up date format function (years)

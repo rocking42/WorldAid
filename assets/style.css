@@ -20,7 +20,8 @@ body, html {
 }
 
 #donaterSvg {
-
+  position: relative;
+  left: -14%;
 }
 
 
