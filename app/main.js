@@ -176,12 +176,13 @@ function ready(error, results) {
     // color legend
     function legend ( colorDescription, colorScheme ) {
         const legend = $("#legendMenu");
+        legend.html("");
         console.log( colorDescription, colorScheme );
         colorScheme.forEach((color, i) => {
             const div = $("<div></div>").attr("class", "legendDiv");
             const tag = $(`<span></span>`).attr("class", "legendTag").css("background", color).appendTo(div);
             const span = $(`<span>&nbsp;- ${colorDescription[i]}</span>`).attr("class", "legendSpan").appendTo(div);
-            legend.html(div);
+            legend.append(div);
             console.log("hello");
         });
     }

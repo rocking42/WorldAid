@@ -304,7 +304,8 @@
 	            var div = $("<div></div>").attr("class", "legendDiv");
 	            var tag = $("<span></span>").attr("class", "legendTag").css("background", color).appendTo(div);
 	            var span = $("<span>&nbsp;- " + colorDescription[i] + "</span>").attr("class", "legendSpan").appendTo(div);
-	            legend.html(div);
+	            legend.html("");
+	            legend.append(div);
 	            console.log("hello");
 	        });
 	    }
@@ -337,7 +338,7 @@
 	            rank.length > 0 ? rank = rank[0].ranking : rank = "?";
 	            d3.select(".countryRank").text(rank + "/96");
 	        } else if (_.includes(donating, country.code) && donatersActivated) {
-	            (0, _receivingD.changeCountryLine)(country.code, items);
+	            (0, _receivingD.changeCountryLine)(country.code, items, "aid-given");
 	            legend(_donatingD.colorDescription, _donatingD.colorScheme);
 	            displayNewStack(country.code);
 	            d3.select(".countryRank").style("display", "none");
@@ -53551,7 +53552,6 @@
 	exports.getPoint = getPoint;
 	exports.getEventCenter = getEventCenter;
 	exports.convertToXYZ = convertToXYZ;
-	exports.legend = legend;
 	// MAP TEXTURE
 	
 	var projection = exports.projection = d3.geo.equirectangular().translate([1024, 512]).scale(325);
@@ -53686,19 +53686,6 @@
 	
 	    return inside;
 	};
-	
-	// color legend
-	function legend(colorDescription, colorScheme) {
-	    var legend = $("#legendMenu");
-	    console.log(colorDescription, colorScheme);
-	    colorScheme.forEach(function (color, i) {
-	        var div = $("<div></div>").attr("class", "legendDiv");
-	        var tag = $("<span></span>").attr("class", "legendTag").css("background", color).appendTo(div);
-	        var span = $("<span>&nbsp;- " + colorDescription[i] + "</span>").attr("class", "legendSpan").appendTo(div);
-	        legend.append(div);
-	        console.log("hello");
-	    });
-	}
 
 /***/ },
 /* 8 */
