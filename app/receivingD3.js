@@ -40,10 +40,47 @@ export const svgRecieve = d3.select("#d3stuff")
 
   // Function recieves country and data
   // returns two array being years and aid given/received
-export function countryYearsAndAid(country, dataType) {
-    const res = dataType.filter((d) => d["aid-given"] === country);
+export function countryYearsAndAid(country, dataType, aidingType) {
+    const res = dataType.filter((d) => d[aidingType] === country);
     const money = Object.values(res[0]).map((d) => +d || 1);
     const years = Object.keys(res[0]).map((d) => parseDate(d));
     const yearsComp = years.splice(0, years.length - 1)
     return [yearsComp, _.compact(money)];
+  }
+
+  // Get the two arrays
+export function findLineInfo(country, data, aidType) {
+      const [years, aid] = countryYearsAndAid(country, data, aidType);
+
+      const countryData = years.map((year, i) => {
+          let item = {
+              year,
+              aid: aid[i]
+          }
+          return item;
+      });
+      return countryData
+  }
+
+export function changeCountryLine(country, data, aidType) {
+      const thisData = findLineInfo(country, data, aidType);
+      y.domain([0, d3.max(thisData, function(d) { return d.aid / 1000000; })]);
+      yAxisReceive.scale(y)
+      var path = d3.selectAll("#recieverSvg path")
+          .data([thisData])
+          .attr("fill", "rgba(50, 195, 182, 0)")
+          .attr("stroke", "black")
+          .attr("d", (d) => areaReceive(d))
+
+      const pathReceive = path.node().getTotalLength();
+      path.attr("stroke-dasharray", pathReceive + " " + pathReceive)
+        .attr("stroke-dashoffset", pathReceive)
+        .transition().duration(300)
+        .ease("linear")
+        .attr("stroke-dashoffset", 0)
+        .transition().duration(200)
+        .attr("fill", (d, i) => "rgba(50, 195, 182, 1)" )
+        .attr("stroke", "rgba(50, 195, 182, 1)");
+      svgRecieve.selectAll("g.y.axis").remove();
+      svgRecieve.append("g").attr("class", "y axis").call(yAxisReceive);
   }

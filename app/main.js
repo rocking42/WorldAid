@@ -50,7 +50,9 @@ import {
     yAxisReceive,
     areaReceive,
     svgRecieve,
-    countryYearsAndAid
+    countryYearsAndAid,
+    changeCountryLine,
+    findLineInfo
 } from './receivingD3'
 import {
     stack,
@@ -184,10 +186,11 @@ function ready(error, results) {
         var country = geo.search(latlng[0], latlng[1]);
         // console.log(country.code);
         if (_.includes(receivingAid, country.code) && receivingAidActivated) {
+            changeCountryLine(country.code, aidReceivedAll, "aid-received");
             d3.select("#msg").text(country.code);
             d3.select("#stats").text("Funds Recieved: " + country["recieved"]);
         } else if (_.includes(donating, country.code) && donatersActivated) {
-            changeCountryLine(country.code, items)
+            changeCountryLine(country.code, items, "aid-given");
             displayNewStack(country.code);
             d3.select("#msg").text(country.code);
             d3.select("#stats").text("Funds Donated: " + country["aid"][2006]);
@@ -228,51 +231,10 @@ function ready(error, results) {
     });
 
 
-    // Get the two arrays
-    function findLineInfo(country, data) {
-        const [years, aid] = countryYearsAndAid(country, data);
-
-        const countryData = years.map((year, i) => {
-            let item = {
-                year,
-                aid: aid[i]
-            }
-            return item;
-        });
-        return countryData
-    }
-
-    function changeCountryLine(country, data) {
-        const thisData = findLineInfo(country, data);
-        y.domain([0, d3.max(thisData, function(d) { return d.aid / 1000000; })]);
-        yAxisReceive.scale(y)
-        var path = d3.selectAll("#recieverSvg path")
-            .data([thisData])
-            .attr("fill", "rgba(50, 195, 182, 0)")
-            .attr("stroke", "black")
-            .attr("d", (d) => areaReceive(d))
-
-        const pathReceive = path.node().getTotalLength();
-        path.attr("stroke-dasharray", pathReceive + " " + pathReceive)
-          .attr("stroke-dashoffset", pathReceive)
-          .transition().duration(300)
-          .ease("linear")
-          .attr("stroke-dashoffset", 0)
-          .transition().duration(200)
-          .attr("fill", (d, i) => "rgba(50, 195, 182, 1)" )
-          .attr("stroke", "rgba(50, 195, 182, 1)");
-        svgRecieve.selectAll("g.y.axis").remove();
-        svgRecieve.append("g").attr("class", "y axis").call(yAxisReceive);
-    }
-
-    const desCountry = findLineInfo("Australia", items)
+    const desCountry = findLineInfo("Germany", items, "aid-given")
     // Scale the range of the data
     x.domain(d3.extent(desCountry, function(d) { return d.year; }));
     y.domain([0, d3.max(desCountry, function(d) { return d.aid / 1000000; })]);
-    // Add the valueline path.
-    // var path = svgRecieve.append("path")
-    //   	.attr("class", "line")
-    // 		.attr("d", valueline(desCountry))
 
     const path = svgRecieve.data([ desCountry ])
     .append("path")
@@ -280,7 +242,6 @@ function ready(error, results) {
     .attr("d", (d) => areaReceive(d))
     .attr("fill", "rgba(50, 195, 182, 0)")
     .attr("stroke", "none");
-
 
     var totalLength = path.node().getTotalLength();
     path.attr("stroke-dasharray", totalLength + " " + totalLength)
@@ -335,11 +296,8 @@ function ready(error, results) {
         })
     ]);
 
-    //Need to recalcluate the max value for yScale
-    //differently, now that everything is stacked.
-
     //Loop once for each year, and get the total value
-    //of CO2 for that year.
+    //of All aid given for that year.
     const totals = [];
 
     for (let i = 0; i < yearsDonate.length; i++) {
@@ -377,14 +335,11 @@ function ready(error, results) {
             .transition().duration(200)
             .attr("fill", (d, i) => colorDonate(i) );
 
-
     //Append a title with the country name (so we get easy tooltips)
     paths.append("title")
         .text(function(d) {
             return d.aidType;
         });
-
-
 
     //Create axes
     svgDonate.append("g")
@@ -396,9 +351,6 @@ function ready(error, results) {
         .attr("class", "y axis")
         .attr("transform", "translate(" + padding[3] + ",0)")
         .call(yAxisDonate);
-
-
-
 }
 // Load the data
 d3_queue.queue()
