@@ -296,6 +296,19 @@
 	        return groupInNeed;
 	    }
 	
+	    // color legend
+	    function legend(colorDescription, colorScheme) {
+	        var legend = $("#legendMenu");
+	        console.log(colorDescription, colorScheme);
+	        colorScheme.forEach(function (color, i) {
+	            var div = $("<div></div>").attr("class", "legendDiv");
+	            var tag = $("<span></span>").attr("class", "legendTag").css("background", color).appendTo(div);
+	            var span = $("<span>&nbsp;- " + colorDescription[i] + "</span>").attr("class", "legendSpan").appendTo(div);
+	            legend.html(div);
+	            console.log("hello");
+	        });
+	    }
+	
 	    // create a container node and add the two meshes
 	    var root = new THREE.Object3D();
 	    root.scale.set(2.5, 2.5, 2.5);
@@ -303,25 +316,30 @@
 	    root.add(theWholeWorld);
 	
 	    _scene.scene.add(root);
-	
 	    function onGlobeClick(event) {
 	        // Get pointc, convert to latitude/longitude
 	        var latlng = _helpers.getEventCenter.call(this, event);
-	
 	        var country = geo.search(latlng[0], latlng[1]);
 	        // console.log(country.code);
 	        if (_.includes(receivingAid, country.code) && receivingAidActivated) {
 	            (0, _receivingD.changeCountryLine)(country.code, aidReceivedAll, "aid-received");
+	            d3.select("#donaterSvg").style("display", "none");
+	            var rank = countryRanking.filter(function (item) {
+	                return item.country === country.code;
+	            });
+	            d3.select(".contryRank").text(rank[0].ranking + "/96");
+	            var url = "https://en.wikipedia.org/w/api.php?action=opensearch&search=" + country.code + "&limit=1&namespace=0&format=json&callback=?";
+	            $.getJSON(url, function (data) {
+	                d3.select("#d3stuff .countryInfo").text(data[2][0]).style("display", "inline-block");
+	            });
 	            d3.select("#msg").text(country.code);
 	            d3.select("#stats").text("Funds Recieved: " + country["recieved"]);
 	        } else if (_.includes(donating, country.code) && donatersActivated) {
-<<<<<<< HEAD
-	            changeCountryLine(country.code, items);
-	            (0, _helpers.legend)(_donatingD.colorDescription, _donatingD.colorScheme);
-=======
-	            (0, _receivingD.changeCountryLine)(country.code, items, "aid-given");
->>>>>>> 4a720e0eeb2718e82ceecb4e897d2442383aa6a3
+	            (0, _receivingD.changeCountryLine)(country.code, items);
+	            legend(_donatingD.colorDescription, _donatingD.colorScheme);
 	            displayNewStack(country.code);
+	            d3.select("#d3stuff .countryInfo").style("display", "none");
+	            d3.select("#donaterSvg").style("display", "inline");
 	            d3.select("#msg").text(country.code);
 	            d3.select("#stats").text("Funds Donated: " + country["aid"][2006]);
 	        } else if (receivingAidActivated) {

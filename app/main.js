@@ -30,8 +30,7 @@ import {
     projection,
     getEventCenter,
     convertToXYZ,
-    geodecoder,
-    legend
+    geodecoder
 } from './helpers';
 import {
     scaleColor,
@@ -57,7 +56,6 @@ import {
     findLineInfo
 } from './receivingD3'
 import {
-    domain,
     colorScheme,
     colorDescription,
     stack,
@@ -175,6 +173,19 @@ function ready(error, results) {
         return groupInNeed
     }
 
+    // color legend
+    function legend ( colorDescription, colorScheme ) {
+        const legend = $("#legendMenu");
+        console.log( colorDescription, colorScheme );
+        colorScheme.forEach((color, i) => {
+            const div = $("<div></div>").attr("class", "legendDiv");
+            const tag = $(`<span></span>`).attr("class", "legendTag").css("background", color).appendTo(div);
+            const span = $(`<span>&nbsp;- ${colorDescription[i]}</span>`).attr("class", "legendSpan").appendTo(div);
+            legend.html(div);
+            console.log("hello");
+        });
+    }
+
     // create a container node and add the two meshes
     var root = new THREE.Object3D();
     root.scale.set(2.5, 2.5, 2.5);
@@ -185,7 +196,6 @@ function ready(error, results) {
     function onGlobeClick(event) {
         // Get pointc, convert to latitude/longitude
         var latlng = getEventCenter.call(this, event);
-
         var country = geo.search(latlng[0], latlng[1]);
         // console.log(country.code);
         if (_.includes(receivingAid, country.code) && receivingAidActivated) {
