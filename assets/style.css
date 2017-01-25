@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Oxygen|VT323');
-
+@import url('https://fonts.googleapis.com/css?family=Fira+Sans|Oxygen|VT323');
 
 body, html {
   width: 100vw;
@@ -14,12 +13,11 @@ body, html {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-
 }
 
 
 #info {
-  font-family: 'VT323', monospace;
+  font-family: 'Fira Sans', sans-serif;
   color: white;
   position: absolute;
   padding: 15px;
