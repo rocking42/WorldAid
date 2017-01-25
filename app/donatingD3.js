@@ -1,6 +1,6 @@
 const d3 = require("d3");
 //Set up stack method
-export stack = d3.layout.stack()
+export const stack = d3.layout.stack()
         .values(function(d) {
           return d.aid;
         })
