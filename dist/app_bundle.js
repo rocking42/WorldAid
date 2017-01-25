@@ -111,7 +111,9 @@
 	        }
 	    }));
 	
-	    d3.select("#loading").transition().duration(500).style("opacity", 0).remove();
+	    d3.select(".newLoader").transition().duration(500).style("display", "none").remove();
+	
+	    d3.select(".container").style("display", "inline");
 	
 	    var currentCountry, overlay;
 	
@@ -478,7 +480,7 @@
 	var d3 = __webpack_require__(4);
 	var THREE = __webpack_require__(5);
 	
-	var canvas = exports.canvas = d3.select("body").append("canvas").attr("width", window.innerWidth).attr("height", window.innerHeight);
+	var canvas = exports.canvas = d3.select(".container").append("canvas").attr("width", window.innerWidth).attr("height", window.innerHeight);
 	
 	canvas.node().getContext("webgl");
 	

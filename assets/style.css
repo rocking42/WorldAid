@@ -26,6 +26,32 @@ body, html {
   user-select: none;
 }
 
+.container {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+}
+
+#loading {
+  color: white;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  margin: auto;
+  z-index: 90000000009;
+  background-color: white;
+}
+
+.newLoader {
+  width: 30rem;
+  height: 30rem;
+  position: absolute;
+  left: calc(50vw - 15rem);
+  top: calc(50vh - 15rem);
+  z-index: 999999999999;
+}
+
 .countryRank {
   font-size: 9rem;
   text-align: center;
@@ -136,17 +162,6 @@ body, html {
   color: ghostwhite;
 }
 
-#loading {
-  color: white;
-  width: 100px;
-  height: 100px;
-  position: absolute;
-  top:0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-}
 
 #d3stuff {
   border-right: 3px ridge #999;

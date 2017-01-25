@@ -97,8 +97,10 @@ function ready(error, results) {
         }
     }));
 
-    d3.select("#loading").transition().duration(500)
-        .style("opacity", 0).remove();
+    d3.select(".newLoader").transition().duration(500)
+        .style("display", "none").remove();
+
+    d3.select(".container").style("display", "inline");
 
     var currentCountry, overlay;
 
