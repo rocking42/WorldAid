@@ -43,21 +43,6 @@ import {
     addMapsInNeed
 } from './textureAdd';
 import {
-    margin,
-    height,
-    width,
-    parseDate,
-    x,
-    y,
-    xAxisReceive,
-    yAxisReceive,
-    areaReceive,
-    svgRecieve,
-    countryYearsAndAid,
-    changeCountryLine,
-    findLineInfo
-} from './receivingD3'
-import {
     colorScheme,
     colorDescription,
     stack,
@@ -75,6 +60,21 @@ import {
     findStackedData,
     displayNewStack
 } from './donatingD3'
+import {
+    margin,
+    height,
+    width,
+    parseDate,
+    x,
+    y,
+    xAxisReceive,
+    yAxisReceive,
+    areaReceive,
+    svgRecieve,
+    countryYearsAndAid,
+    changeCountryLine,
+    findLineInfo
+} from './receivingD3'
 
 const receivingAid = ["Nigeria", "Iraq", "Afghanistan", "Pakistan", "Congo, Dem. Rep.", "Sudan", "Ethiopia", "Vietnam", "Tanzania", "Cameroon", "Mozambique", "Serbia", "Uganda", "Zambia", "West Bank and Gaza", "Indonesia", "India", "China", "Ghana", "Bangladesh", "Morocco", "Colombia", "Kenya", "Burkina Faso", "Egypt", "Mali", "Senegal", "Bolivia"];
 
@@ -214,15 +214,15 @@ function ready(error, results) {
         renderer.domElement
     );
 
-    // const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given")
-    // const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received")
+    const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given")
+    const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received")
 
     animate();
     // requestAnimationFrame(frameA);
 
     let receivingAidActivated = false;
     document.querySelector(".clearMap").addEventListener("click", function() {
-        //   addSelected(receivingAid);
+          addSelected(aidLayers);
         if (!receivingAidActivated) {
             receivingAidActivated = true;
             donatersActivated = false;
@@ -233,7 +233,7 @@ function ready(error, results) {
 
     let donatersActivated = false;
     document.querySelector(".showDonate").addEventListener("click", function() {
-        //   addSelected(donaters);
+          addSelected(donaters);
         if (!donatersActivated) {
             receivingAidActivated = false;
             donatersActivated = true;

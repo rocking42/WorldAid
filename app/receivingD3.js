@@ -1,7 +1,7 @@
 const d3 = require("d3");
 // Set the dimensions and padding of the canvas / graph
 // var paddingDonate = [ 20, 10, 50, 100 ];
-export const margin = {top: 20, right: 20, bottom: 20, left: 50},
+export const margin = {top: 20, right: 20, bottom: 20, left: 60},
       width = window.innerWidth * 0.22,
       height = window.innerHeight * 0.38;
 

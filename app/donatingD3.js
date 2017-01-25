@@ -7,9 +7,9 @@ export const stack = d3.layout.stack()
         .order("reverse");
 
 //Width, height, padding
-export const w = window.innerWidth/2.7;
+export const w = window.innerWidth * 0.38;
 export const h = window.innerHeight * 0.47;
-export const padding = [ 20, 10, 50, 100 ];  //Top, right, bottom, left
+export const padding = [ 20, 10, 50, 110 ];  //Top, right, bottom, left
 
 //Set up date format function (years)
 export const dateFormat = d3.time.format("%Y");
