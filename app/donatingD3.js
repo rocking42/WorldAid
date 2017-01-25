@@ -1,4 +1,5 @@
 const d3 = require("d3");
+const values = require('object.values');
 //Set up stack method
 export const stack = d3.layout.stack()
         .values(function(d) {
@@ -70,7 +71,7 @@ export function findStackedData(country, ...allData) {
   const countryData = [];
   allData.forEach((indArray) => {
     countryData.push( indArray.filter((item) => {
-      return Object.values(item)[Object.values(item).length - 1] === country
+      return values(item)[values(item).length - 1] === country
     })[0] );
   });
   // Setup the returned data-structure
@@ -79,7 +80,7 @@ export function findStackedData(country, ...allData) {
   countryData.forEach((item, i) => {
     // Get the values and keys arrays of each
     const years = Object.keys(item)
-    const money = Object.values(item)
+    const money = values(item)
     // Set the name of the aid-type
     dataResult[i]["aidType"] = years[years.length - 1];
     // Zip the arrays together
