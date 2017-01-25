@@ -83,3 +83,46 @@ export function changeCountryLine(country, data, aidType) {
       svgRecieve.selectAll("g.y.axis").remove();
       svgRecieve.append("g").attr("class", "y axis").call(yAxisReceive);
   }
+
+export function showLine(countryData) {
+    // Scale the range of the datas
+    x.domain(d3.extent(countryData, function(d) {
+        return d.year;
+    }));
+    y.domain([0, d3.max(countryData, function(d) {
+        return d.aid / 1000000;
+    })]);
+
+    const path = svgRecieve.data([countryData])
+    .append("path")
+    .attr("class", "area usa")
+    .attr("d", (d) => areaReceive(d))
+    .attr("fill", "rgba(50, 195, 182, 0)")
+    .attr("stroke", "none");
+
+    var totalLength = path.node().getTotalLength();
+    path.attr("stroke-dasharray", totalLength + " " + totalLength)
+    .attr("stroke-dashoffset", totalLength)
+    .transition().duration(500)
+    .ease("linear")
+    .attr("stroke-dashoffset", 0)
+    .transition().duration(200)
+    .attr("fill", "rgba(50, 195, 182, 1)");
+
+    // Add the X Axis
+    svgRecieve.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxisReceive);
+
+    // Add the Y Axis
+    svgRecieve.append("g")
+    .attr("class", "y axis")
+    .call(yAxisReceive);
+
+    svgRecieve.append("text")
+    .attr("text-anchor", "end")
+    .attr("x", -25)
+    .attr("y", height + 5)
+    .text("MIL");
+}

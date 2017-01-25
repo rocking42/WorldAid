@@ -58,7 +58,8 @@ import {
     colorDonate,
     svgDonate,
     findStackedData,
-    displayNewStack
+    displayNewStack,
+    showStack
 } from './donatingD3'
 import {
     margin,
@@ -73,29 +74,20 @@ import {
     svgRecieve,
     countryYearsAndAid,
     changeCountryLine,
-    findLineInfo
+    findLineInfo,
+    showLine
 } from './receivingD3'
 
 const receivingAid = ["Nigeria", "Iraq", "Afghanistan", "Pakistan", "Congo, Dem. Rep.", "Sudan", "Ethiopia", "Vietnam", "Tanzania", "Cameroon", "Mozambique", "Serbia", "Uganda", "Zambia", "West Bank and Gaza", "Indonesia", "India", "China", "Ghana", "Bangladesh", "Morocco", "Colombia", "Kenya", "Burkina Faso", "Egypt", "Mali", "Senegal", "Bolivia"];
 
 const donating = ["Australia", "Austria", "Belgium", "Canada", "Denmark", "Finland", "France", "Germany", "Greece", "Ireland", "Italy", "Japan", "Luxembourg", "Netherlands", "New Zealand", "Norway", "Portugal", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"];
 
-
 // Store the results in a variable
 function ready(error, results) {
     if (error) throw error;
     const [items, inNeed, dataWorld, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize, countryRanking, aidReceivedAll] = [results[0], results[1], results[2], results[3], results[4], results[5], results[6], results[7], results[8], results[9], results[10], results[11], results[12], results[13]];
+
     let segments = 155;
-
-    scaleColor.domain(d3.extent(items, (d) => {
-        return +d[2006];
-    }));
-
-    scaleInNeed.domain(d3.extent(inNeed, (d) => {
-        if (+d[2006] > 916590000) {
-            return +d[2006];
-        }
-    }));
 
     d3.select("#loading").transition().duration(500)
         .style("opacity", 0).remove();
@@ -126,7 +118,6 @@ function ready(error, results) {
         return mapTexture(country, color);
     });
 
-
     // Base globe with blue "water"
     let blueMaterial = new THREE.MeshPhongMaterial();
     blueMaterial.map = THREE.ImageUtils.loadTexture('../assets/earthlight.jpg');
@@ -155,7 +146,6 @@ function ready(error, results) {
             const tag = $(`<span></span>`).attr("class", "legendTag").css("background", color).appendTo(div);
             const span = $(`<span>&nbsp;- ${colorDescription[i]}</span>`).attr("class", "legendSpan").appendTo(div);
             legend.append(div);
-            console.log("hello");
         });
     }
 
@@ -243,124 +233,21 @@ function ready(error, results) {
         }
     });
 
-    const desCountry = findLineInfo("Germany", items, "aid-given")
-        // Scale the range of the datas
-    x.domain(d3.extent(desCountry, function(d) {
-        return d.year;
-    }));
-    y.domain([0, d3.max(desCountry, function(d) {
-        return d.aid / 1000000;
-    })]);
+  scaleColor.domain(d3.extent(items, (d) => {
+      return +d[2006];
+  }));
 
-    const path = svgRecieve.data([desCountry])
-        .append("path")
-        .attr("class", "area usa")
-        .attr("d", (d) => areaReceive(d))
-        .attr("fill", "rgba(50, 195, 182, 0)")
-        .attr("stroke", "none");
+  scaleInNeed.domain(d3.extent(inNeed, (d) => {
+      if (+d[2006] > 916590000) {
+          return +d[2006];
+      }
+  }));
 
-    var totalLength = path.node().getTotalLength();
-    path.attr("stroke-dasharray", totalLength + " " + totalLength)
-        .attr("stroke-dashoffset", totalLength)
-        .transition().duration(500)
-        .ease("linear")
-        .attr("stroke-dashoffset", 0)
-        .transition().duration(200)
-        .attr("fill", "rgba(50, 195, 182, 1)");
+  const desCountry = findLineInfo("Germany", items, "aid-given")
+  showLine(desCountry);
 
-    // Add the X Axis
-    svgRecieve.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + height + ")")
-        .call(xAxisReceive);
-
-    // Add the Y Axis
-    svgRecieve.append("g")
-        .attr("class", "y axis")
-        .call(yAxisReceive);
-
-    svgRecieve.append("text")
-              .attr("text-anchor", "end")
-              .attr("x", -25)
-              .attr("y", height + 5)
-              .text("MIL");
-
-    const dataset = findStackedData("Germany", crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
-
-    //New array with all the years, for referencing later
-    const yearsDonate = ["1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981","1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992","1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007"];
-    //Now that the data is ready, we can check its
-    //min and max values to set our scales' domains!
-    xScaleDonate.domain([
-        d3.min(yearsDonate, function(d) {
-            return dateFormat.parse(d);
-        }),
-        d3.max(yearsDonate, function(d) {
-            return dateFormat.parse(d);
-        })
-    ]);
-
-    //Loop once for each year, and get the total value
-    //of All aid given for that year.
-    const totals = [];
-
-    for (let i = 0; i < yearsDonate.length; i++) {
-        totals[i] = 0;
-        for (let j = 0; j < dataset.length; j++) {
-            totals[i] += dataset[j].aid[i].y;
-        }
-    }
-
-    yScaleDonate.domain([d3.max(totals), 0]);
-    //Areas
-    //
-    //Now that we are creating multiple paths, we can use the
-    //selectAll/data/co2/enter/append pattern to generate as many
-    //as needed.
-
-    //Make a path for each country
-    var selection = svgDonate.selectAll("path")
-        .data(dataset)
-
-    var paths = selection.enter()
-        .append("path")
-        .attr("class", "area")
-
-        .attr("stroke", (d, i) => colorDonate(i))
-        .attr("fill", "#fff")
-        .attr("d", (d) => areaDonate(d.aid))
-
-    var totalLength = paths.node().getTotalLength();
-    paths.attr("stroke-dasharray", totalLength + " " + totalLength)
-        .attr("stroke-dashoffset", totalLength)
-        .transition().duration(300)
-        .ease("linear")
-        .attr("stroke-dashoffset", 0)
-        .transition().duration(200)
-        .attr("fill", (d, i) => colorDonate(i));
-
-    //Append a title with the country name (so we get easy tooltips)
-    paths.append("title")
-        .text(function(d) {
-            return d.aidType;
-        });
-
-    //Create axes
-    svgDonate.append("g")
-        .attr("class", "x axis")
-        .attr("transform", "translate(0," + (h - padding[2]) + ")")
-        .call(xAxisDonate);
-
-    svgDonate.append("g")
-        .attr("class", "y axis")
-        .attr("transform", "translate(" + padding[3] + ",0)")
-        .call(yAxisDonate);
-
-    svgDonate.append("text")
-              .attr("text-anchor", "end")
-              .attr("x", 80)
-              .attr("y", height + 28)
-              .text("%");
+  const dataset = findStackedData("Germany", crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
+  showStack(dataset);
 }
 // Load the data
 d3_queue.queue()
