@@ -171,8 +171,7 @@ body, html {
 
 #legendMenu {
   width: 20rem;
-  height: 20rem;
-  border: 0.2rem solid black;
+  /*border: 0.2rem solid black;*/
   position: absolute;
   right: 0;
   top: 0;
