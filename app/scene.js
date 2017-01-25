@@ -17,6 +17,21 @@ camera.position.z = 600;
 camera.position.x = -750;
 camera.position.y = 400;
 
+function checkRotation(){
+  const rotSpeed = 0.001;
+
+  let x = camera.position.x,
+    y = camera.position.y,
+    z = camera.position.z;
+
+    camera.position.x = x * Math.cos(rotSpeed) + z * Math.sin(rotSpeed);
+    camera.position.z = z * Math.cos(rotSpeed) - x * Math.sin(rotSpeed);
+
+
+  camera.lookAt(scene.position);
+
+}
+
 export var scene = new THREE.Scene();
 
 export var light = new THREE.HemisphereLight('0xffffff', '0xffffff', 1.5);
@@ -35,6 +50,8 @@ const fps = 30;
 export function animate() {
   setTimeout(function() {
     requestAnimationFrame(animate);
+
+    checkRotation();
     renderer.render(scene, camera);
   }, 1000 / fps);
 }
@@ -48,7 +65,6 @@ export function animate() {
 //     requestAnimationFrame(frameA);
 //     renderer.render(scene, camera);
 //   };
-
 
 export function removeGroups( toRemove ) {
   if (scene.children[1].children[2]) {

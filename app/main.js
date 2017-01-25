@@ -15,6 +15,7 @@ import {
     canvas,
     renderer,
     camera,
+    checkRotation,
     scene,
     light,
     animate,

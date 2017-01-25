@@ -1,4 +1,11 @@
-@import url('https://fonts.googleapis.com/css?family=Fira+Sans|Oxygen|VT323');
+@import url('https://fonts.googleapis.com/css?family=Montserrat|Overpass:600|Raleway:500|Roboto');
+@import url('https://fonts.googleapis.com/css?family=Oswald');
+
+/*font-family: 'Roboto', sans-serif;
+font-family: 'Montserrat', sans-serif;
+font-family: 'Raleway', sans-serif;
+font-family: 'Overpass', sans-serif;
+font-family: 'Oswald', sans-serif;*/
 
 html {
   font-size: 15px;
@@ -6,8 +13,8 @@ html {
 
 body, html {
   width: 100vw;
-  background-color: #333;
-  background: url("galaxy.png");
+  background-color: #FFF;
+  /*background: url("galaxy.png");*/
   margin: 0px;
   font-family: helvetica, arial;
   color: #333;
@@ -19,21 +26,11 @@ body, html {
   user-select: none;
 }
 
-#donaterSvg {
-  position: relative;
-  left: -14%;
-}
-
-
-#donaterSvg path:hover {
-  fill: orange;
-}
-
 
 #info {
   text-align: center;
   width: 100%;
-  font-family: 'Fira Sans', sans-serif;
+  font-family: Raleway, sans-serif;
   top: 1rem;
   z-index: 1;
 }
@@ -141,11 +138,11 @@ body, html {
 }
 
 #d3stuff {
-  width: 27vw;
-  border-right: 1px ridge #999;
+  border-right: 3px ridge #999;
   position: absolute;
+	width: 26rem;
   height: 100vh;
-  background-color: rgba(180, 180, 180, 0.9);
+  /*background-color: rgba(180, 180, 180, 0.9);*/
   z-index: 1;
   overflow: hidden;
 }
@@ -155,4 +152,19 @@ body, html {
   fill: none;
   stroke: #000;
   shape-rendering: crispEdges;
+}
+
+#donaterSvg {
+  position: absolute;
+	bottom: -2rem;
+  left: -14%;
+	width: 30rem;
+}
+
+#recieverSvg {
+	width: 30rem;
+}
+
+#donaterSvg path:hover {
+  fill: orange;
 }
