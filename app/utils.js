@@ -48,5 +48,4 @@ export var getTween = function (prop, to, time) {
     }
   };
 };
-console.log("shit");
 // export default utils;
