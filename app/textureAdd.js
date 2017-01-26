@@ -107,18 +107,8 @@ export function countTexture(country) {
 }
 var segments = 155;
 export function addMaps(group, countries, aidType) {
-    let totalCountries = 0;
-    let countryCount = 0;
-
     for (const country of countries) {
         if (country[aidType]) {
-          totalCountries++;
-        }
-    }
-
-    for (const country of countries) {
-        if (country[aidType]) {
-            countryCount += 1;
             let worldTexture = countTexture(country);
             let mapMaterial = new THREE.MeshPhongMaterial({
                 map: worldTexture,
@@ -127,7 +117,6 @@ export function addMaps(group, countries, aidType) {
             var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
             baseMap.rotation.y = Math.PI;
             group.add(baseMap);
-            // d3.select("#loadBarFilling")[0][0].style.width = `${(50/totalCountries*countryCount)}rem`
         }
     }
     return group
