@@ -136,7 +136,7 @@ function curHelp(num) {
   num = _.chunk(num.split(""), 3);
   return _.map(num, (d) => d.join("")).join(",");
 }
-
+// Currency helper
 export function currency(number) {
     var stuff;
     number = number.toString();
