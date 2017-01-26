@@ -22,7 +22,8 @@ import {
     light,
     animate,
     addSelected,
-    removeGroups
+    removeGroups,
+    finishLoading
 } from './scene';
 // 3D click functions
 import {
@@ -85,7 +86,11 @@ import {
     showLine
 } from './receivingD3'
 
-// Store the results in a variable
+// Remove the loading text when elements are loaded
+$(document).on("CanvasOnLoad", () => {
+  finishLoading();
+});
+// Data loading callback function
 function ready(error, results) {
     if (error) throw error;
     const [items, inNeed, dataWorld, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize, countryRanking, aidReceivedAll] = [results[0], results[1], results[2], results[3], results[4], results[5], results[6], results[7], results[8], results[9], results[10], results[11], results[12], results[13]];
@@ -94,7 +99,6 @@ function ready(error, results) {
 
     const donating = ["Australia","Austria","Belgium","Canada","Denmark","Finland","France","Germany","Greece","Ireland","Italy","Japan","Luxembourg","Netherlands","New Zealand","Norway","Portugal","Spain","Sweden","Switzerland","United Kingdom","United States"];
 
-// <<<<<<< HEAD
     let segments = 155;
     // Add the data to the scales
     scaleColor.domain(d3.extent(items, (d) => {
@@ -109,9 +113,6 @@ function ready(error, results) {
     // Loading screen
     d3.select("#loading").transition().duration(500)
         .style("opacity", 0).remove();
-// =======
-    // let segments = 40;
-// >>>>>>> 7b4e17345c7a8315307822aa49e9e689393185c9
 
 
     // Setup cache for country textures
@@ -228,9 +229,12 @@ function ready(error, results) {
         renderer.domElement
     );
     // Texture layer load
-    const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given")
-    const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received")
-
+    const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given");
+    const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received");
+    // Fire event listener as all textures are loaded
+    $.event.trigger({
+      type: "CanvasOnLoad"
+    });
     animate();
     // requestAnimationFrame(frameA);
 
@@ -247,9 +251,6 @@ function ready(error, results) {
             $(".rangeBarRecieving").addClass("active");
         }
     });
-
-    // Loading screen
-    // d3.select(".newLoader").style("display", "none").remove();
 
     d3.select(".container").style("display", "inline");
     d3.select("canvas").style("display", "inline");

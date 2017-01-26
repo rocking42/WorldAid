@@ -89,7 +89,11 @@
 	// Import the single area graph functions
 	
 	
-	// Store the results in a variable
+	// Remove the loading text when elements are loaded
+	$(document).on("CanvasOnLoad", function () {
+	    (0, _scene.finishLoading)();
+	});
+	// Data loading callback function
 	function ready(error, results) {
 	    if (error) throw error;
 	    var _ref = [results[0], results[1], results[2], results[3], results[4], results[5], results[6], results[7], results[8], results[9], results[10], results[11], results[12], results[13]],
@@ -113,8 +117,7 @@
 	
 	    var donating = ["Australia", "Austria", "Belgium", "Canada", "Denmark", "Finland", "France", "Germany", "Greece", "Ireland", "Italy", "Japan", "Luxembourg", "Netherlands", "New Zealand", "Norway", "Portugal", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"];
 	
-	    // <<<<<<< HEAD
-	    // let segments = 155;
+	    var segments = 155;
 	    // Add the data to the scales
 	    _textureAdd.scaleColor.domain(d3.extent(items, function (d) {
 	        return +d[2006];
@@ -127,10 +130,6 @@
 	    }));
 	    // Loading screen
 	    d3.select("#loading").transition().duration(500).style("opacity", 0).remove();
-	    // =======
-	    var segments = 40;
-	    // >>>>>>> 7b4e17345c7a8315307822aa49e9e689393185c9
-	
 	
 	    // Setup cache for country textures
 	    var countries = topojson.feature(dataWorld, dataWorld.objects.countries);
@@ -311,7 +310,10 @@
 	    // Texture layer load
 	    var donaters = (0, _textureAdd.addMaps)(new THREE.Group(), countries.features, "aid-given");
 	    var aidLayers = (0, _textureAdd.addMaps)(new THREE.Group(), countries.features, "aid-received");
-	
+	    // Fire event listener as all textures are loaded
+	    $.event.trigger({
+	        type: "CanvasOnLoad"
+	    });
 	    (0, _scene.animate)();
 	    // requestAnimationFrame(frameA);
 	
@@ -328,9 +330,6 @@
 	            $(".rangeBarRecieving").addClass("active");
 	        }
 	    });
-	
-	    // Loading screen
-	    // d3.select(".newLoader").style("display", "none").remove();
 	
 	    d3.select(".container").style("display", "inline");
 	    d3.select("canvas").style("display", "inline");
@@ -439,10 +438,11 @@
 	exports.animate = animate;
 	exports.removeGroups = removeGroups;
 	exports.addSelected = addSelected;
+	exports.finishLoading = finishLoading;
 	var d3 = __webpack_require__(4);
 	var THREE = __webpack_require__(5);
 	
-	var canvas = exports.canvas = d3.select(".container").append("canvas").attr("width", window.innerWidth).attr("height", window.innerHeight);
+	var canvas = exports.canvas = d3.select("body").append("canvas").attr("width", window.innerWidth).attr("height", window.innerHeight);
 	
 	canvas.node().getContext("webgl");
 	
@@ -514,6 +514,10 @@
 	  window.setTimeout(function () {
 	    scene.children[1].add(highlighted);
 	  }, 0);
+	}
+	// Scene loading text removal
+	function finishLoading() {
+	  d3.select("#loadBarFilling").transition().duration(500).style("opacity", "0").remove();
 	}
 
 /***/ },
@@ -53727,7 +53731,7 @@
 	                var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
 	                baseMap.rotation.y = Math.PI;
 	                group.add(baseMap);
-	                d3.select("#loadBarFilling")[0][0].style.width = 50 / totalCountries * countryCount + "rem";
+	                // d3.select("#loadBarFilling")[0][0].style.width = `${(50/totalCountries*countryCount)}rem`
 	            }
 	        }
 	    } catch (err) {

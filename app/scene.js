@@ -78,3 +78,9 @@ export function addSelected(highlighted) {
     scene.children[1].add(highlighted);
   }, 0);
 }
+// Scene loading text removal
+export function finishLoading() {
+  d3.select("#loadBarFilling")
+    .transition().duration(500)
+    .style("opacity", "0").remove();
+}
