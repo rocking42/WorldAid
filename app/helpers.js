@@ -1,3 +1,4 @@
+const _ = require("lodash")
 // MAP TEXTURE
 
 export var projection = d3.geo.equirectangular()
@@ -130,3 +131,24 @@ export var pointInPolygon = function(poly, point) {
 
     return inside;
 };
+
+function curHelp(num) {
+  num = _.chunk(num.split(""), 3);
+  return _.map(num, (d) => d.join("")).join(",");
+}
+
+export function currency(number) {
+    var stuff;
+    number = number.toString();
+    if (number.length % 3 === 0) {
+      return curHelp(number)
+    }
+    if ((number.length - 1) % 3 === 0) {
+      stuff = number.split("").splice(0,1);
+      number = number.split("").splice(1);
+    } else {
+      stuff = number.split("").splice(0,2).join("");
+      number = number.split("").splice(2);
+    }
+    return `${stuff},${curHelp(number.join(""))}`;
+}

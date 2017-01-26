@@ -1,5 +1,5 @@
 const d3 = require("d3");
-const _ = require("lodash")
+const _ = require("lodash");
 const topojson = require("topojson");
 const THREE = require("three");
 const d3_queue = require("d3-queue");
@@ -35,7 +35,8 @@ import {
     projection,
     getEventCenter,
     convertToXYZ,
-    geodecoder
+    geodecoder,
+    currency
 } from './helpers';
 // Import the texture rendering functions
 import {
@@ -88,6 +89,10 @@ import {
 // Remove the loading text when elements are loaded
 $(document).on("CanvasOnLoad", () => {
   finishLoading();
+});
+
+window.addEventListener("resize", function() {
+
 });
 // Data loading callback function
 function ready(error, results) {
@@ -195,7 +200,7 @@ function ready(error, results) {
                 d3.select("#d3stuff .countryInfo").text(data[2][0]).style("display", "inline-block");
             });
             d3.select("#msg").text(country.code);
-            d3.select("#stats").text(`Funds Recieved: $${country["recieved"]}`);
+            d3.select("#stats").text(`Funds Recieved: $${currency(country["recieved"])}`);
             d3.select(".qualityText").style("display", "block");
             d3.select(".countryRank").style("display", "block");
             // Grap the rank of the country or ? if no data present
@@ -213,7 +218,7 @@ function ready(error, results) {
             d3.select(".countryRank").style("display", "none");
             d3.select("#d3stuff .countryInfo").style("display", "none");
             d3.select("#msg").text(country.code);
-            d3.select("#stats").text(`Funds Donated: $${country["aid"][2006]}`);
+            d3.select("#stats").text(`Funds Donated: $${currency(country["aid"][2006])}`);
             // else Helpful message
         } else if (receivingAidActivated) {
             d3.select("#msg").text(`select a reciever`);
