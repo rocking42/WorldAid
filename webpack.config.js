@@ -8,6 +8,21 @@ const HTMLWebpackPluginConfig = new HTMLWebpackPlugin({
   inject: "body"
 });
 
+const webpackUglifyJsPlugin = require('webpack-uglify-js-plugin');
+
+const webpackUglifyJSPluginConfig = new webpackUglifyJsPlugin({
+  cacheFolder: __dirname + 'dist/',
+  debug: true,
+  minimize: true,
+  sourceMap: false,
+  output: {
+    comments: false
+  },
+  compressor: {
+    warnings: false
+  }
+});
+
 // Include it as a plugin
 
 module.exports = {
@@ -29,6 +44,7 @@ module.exports = {
     ]
   },
   plugins: [
-    HTMLWebpackPluginConfig
+    HTMLWebpackPluginConfig,
+    webpackUglifyJSPluginConfig
   ]
 };
