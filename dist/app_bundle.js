@@ -113,7 +113,7 @@
 	
 	    var donating = ["Australia", "Austria", "Belgium", "Canada", "Denmark", "Finland", "France", "Germany", "Greece", "Ireland", "Italy", "Japan", "Luxembourg", "Netherlands", "New Zealand", "Norway", "Portugal", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"];
 	
-	    var segments = 155;
+	    var segments = 40;
 	
 	    // Setup cache for country textures
 	    var countries = topojson.feature(dataWorld, dataWorld.objects.countries);
@@ -313,7 +313,7 @@
 	    });
 	
 	    // Loading screen
-	    d3.select(".newLoader").style("display", "none").remove();
+	    // d3.select(".newLoader").style("display", "none").remove();
 	
 	    d3.select(".container").style("display", "inline");
 	    d3.select("canvas").style("display", "inline");
@@ -53623,7 +53623,6 @@
 	    var result = void 0;
 	    if (country["aid-given"]) {
 	        console.log(country["aid-given"][2006]);
-	        debugger;
 	        result = scaleColor(country["aid-given"][2006]);
 	    }
 	    return result;
@@ -53673,6 +53672,9 @@
 	}
 	var segments = 155;
 	function addMaps(group, countries, aidType) {
+	    var totalCountries = 0;
+	    var countryCount = 0;
+	
 	    var _iteratorNormalCompletion = true;
 	    var _didIteratorError = false;
 	    var _iteratorError = undefined;
@@ -53682,14 +53684,7 @@
 	            var country = _step.value;
 	
 	            if (country[aidType]) {
-	                var worldTexture = countTexture(country);
-	                var mapMaterial = new THREE.MeshPhongMaterial({
-	                    map: worldTexture,
-	                    transparent: true
-	                });
-	                var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
-	                baseMap.rotation.y = Math.PI;
-	                group.add(baseMap);
+	                totalCountries++;
 	            }
 	        }
 	    } catch (err) {
@@ -53703,6 +53698,42 @@
 	        } finally {
 	            if (_didIteratorError) {
 	                throw _iteratorError;
+	            }
+	        }
+	    }
+	
+	    var _iteratorNormalCompletion2 = true;
+	    var _didIteratorError2 = false;
+	    var _iteratorError2 = undefined;
+	
+	    try {
+	        for (var _iterator2 = countries[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	            var _country = _step2.value;
+	
+	            if (_country[aidType]) {
+	                countryCount += 1;
+	                var worldTexture = countTexture(_country);
+	                var mapMaterial = new THREE.MeshPhongMaterial({
+	                    map: worldTexture,
+	                    transparent: true
+	                });
+	                var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
+	                baseMap.rotation.y = Math.PI;
+	                group.add(baseMap);
+	                d3.select("#loadBarFilling")[0][0].style.width = 50 / totalCountries * countryCount + "rem";
+	            }
+	        }
+	    } catch (err) {
+	        _didIteratorError2 = true;
+	        _iteratorError2 = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                _iterator2.return();
+	            }
+	        } finally {
+	            if (_didIteratorError2) {
+	                throw _iteratorError2;
 	            }
 	        }
 	    }

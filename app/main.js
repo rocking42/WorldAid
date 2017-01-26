@@ -94,7 +94,7 @@ function ready(error, results) {
 
     const donating = ["Australia","Austria","Belgium","Canada","Denmark","Finland","France","Germany","Greece","Ireland","Italy","Japan","Luxembourg","Netherlands","New Zealand","Norway","Portugal","Spain","Sweden","Switzerland","United Kingdom","United States"];
 
-    let segments = 155;
+    let segments = 40;
 
 
     // Setup cache for country textures
@@ -232,11 +232,11 @@ function ready(error, results) {
     });
 
     // Loading screen
-    d3.select(".newLoader").style("display", "none").remove();
+    // d3.select(".newLoader").style("display", "none").remove();
 
     d3.select(".container").style("display", "inline");
     d3.select("canvas").style("display", "inline");
-    
+
     // AID DONATE LAYERS
     let donatersActivated = false;
     document.querySelector(".showDonate").addEventListener("click", function() {
