@@ -114,10 +114,6 @@
 	    var donating = ["Australia", "Austria", "Belgium", "Canada", "Denmark", "Finland", "France", "Germany", "Greece", "Ireland", "Italy", "Japan", "Luxembourg", "Netherlands", "New Zealand", "Norway", "Portugal", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"];
 	
 	    var segments = 155;
-	    // Loading screen
-	    d3.select(".newLoader").style("display", "none").remove();
-	
-	    d3.select("canvas").style("display", "inline");
 	
 	    // Setup cache for country textures
 	    var countries = topojson.feature(dataWorld, dataWorld.objects.countries);
@@ -315,6 +311,13 @@
 	            $(".rangeBarRecieving").addClass("active");
 	        }
 	    });
+	
+	    // Loading screen
+	    d3.select(".newLoader").style("display", "none").remove();
+	
+	    d3.select(".container").style("display", "inline");
+	    d3.select("canvas").style("display", "inline");
+	
 	    // AID DONATE LAYERS
 	    var donatersActivated = false;
 	    document.querySelector(".showDonate").addEventListener("click", function () {
