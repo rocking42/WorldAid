@@ -26,6 +26,28 @@ body, html {
   user-select: none;
 }
 
+canvas {
+  display: none;
+}
+
+.container {
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+}
+
+#loadBarFilling {
+  z-index: 90000000011;
+  background-color: lightslategrey;
+  width: 0rem;
+  height: 2rem;
+  position: absolute;
+  left: calc(50vw - 25rem);
+  top: calc(50vh - 1rem);
+  transition: backgroung-color 0.5s line;
+}
+
 .countryRank {
   font-size: 9rem;
   text-align: center;
@@ -136,17 +158,6 @@ body, html {
   color: ghostwhite;
 }
 
-#loading {
-  color: white;
-  width: 100px;
-  height: 100px;
-  position: absolute;
-  top:0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
-}
 
 #d3stuff {
   border-right: 3px ridge #999;

@@ -113,7 +113,8 @@
 	
 	    var donating = ["Australia", "Austria", "Belgium", "Canada", "Denmark", "Finland", "France", "Germany", "Greece", "Ireland", "Italy", "Japan", "Luxembourg", "Netherlands", "New Zealand", "Norway", "Portugal", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"];
 	
-	    var segments = 155;
+	    // <<<<<<< HEAD
+	    // let segments = 155;
 	    // Add the data to the scales
 	    _textureAdd.scaleColor.domain(d3.extent(items, function (d) {
 	        return +d[2006];
@@ -126,9 +127,10 @@
 	    }));
 	    // Loading screen
 	    d3.select("#loading").transition().duration(500).style("opacity", 0).remove();
+	    // =======
+	    var segments = 40;
+	    // >>>>>>> 7b4e17345c7a8315307822aa49e9e689393185c9
 	
-	    // NOT NEEDED?
-	    var currentCountry, overlay;
 	
 	    // Setup cache for country textures
 	    var countries = topojson.feature(dataWorld, dataWorld.objects.countries);
@@ -197,12 +199,6 @@
 	                }
 	            }
 	        }
-	
-	        // NOT NEEDED?
-	        // var textureCache = memoize(function(cntryID, color) {
-	        //     var country = geo.find(cntryID);
-	        //     return mapTexture(country, color);
-	        // });
 	
 	        // Base globe with blue "water"
 	    } catch (err) {
@@ -332,6 +328,13 @@
 	            $(".rangeBarRecieving").addClass("active");
 	        }
 	    });
+	
+	    // Loading screen
+	    // d3.select(".newLoader").style("display", "none").remove();
+	
+	    d3.select(".container").style("display", "inline");
+	    d3.select("canvas").style("display", "inline");
+	
 	    // AID DONATE LAYERS
 	    var donatersActivated = false;
 	    document.querySelector(".showDonate").addEventListener("click", function () {
@@ -439,7 +442,7 @@
 	var d3 = __webpack_require__(4);
 	var THREE = __webpack_require__(5);
 	
-	var canvas = exports.canvas = d3.select("body").append("canvas").attr("width", window.innerWidth).attr("height", window.innerHeight);
+	var canvas = exports.canvas = d3.select(".container").append("canvas").attr("width", window.innerWidth).attr("height", window.innerHeight);
 	
 	canvas.node().getContext("webgl");
 	
@@ -53676,6 +53679,9 @@
 	}
 	var segments = 155;
 	function addMaps(group, countries, aidType) {
+	    var totalCountries = 0;
+	    var countryCount = 0;
+	
 	    var _iteratorNormalCompletion = true;
 	    var _didIteratorError = false;
 	    var _iteratorError = undefined;
@@ -53685,14 +53691,7 @@
 	            var country = _step.value;
 	
 	            if (country[aidType]) {
-	                var worldTexture = countTexture(country);
-	                var mapMaterial = new THREE.MeshPhongMaterial({
-	                    map: worldTexture,
-	                    transparent: true
-	                });
-	                var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
-	                baseMap.rotation.y = Math.PI;
-	                group.add(baseMap);
+	                totalCountries++;
 	            }
 	        }
 	    } catch (err) {
@@ -53706,6 +53705,42 @@
 	        } finally {
 	            if (_didIteratorError) {
 	                throw _iteratorError;
+	            }
+	        }
+	    }
+	
+	    var _iteratorNormalCompletion2 = true;
+	    var _didIteratorError2 = false;
+	    var _iteratorError2 = undefined;
+	
+	    try {
+	        for (var _iterator2 = countries[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+	            var _country = _step2.value;
+	
+	            if (_country[aidType]) {
+	                countryCount += 1;
+	                var worldTexture = countTexture(_country);
+	                var mapMaterial = new THREE.MeshPhongMaterial({
+	                    map: worldTexture,
+	                    transparent: true
+	                });
+	                var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
+	                baseMap.rotation.y = Math.PI;
+	                group.add(baseMap);
+	                d3.select("#loadBarFilling")[0][0].style.width = 50 / totalCountries * countryCount + "rem";
+	            }
+	        }
+	    } catch (err) {
+	        _didIteratorError2 = true;
+	        _iteratorError2 = err;
+	    } finally {
+	        try {
+	            if (!_iteratorNormalCompletion2 && _iterator2.return) {
+	                _iterator2.return();
+	            }
+	        } finally {
+	            if (_didIteratorError2) {
+	                throw _iteratorError2;
 	            }
 	        }
 	    }

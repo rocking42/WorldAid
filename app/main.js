@@ -94,6 +94,7 @@ function ready(error, results) {
 
     const donating = ["Australia","Austria","Belgium","Canada","Denmark","Finland","France","Germany","Greece","Ireland","Italy","Japan","Luxembourg","Netherlands","New Zealand","Norway","Portugal","Spain","Sweden","Switzerland","United Kingdom","United States"];
 
+// <<<<<<< HEAD
     let segments = 155;
     // Add the data to the scales
     scaleColor.domain(d3.extent(items, (d) => {
@@ -108,13 +109,14 @@ function ready(error, results) {
     // Loading screen
     d3.select("#loading").transition().duration(500)
         .style("opacity", 0).remove();
+// =======
+    // let segments = 40;
+// >>>>>>> 7b4e17345c7a8315307822aa49e9e689393185c9
 
-    // NOT NEEDED?
-    var currentCountry, overlay;
 
     // Setup cache for country textures
-    var countries = topojson.feature(dataWorld, dataWorld.objects.countries);
-    var geo = geodecoder(countries.features);
+    const countries = topojson.feature(dataWorld, dataWorld.objects.countries);
+    const geo = geodecoder(countries.features);
 
     // Iterate through all countries and match the data with the country
     for (const country of countries.features) {
@@ -130,12 +132,6 @@ function ready(error, results) {
             }
         }
     }
-
-    // NOT NEEDED?
-    // var textureCache = memoize(function(cntryID, color) {
-    //     var country = geo.find(cntryID);
-    //     return mapTexture(country, color);
-    // });
 
     // Base globe with blue "water"
     let blueMaterial = new THREE.MeshPhongMaterial();
@@ -169,7 +165,7 @@ function ready(error, results) {
     }
 
     // create a container node and add the two meshes
-    var root = new THREE.Object3D();
+    const root = new THREE.Object3D();
     root.scale.set(2.5, 2.5, 2.5);
     root.add(baseGlobe);
     root.add(theWholeWorld);
@@ -183,8 +179,8 @@ function ready(error, results) {
     // Country click events
     function onGlobeClick(event) {
         // Get pointc, convert to latitude/longitude
-        var latlng = getEventCenter.call(this, event);
-        var country = geo.search(latlng[0], latlng[1]);
+        const latlng = getEventCenter.call(this, event);
+        const country = geo.search(latlng[0], latlng[1]);
         console.log(country.code);
         // Validate whether a country is a recipient/donater/not affected
         if (_.includes(receivingAid, country.code) && receivingAidActivated) {
@@ -251,6 +247,13 @@ function ready(error, results) {
             $(".rangeBarRecieving").addClass("active");
         }
     });
+
+    // Loading screen
+    // d3.select(".newLoader").style("display", "none").remove();
+
+    d3.select(".container").style("display", "inline");
+    d3.select("canvas").style("display", "inline");
+
     // AID DONATE LAYERS
     let donatersActivated = false;
     document.querySelector(".showDonate").addEventListener("click", function() {
