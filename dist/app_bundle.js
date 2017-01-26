@@ -74,11 +74,20 @@
 	var d3_queue = __webpack_require__(14);
 	var OrbitControls = __webpack_require__(15)(THREE);
 	var $ = __webpack_require__(16);
+	// Utility functions
 	
+	// Initial scene setup functions
 	
-	var receivingAid = ["Nigeria", "Iraq", "Afghanistan", "Pakistan", "Congo, Dem. Rep.", "Sudan", "Ethiopia", "Vietnam", "Tanzania", "Cameroon", "Mozambique", "Serbia", "Uganda", "Zambia", "West Bank and Gaza", "Indonesia", "India", "China", "Ghana", "Bangladesh", "Morocco", "Colombia", "Kenya", "Burkina Faso", "Egypt", "Mali", "Senegal", "Bolivia"];
+	// 3D click functions
 	
-	var donating = ["Australia", "Austria", "Belgium", "Canada", "Denmark", "Finland", "France", "Germany", "Greece", "Ireland", "Italy", "Japan", "Luxembourg", "Netherlands", "New Zealand", "Norway", "Portugal", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"];
+	// Various THREEjs helpers
+	
+	// Import the texture rendering functions
+	
+	// Import the stacked graph data
+	
+	// Import the single area graph functions
+	
 	
 	// Store the results in a variable
 	function ready(error, results) {
@@ -98,12 +107,27 @@
 	        waterAndSanitize = _ref[11],
 	        countryRanking = _ref[12],
 	        aidReceivedAll = _ref[13];
+	    // Hard coded arrays of recipients and donaters
 	
+	    var receivingAid = ["Nigeria", "Iraq", "Afghanistan", "Pakistan", "Congo,Dem.Rep.", "Sudan", "Ethiopia", "Vietnam", "Tanzania", "Cameroon", "Mozambique", "Serbia", "Uganda", "Zambia", "WestBankandGaza", "Indonesia", "India", "China", "Ghana", "Bangladesh", "Morocco", "Colombia", "Kenya", "BurkinaFaso", "Egypt", "Mali", "Senegal", "Bolivia"];
+	
+	    var donating = ["Australia", "Austria", "Belgium", "Canada", "Denmark", "Finland", "France", "Germany", "Greece", "Ireland", "Italy", "Japan", "Luxembourg", "Netherlands", "New Zealand", "Norway", "Portugal", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"];
 	
 	    var segments = 155;
+	    // Add the data to the scales
+	    _textureAdd.scaleColor.domain(d3.extent(items, function (d) {
+	        return +d[2006];
+	    }));
 	
+	    _textureAdd.scaleInNeed.domain(d3.extent(inNeed, function (d) {
+	        if (+d[2006] > 916590000) {
+	            return +d[2006];
+	        }
+	    }));
+	    // Loading screen
 	    d3.select("#loading").transition().duration(500).style("opacity", 0).remove();
 	
+	    // NOT NEEDED?
 	    var currentCountry, overlay;
 	
 	    // Setup cache for country textures
@@ -173,6 +197,14 @@
 	                }
 	            }
 	        }
+	
+	        // NOT NEEDED?
+	        // var textureCache = memoize(function(cntryID, color) {
+	        //     var country = geo.find(cntryID);
+	        //     return mapTexture(country, color);
+	        // });
+	
+	        // Base globe with blue "water"
 	    } catch (err) {
 	        _didIteratorError = true;
 	        _iteratorError = err;
@@ -188,12 +220,6 @@
 	        }
 	    }
 	
-	    var textureCache = (0, _utils.memoize)(function (cntryID, color) {
-	        var country = geo.find(cntryID);
-	        return (0, _textureAdd.mapTexture)(country, color);
-	    });
-	
-	    // Base globe with blue "water"
 	    var blueMaterial = new THREE.MeshPhongMaterial();
 	    blueMaterial.map = THREE.ImageUtils.loadTexture('../assets/earthlight.jpg');
 	    var sphere = new THREE.SphereGeometry(200, segments, segments);
@@ -201,7 +227,7 @@
 	    baseGlobe.rotation.y = Math.PI;
 	    baseGlobe.name = "globe";
 	    baseGlobe.addEventListener('click', onGlobeClick);
-	
+	    // Grab the outline textures and add it to the scene
 	    var outlineTexture = (0, _textureAdd.mapTexture)(countries);
 	    var worldOutline = new THREE.MeshPhongMaterial({
 	        map: outlineTexture,
@@ -236,56 +262,68 @@
 	        $(".btn-3d").removeClass("activeButton");
 	        $(this).addClass("activeButton");
 	    });
-	
+	    // Country click events
 	    function onGlobeClick(event) {
 	        // Get pointc, convert to latitude/longitude
 	        var latlng = _helpers.getEventCenter.call(this, event);
 	        var country = geo.search(latlng[0], latlng[1]);
 	        console.log(country.code);
+	        // Validate whether a country is a recipient/donater/not affected
 	        if (_.includes(receivingAid, country.code) && receivingAidActivated) {
+	            // Update the area graph
 	            (0, _receivingD.changeCountryLine)(country.code, aidReceivedAll, "aid-received");
+	            // Hide the stack graph
 	            d3.select("#donaterSvg").style("display", "none");
+	            // Wikipedia data
 	            var url = "https://en.wikipedia.org/w/api.php?action=opensearch&search=" + country.code + "&limit=1&namespace=0&format=json&callback=?";
 	            $.getJSON(url, function (data) {
+	                // Add wiki text
 	                d3.select("#d3stuff .countryInfo").text(data[2][0]).style("display", "inline-block");
 	            });
 	            d3.select("#msg").text(country.code);
-	            d3.select("#stats").text("Funds Recieved: " + country["recieved"] + "$");
+	            d3.select("#stats").text("Funds Recieved: $" + country["recieved"]);
 	            d3.select(".countryRank").style("display", "block");
+	            // Grap the rank of the country or ? if no data present
 	            var rank = countryRanking.filter(function (item) {
 	                return item.country === country.code;
 	            });
 	            rank.length > 0 ? rank = rank[0].ranking : rank = "?";
 	            d3.select(".countryRank").text(rank + "/96");
 	        } else if (_.includes(donating, country.code) && donatersActivated) {
+	            // Update the area graph
 	            (0, _receivingD.changeCountryLine)(country.code, items, "aid-given");
+	            // Update the stack graph and display it if hidden
 	            (0, _donatingD.displayNewStack)(country.code, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
+	            d3.select("#donaterSvg").style("display", "inline");
+	            // Hide the rank and info
 	            d3.select(".countryRank").style("display", "none");
 	            d3.select("#d3stuff .countryInfo").style("display", "none");
-	            d3.select("#donaterSvg").style("display", "inline");
 	            d3.select("#msg").text(country.code);
 	            d3.select("#stats").text("Funds Donated: " + country["aid"][2006]);
+	            // else Helpful message
 	        } else if (receivingAidActivated) {
 	            d3.select("#msg").text("select a reciever");
 	        } else if (donatersActivated) {
 	            d3.select("#msg").text("select a donator");
 	        }
 	    }
-	
+	    // Add event listeners to the globe
 	    (0, _events.setEvents)(_scene.camera, [baseGlobe], 'click');
 	    (0, _events.setEvents)(_scene.camera, [baseGlobe], 'mousemove', 10);
-	
+	    // Allow the globe to be dragged around
 	    var controls = new OrbitControls(_scene.camera, _scene.renderer.domElement);
-	
-	    // const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given")
-	    // const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received")
+	    // Texture layer load
+	    var donaters = (0, _textureAdd.addMaps)(new THREE.Group(), countries.features, "aid-given");
+	    var aidLayers = (0, _textureAdd.addMaps)(new THREE.Group(), countries.features, "aid-received");
 	
 	    (0, _scene.animate)();
 	    // requestAnimationFrame(frameA);
 	
+	    // LAYER TOGGLES
+	    // AID RECEIVE LAYERS
 	    var receivingAidActivated = false;
 	    document.querySelector(".clearMap").addEventListener("click", function () {
-	        //   addSelected(aidLayers);
+	        (0, _scene.addSelected)(aidLayers);
 	        if (!receivingAidActivated) {
 	            $("#legendMenu").html("");
 	            receivingAidActivated = true;
@@ -294,10 +332,10 @@
 	            $(".rangeBarRecieving").addClass("active");
 	        }
 	    });
-	
+	    // AID DONATE LAYERS
 	    var donatersActivated = false;
 	    document.querySelector(".showDonate").addEventListener("click", function () {
-	        //   addSelected(donaters);
+	        (0, _scene.addSelected)(donaters);
 	        if (!donatersActivated) {
 	            legend(_donatingD.colorDescription, _donatingD.colorScheme);
 	            receivingAidActivated = false;
@@ -307,20 +345,13 @@
 	        }
 	    });
 	
-	    _textureAdd.scaleColor.domain(d3.extent(items, function (d) {
-	        return +d[2006];
-	    }));
-	
-	    _textureAdd.scaleInNeed.domain(d3.extent(inNeed, function (d) {
-	        if (+d[2006] > 916590000) {
-	            return +d[2006];
-	        }
-	    }));
-	
+	    // Find the area data needed for the line area graph
 	    var desCountry = (0, _receivingD.findLineInfo)("Germany", items, "aid-given");
+	    // Display the initial single area Graph
 	    (0, _receivingD.showLine)(desCountry);
-	
+	    // Grab the data for the initial setup stack graph
 	    var dataset = (0, _donatingD.findStackedData)("Germany", crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
+	    // Display the stacked graph using the data
 	    (0, _donatingD.showStack)(dataset);
 	}
 	// Load the data

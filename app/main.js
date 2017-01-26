@@ -95,6 +95,16 @@ function ready(error, results) {
     const donating = ["Australia","Austria","Belgium","Canada","Denmark","Finland","France","Germany","Greece","Ireland","Italy","Japan","Luxembourg","Netherlands","New Zealand","Norway","Portugal","Spain","Sweden","Switzerland","United Kingdom","United States"];
 
     let segments = 155;
+    // Add the data to the scales
+    scaleColor.domain(d3.extent(items, (d) => {
+      return +d[2006];
+    }));
+
+    scaleInNeed.domain(d3.extent(inNeed, (d) => {
+      if (+d[2006] > 916590000) {
+        return +d[2006];
+      }
+    }));
     // Loading screen
     d3.select("#loading").transition().duration(500)
         .style("opacity", 0).remove();
@@ -222,8 +232,8 @@ function ready(error, results) {
         renderer.domElement
     );
     // Texture layer load
-    // const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given")
-    // const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received")
+    const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given")
+    const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received")
 
     animate();
     // requestAnimationFrame(frameA);
@@ -232,7 +242,7 @@ function ready(error, results) {
     // AID RECEIVE LAYERS
     let receivingAidActivated = false;
     document.querySelector(".clearMap").addEventListener("click", function() {
-        //   addSelected(aidLayers);
+          addSelected(aidLayers);
         if (!receivingAidActivated) {
             $("#legendMenu").html("");
             receivingAidActivated = true;
@@ -244,7 +254,7 @@ function ready(error, results) {
     // AID DONATE LAYERS
     let donatersActivated = false;
     document.querySelector(".showDonate").addEventListener("click", function() {
-        //   addSelected(donaters);
+          addSelected(donaters);
         if (!donatersActivated) {
             legend(colorDescription, colorScheme);
             receivingAidActivated = false;
@@ -254,16 +264,6 @@ function ready(error, results) {
         }
     });
 
-  // Add the data to the scales
-  scaleColor.domain(d3.extent(items, (d) => {
-      return +d[2006];
-  }));
-
-  scaleInNeed.domain(d3.extent(inNeed, (d) => {
-      if (+d[2006] > 916590000) {
-          return +d[2006];
-      }
-  }));
   // Find the area data needed for the line area graph
   const desCountry = findLineInfo("Germany", items, "aid-given")
   // Display the initial single area Graph
