@@ -230,8 +230,8 @@ function ready(error, results) {
         renderer.domElement
     );
     // Texture layer load
-    // const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given");
-    // const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received");
+    const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given");
+    const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received");
     // Fire event listener as all textures are loaded
     $.event.trigger({
       type: "CanvasOnLoad"
@@ -243,7 +243,7 @@ function ready(error, results) {
     // AID RECEIVE LAYERS
     let receivingAidActivated = false;
     document.querySelector(".clearMap").addEventListener("click", function() {
-          // addSelected(aidLayers);
+          addSelected(aidLayers);
         if (!receivingAidActivated) {
             $("#legendMenu").html("");
             receivingAidActivated = true;
@@ -259,7 +259,7 @@ function ready(error, results) {
     // AID DONATE LAYERS
     let donatersActivated = false;
     document.querySelector(".showDonate").addEventListener("click", function() {
-          // addSelected(donaters);
+          addSelected(donaters);
         if (!donatersActivated) {
             legend(colorDescription, colorScheme);
             receivingAidActivated = false;
