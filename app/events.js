@@ -1,7 +1,6 @@
 const THREE = require("three");
 import { debounce } from './utils';
 
-
 export let raycaster = new THREE.Raycaster();
 
 export function setEvents(camera, items, type, wait) {

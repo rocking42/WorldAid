@@ -152,7 +152,7 @@ canvas {
 #d3stuff {
   border-right: 3px ridge #999;
   position: absolute;
-	width: 26rem;
+	width: 27vw;
   height: 100vh;
   /*background-color: rgba(180, 180, 180, 0.9);*/
   z-index: 1;
