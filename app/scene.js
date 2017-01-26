@@ -1,7 +1,7 @@
 const d3 = require("d3");
 const THREE = require("three");
 
-export var canvas = d3.select(".container").append("canvas")
+export var canvas = d3.select("body").append("canvas")
   .attr("width", window.innerWidth)
   .attr("height", window.innerHeight);
 

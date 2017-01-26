@@ -435,7 +435,7 @@
 	var d3 = __webpack_require__(4);
 	var THREE = __webpack_require__(5);
 	
-	var canvas = exports.canvas = d3.select(".container").append("canvas").attr("width", window.innerWidth).attr("height", window.innerHeight);
+	var canvas = exports.canvas = d3.select("body").append("canvas").attr("width", window.innerWidth).attr("height", window.innerHeight);
 	
 	canvas.node().getContext("webgl");
 	
@@ -53672,9 +53672,6 @@
 	}
 	var segments = 155;
 	function addMaps(group, countries, aidType) {
-	    var totalCountries = 0;
-	    var countryCount = 0;
-	
 	    var _iteratorNormalCompletion = true;
 	    var _didIteratorError = false;
 	    var _iteratorError = undefined;
@@ -53684,7 +53681,14 @@
 	            var country = _step.value;
 	
 	            if (country[aidType]) {
-	                totalCountries++;
+	                var worldTexture = countTexture(country);
+	                var mapMaterial = new THREE.MeshPhongMaterial({
+	                    map: worldTexture,
+	                    transparent: true
+	                });
+	                var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
+	                baseMap.rotation.y = Math.PI;
+	                group.add(baseMap);
 	            }
 	        }
 	    } catch (err) {
@@ -53698,42 +53702,6 @@
 	        } finally {
 	            if (_didIteratorError) {
 	                throw _iteratorError;
-	            }
-	        }
-	    }
-	
-	    var _iteratorNormalCompletion2 = true;
-	    var _didIteratorError2 = false;
-	    var _iteratorError2 = undefined;
-	
-	    try {
-	        for (var _iterator2 = countries[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	            var _country = _step2.value;
-	
-	            if (_country[aidType]) {
-	                countryCount += 1;
-	                var worldTexture = countTexture(_country);
-	                var mapMaterial = new THREE.MeshPhongMaterial({
-	                    map: worldTexture,
-	                    transparent: true
-	                });
-	                var baseMap = new THREE.Mesh(new THREE.SphereGeometry(200, segments, segments), mapMaterial);
-	                baseMap.rotation.y = Math.PI;
-	                group.add(baseMap);
-	                d3.select("#loadBarFilling")[0][0].style.width = 50 / totalCountries * countryCount + "rem";
-	            }
-	        }
-	    } catch (err) {
-	        _didIteratorError2 = true;
-	        _iteratorError2 = err;
-	    } finally {
-	        try {
-	            if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	                _iterator2.return();
-	            }
-	        } finally {
-	            if (_didIteratorError2) {
-	                throw _iteratorError2;
 	            }
 	        }
 	    }

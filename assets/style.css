@@ -30,24 +30,6 @@ canvas {
   display: none;
 }
 
-.container {
-  display: none;
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-}
-
-#loadBarFilling {
-  z-index: 90000000011;
-  background-color: lightslategrey;
-  width: 0rem;
-  height: 2rem;
-  position: absolute;
-  left: calc(50vw - 25rem);
-  top: calc(50vh - 1rem);
-  transition: backgroung-color 0.5s line;
-}
-
 .countryRank {
   font-size: 9rem;
   text-align: center;
