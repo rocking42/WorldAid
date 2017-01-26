@@ -120,9 +120,15 @@ export function showLine(countryData) {
     .attr("class", "y axis")
     .call(yAxisReceive);
 
+    // svgRecieve.append("text")
+    // .attr("text-anchor", "end")
+    // .attr("x", -25)
+    // .attr("y", height + 5)
+    // .text("MIL");
+
     svgRecieve.append("text")
     .attr("text-anchor", "end")
-    .attr("x", -25)
-    .attr("y", height + 5)
-    .text("MIL");
+    .attr("x", width - 60)
+    // .attr("y", height + 5)
+    .text("Aid given each year (Millions)");
 }

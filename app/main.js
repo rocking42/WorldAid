@@ -160,7 +160,7 @@ function ready(error, results) {
         colorScheme.forEach((color, i) => {
             const div = $("<div></div>").attr("class", "legendDiv");
             const tag = $(`<span></span>`).attr("class", "legendTag").css("background", color).appendTo(div);
-            const span = $(`<span>&nbsp;- ${colorDescription[i]}</span>`).attr("class", "legendSpan").appendTo(div);
+            const span = $(`<span>&nbsp;- ${colorDescription[i]}</span>`).attr("class", `${colorDescription[i].toLowerCase().split(" ").join("")}`).appendTo(div);
             legend.append(div);
         });
     }
@@ -197,6 +197,7 @@ function ready(error, results) {
             });
             d3.select("#msg").text(country.code);
             d3.select("#stats").text(`Funds Recieved: $${country["recieved"]}`);
+            d3.select(".qualityText").style("display", "block");
             d3.select(".countryRank").style("display", "block");
             // Grap the rank of the country or ? if no data present
             let rank = (countryRanking.filter((item) => item.country === country.code))
@@ -209,10 +210,11 @@ function ready(error, results) {
             displayNewStack(country.code, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
             d3.select("#donaterSvg").style("display", "inline");
             // Hide the rank and info
+            d3.select(".qualityText").style("display", "none");
             d3.select(".countryRank").style("display", "none");
             d3.select("#d3stuff .countryInfo").style("display", "none");
             d3.select("#msg").text(country.code);
-            d3.select("#stats").text(`Funds Donated: ${country["aid"][2006]}`);
+            d3.select("#stats").text(`Funds Donated: $${country["aid"][2006]}`);
             // else Helpful message
         } else if (receivingAidActivated) {
             d3.select("#msg").text(`select a reciever`);
@@ -229,8 +231,8 @@ function ready(error, results) {
         renderer.domElement
     );
     // Texture layer load
-    const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given");
-    const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received");
+    // const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given");
+    // const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received");
     // Fire event listener as all textures are loaded
     $.event.trigger({
       type: "CanvasOnLoad"
@@ -242,7 +244,7 @@ function ready(error, results) {
     // AID RECEIVE LAYERS
     let receivingAidActivated = false;
     document.querySelector(".clearMap").addEventListener("click", function() {
-          addSelected(aidLayers);
+          // addSelected(aidLayers);
         if (!receivingAidActivated) {
             $("#legendMenu").html("");
             receivingAidActivated = true;
@@ -258,7 +260,7 @@ function ready(error, results) {
     // AID DONATE LAYERS
     let donatersActivated = false;
     document.querySelector(".showDonate").addEventListener("click", function() {
-          addSelected(donaters);
+          // addSelected(donaters);
         if (!donatersActivated) {
             legend(colorDescription, colorScheme);
             receivingAidActivated = false;

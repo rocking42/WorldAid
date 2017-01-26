@@ -22,7 +22,6 @@ export function mapTexture(geojson, color) {
     context.strokeStyle = "#333";
     context.lineWidth = 1;
 
-
     context.beginPath();
 
     path(geojson);
@@ -68,44 +67,49 @@ export const colorInNeed = function(country) {
 
 export function countTexture(country) {
     let color;
+    // Choose color range based on aid type
     if (country["aid-given"]) {
         color = chooseColor(country);
     } else if (country["aid-received"]) {
         color = colorInNeed(country);
     }
+    // Set up vars and canvas
     var texture, context, canvas;
     canvas = d3.select("body").append("canvas")
         .style("display", "none")
         .attr("width", "2048px")
         .attr("height", "1024px");
-
+    // Set up 2D context
     context = canvas.node().getContext("2d");
-
+    // Create a path of the country outline
     var path = d3.geo.path()
         .projection(projection)
         .context(context);
 
     context.strokeStyle = "#333";
     context.lineWidth = 1;
-
+    // Fill the country based on the returned color
     context.fillStyle = color;
 
     context.beginPath();
-
 
     path(country);
     context.fill();
 
     context.stroke();
-
+    // Gather the texture from the canvas
     texture = new THREE.Texture(canvas.node());
     texture.needsUpdate = true;
-
+    // Remove the canvas and return only the texture
     canvas.remove();
 
     return texture;
 }
+
 var segments = 155;
+// Iterate over all countries
+// Make a texture map of either recipient or donating countries
+// Return a group of all textures
 export function addMaps(group, countries, aidType) {
     for (const country of countries) {
         if (country[aidType]) {
@@ -119,5 +123,5 @@ export function addMaps(group, countries, aidType) {
             group.add(baseMap);
         }
     }
-    return group
+    return group;
 }

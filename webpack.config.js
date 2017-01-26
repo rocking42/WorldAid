@@ -19,6 +19,7 @@ const webpackUglifyJSPluginConfig = new webpackUglifyJsPlugin({
     comments: false
   },
   compressor: {
+    drop_debugger: false,
     warnings: false
   }
 });

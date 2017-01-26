@@ -1,5 +1,6 @@
 const d3 = require("d3");
 const _  = require("lodash");
+const $ = require("jquery");
 //Set up stack method
 export const stack = d3.layout.stack()
         .values(function(d) {
@@ -155,7 +156,12 @@ export function showStack(stackData) {
     var paths = selection.enter()
         .append("path")
         .attr("class", "area")
-
+        .on("mouseover", function(e) {
+          $(`.${e.aidType}`).css("background", "yellow")
+        })
+        .on("mouseout", function(e) {
+          $(`.${e.aidType}`).css("background", "none")
+        })
         .attr("stroke", (d, i) => colorDonate(i))
         .attr("fill", "#fff")
         .attr("d", (d) => areaDonate(d.aid))
@@ -188,7 +194,7 @@ export function showStack(stackData) {
 
     svgDonate.append("text")
               .attr("text-anchor", "end")
-              .attr("x", 80)
-              .attr("y", h - 45)
-              .text("%");
+              .attr("x", w - 180)
+              .attr("y", 15)
+              .text("Donation breakdown by percentage");
 }
