@@ -45,7 +45,6 @@ canvas {
   position: absolute;
   left: calc(50vw - 25rem);
   top: calc(50vh - 1rem);
-  transition: width 0.5s line;
   transition: backgroung-color 0.5s line;
 }
 
