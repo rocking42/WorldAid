@@ -52,6 +52,7 @@ export const chooseColor = function(country) {
     let result;
     if (country["aid-given"]) {
         console.log(country["aid-given"][2006]);
+        debugger;
         result = scaleColor(country["aid-given"][2006]);
     }
     return result;

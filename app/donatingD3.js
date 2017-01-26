@@ -1,4 +1,5 @@
 const d3 = require("d3");
+const _  = require("lodash");
 //Set up stack method
 export const stack = d3.layout.stack()
         .values(function(d) {
@@ -7,9 +8,9 @@ export const stack = d3.layout.stack()
         .order("reverse");
 
 //Width, height, padding
-export const w = window.innerWidth/2.7;
+export const w = window.innerWidth * 0.38;
 export const h = window.innerHeight * 0.47;
-export const padding = [ 20, 10, 50, 100 ];  //Top, right, bottom, left
+export const padding = [ 20, 10, 50, 110 ];  //Top, right, bottom, left
 
 //Set up date format function (years)
 export const dateFormat = d3.time.format("%Y");
@@ -59,9 +60,7 @@ export const colorDonate = d3.scale.ordinal()
                                    .domain(domain)
                                    .range(colorScheme);
 //Create the SVG
-export const svgDonate = d3.select("#d3stuff")
-      .append("svg")
-      .attr("id", "donaterSvg")
+export const svgDonate = d3.select("#donaterSvg")
       .attr("width", w)
       .attr("height", h);
 
@@ -70,7 +69,7 @@ export function findStackedData(country, ...allData) {
   const countryData = [];
   allData.forEach((indArray) => {
     countryData.push( indArray.filter((item) => {
-      return Object.values(item)[Object.values(item).length - 1] === country
+      return _.values(item)[_.values(item).length - 1] === country
     })[0] );
   });
   // Setup the returned data-structure
@@ -78,8 +77,8 @@ export function findStackedData(country, ...allData) {
   // iterate over the countries data
   countryData.forEach((item, i) => {
     // Get the values and keys arrays of each
-    const years = Object.keys(item)
-    const money = Object.values(item)
+    const years = _.keys(item)
+    const money = _.values(item)
     // Set the name of the aid-type
     dataResult[i]["aidType"] = years[years.length - 1];
     // Zip the arrays together
@@ -114,4 +113,82 @@ export function displayNewStack(country, ...dataSources) {
         .attr("stroke-dashoffset", 0)
         .transition().duration(200)
         .attr("fill", (d, i) => colorDonate(i) )
+}
+
+
+export function showStack(stackData) {
+    //New array with all the years, for referencing later
+    const yearsDonate = ["1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981","1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992","1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007"];
+    //Now that the data is ready, we can check its
+    //min and max values to set our scales' domains!
+    xScaleDonate.domain([
+        d3.min(yearsDonate, function(d) {
+            return dateFormat.parse(d);
+        }),
+        d3.max(yearsDonate, function(d) {
+            return dateFormat.parse(d);
+        })
+    ]);
+
+    //Loop once for each year, and get the total value
+    //of All aid given for that year.
+    const totals = [];
+
+    for (let i = 0; i < yearsDonate.length; i++) {
+        totals[i] = 0;
+        for (let j = 0; j < stackData.length; j++) {
+            totals[i] += stackData[j].aid[i].y;
+        }
+    }
+
+    yScaleDonate.domain([d3.max(totals), 0]);
+    //Areas
+    //
+    //Now that we are creating multiple paths, we can use the
+    //selectAll/data/co2/enter/append pattern to generate as many
+    //as needed.
+
+    //Make a path for each country
+    var selection = svgDonate.selectAll("path")
+        .data(stackData)
+
+    var paths = selection.enter()
+        .append("path")
+        .attr("class", "area")
+
+        .attr("stroke", (d, i) => colorDonate(i))
+        .attr("fill", "#fff")
+        .attr("d", (d) => areaDonate(d.aid))
+
+    var totalLength = paths.node().getTotalLength();
+    paths.attr("stroke-dasharray", totalLength + " " + totalLength)
+        .attr("stroke-dashoffset", totalLength)
+        .transition().duration(300)
+        .ease("linear")
+        .attr("stroke-dashoffset", 0)
+        .transition().duration(200)
+        .attr("fill", (d, i) => colorDonate(i));
+
+    //Append a title with the country name (so we get easy tooltips)
+    paths.append("title")
+        .text(function(d) {
+            return d.aidType;
+        });
+
+    //Create axes
+    svgDonate.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + (h - padding[2]) + ")")
+        .call(xAxisDonate);
+
+    svgDonate.append("g")
+        .attr("class", "y axis")
+        .attr("transform", "translate(" + padding[3] + ",0)")
+        .call(yAxisDonate);
+
+    svgDonate.append("text")
+              .attr("text-anchor", "end")
+              .attr("x", 80)
+              .attr("y", h - 45)
+              .text("%");
 }

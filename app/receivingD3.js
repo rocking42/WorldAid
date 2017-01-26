@@ -1,7 +1,8 @@
 const d3 = require("d3");
+const _  = require("lodash");
 // Set the dimensions and padding of the canvas / graph
 // var paddingDonate = [ 20, 10, 50, 100 ];
-export const margin = {top: 20, right: 20, bottom: 20, left: 50},
+export const margin = {top: 20, right: 20, bottom: 20, left: 60},
       width = window.innerWidth * 0.22,
       height = window.innerHeight * 0.38;
 
@@ -29,9 +30,7 @@ export const areaReceive = d3.svg.area()
     return y(d.aid / 1000000);
   });
   // Adds the svg canvas
-export const svgRecieve = d3.select("#d3stuff")
-      .append("svg")
-      .attr("id", "recieverSvg")
+export const svgRecieve = d3.select("#recieverSvg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -42,8 +41,8 @@ export const svgRecieve = d3.select("#d3stuff")
   // returns two array being years and aid given/received
 export function countryYearsAndAid(country, dataType, aidingType) {
     const res = dataType.filter((d) => d[aidingType] === country);
-    const money = Object.values(res[0]).map((d) => +d || 1);
-    const years = Object.keys(res[0]).map((d) => parseDate(d));
+    const money = _.values(res[0]).map((d) => +d || 1);
+    const years = _.keys(res[0]).map((d) => parseDate(d));
     const yearsComp = years.splice(0, years.length - 1)
     return [yearsComp, _.compact(money)];
   }
@@ -84,3 +83,46 @@ export function changeCountryLine(country, data, aidType) {
       svgRecieve.selectAll("g.y.axis").remove();
       svgRecieve.append("g").attr("class", "y axis").call(yAxisReceive);
   }
+
+export function showLine(countryData) {
+    // Scale the range of the datas
+    x.domain(d3.extent(countryData, function(d) {
+        return d.year;
+    }));
+    y.domain([0, d3.max(countryData, function(d) {
+        return d.aid / 1000000;
+    })]);
+
+    const path = svgRecieve.data([countryData])
+    .append("path")
+    .attr("class", "area usa")
+    .attr("d", (d) => areaReceive(d))
+    .attr("fill", "rgba(50, 195, 182, 0)")
+    .attr("stroke", "none");
+
+    var totalLength = path.node().getTotalLength();
+    path.attr("stroke-dasharray", totalLength + " " + totalLength)
+    .attr("stroke-dashoffset", totalLength)
+    .transition().duration(500)
+    .ease("linear")
+    .attr("stroke-dashoffset", 0)
+    .transition().duration(200)
+    .attr("fill", "rgba(50, 195, 182, 1)");
+
+    // Add the X Axis
+    svgRecieve.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxisReceive);
+
+    // Add the Y Axis
+    svgRecieve.append("g")
+    .attr("class", "y axis")
+    .call(yAxisReceive);
+
+    svgRecieve.append("text")
+    .attr("text-anchor", "end")
+    .attr("x", -25)
+    .attr("y", height + 5)
+    .text("MIL");
+}

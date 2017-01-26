@@ -26,8 +26,12 @@ body, html {
   user-select: none;
 }
 
-.container {
+canvas {
   display: none;
+}
+
+.container {
+  display: inline-block;
   width: 100vw;
   height: 100vh;
   position: absolute;
@@ -181,18 +185,20 @@ body, html {
 }
 
 #donaterSvg {
-  position: absolute;
-	top: 29rem;
+  position: relative;;
   left: -14%;
 	width: 30rem;
 }
 
 #recieverSvg {
+  position: relative;
+  left: -1%;
+  top: -30px;
 	width: 30rem;
 }
 
 #donaterSvg path:hover {
-  fill: orange;
+  fill: rgb(33, 9, 48);
 }
 
 #legendMenu {

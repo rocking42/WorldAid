@@ -63,22 +63,31 @@
 	
 	var _textureAdd = __webpack_require__(8);
 	
-	var _receivingD = __webpack_require__(9);
+	var _donatingD = __webpack_require__(9);
 	
-	var _donatingD = __webpack_require__(10);
+	var _receivingD = __webpack_require__(12);
 	
 	var d3 = __webpack_require__(4);
-	var _ = __webpack_require__(11);
+	var _ = __webpack_require__(10);
 	var topojson = __webpack_require__(13);
 	var THREE = __webpack_require__(5);
 	var d3_queue = __webpack_require__(14);
 	var OrbitControls = __webpack_require__(15)(THREE);
 	var $ = __webpack_require__(16);
+	// Utility functions
 	
+	// Initial scene setup functions
 	
-	var receivingAid = ["Nigeria", "Iraq", "Afghanistan", "Pakistan", "Congo, Dem. Rep.", "Sudan", "Ethiopia", "Vietnam", "Tanzania", "Cameroon", "Mozambique", "Serbia", "Uganda", "Zambia", "West Bank and Gaza", "Indonesia", "India", "China", "Ghana", "Bangladesh", "Morocco", "Colombia", "Kenya", "Burkina Faso", "Egypt", "Mali", "Senegal", "Bolivia"];
+	// 3D click functions
 	
-	var donating = ["Australia", "Austria", "Belgium", "Canada", "Denmark", "Finland", "France", "Germany", "Greece", "Ireland", "Italy", "Japan", "Luxembourg", "Netherlands", "New Zealand", "Norway", "Portugal", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"];
+	// Various THREEjs helpers
+	
+	// Import the texture rendering functions
+	
+	// Import the stacked graph data
+	
+	// Import the single area graph functions
+	
 	
 	// Store the results in a variable
 	function ready(error, results) {
@@ -98,24 +107,17 @@
 	        waterAndSanitize = _ref[11],
 	        countryRanking = _ref[12],
 	        aidReceivedAll = _ref[13];
+	    // Hard coded arrays of recipients and donaters
+	
+	    var receivingAid = ["Nigeria", "Iraq", "Afghanistan", "Pakistan", "Congo,Dem.Rep.", "Sudan", "Ethiopia", "Vietnam", "Tanzania", "Cameroon", "Mozambique", "Serbia", "Uganda", "Zambia", "WestBankandGaza", "Indonesia", "India", "China", "Ghana", "Bangladesh", "Morocco", "Colombia", "Kenya", "BurkinaFaso", "Egypt", "Mali", "Senegal", "Bolivia"];
+	
+	    var donating = ["Australia", "Austria", "Belgium", "Canada", "Denmark", "Finland", "France", "Germany", "Greece", "Ireland", "Italy", "Japan", "Luxembourg", "Netherlands", "New Zealand", "Norway", "Portugal", "Spain", "Sweden", "Switzerland", "United Kingdom", "United States"];
 	
 	    var segments = 155;
+	    // Loading screen
+	    d3.select(".newLoader").style("display", "none").remove();
 	
-	    _textureAdd.scaleColor.domain(d3.extent(items, function (d) {
-	        return +d[2006];
-	    }));
-	
-	    _textureAdd.scaleInNeed.domain(d3.extent(inNeed, function (d) {
-	        if (+d[2006] > 916590000) {
-	            return +d[2006];
-	        }
-	    }));
-	
-	    d3.select(".newLoader").transition().duration(500).style("display", "none").remove();
-	
-	    d3.select(".container").style("display", "inline");
-	
-	    var currentCountry, overlay;
+	    d3.select("canvas").style("display", "inline");
 	
 	    // Setup cache for country textures
 	    var countries = topojson.feature(dataWorld, dataWorld.objects.countries);
@@ -184,6 +186,8 @@
 	                }
 	            }
 	        }
+	
+	        // Base globe with blue "water"
 	    } catch (err) {
 	        _didIteratorError = true;
 	        _iteratorError = err;
@@ -199,12 +203,6 @@
 	        }
 	    }
 	
-	    var textureCache = (0, _utils.memoize)(function (cntryID, color) {
-	        var country = geo.find(cntryID);
-	        return (0, _textureAdd.mapTexture)(country, color);
-	    });
-	
-	    // Base globe with blue "water"
 	    var blueMaterial = new THREE.MeshPhongMaterial();
 	    blueMaterial.map = THREE.ImageUtils.loadTexture('../assets/earthlight.jpg');
 	    var sphere = new THREE.SphereGeometry(200, segments, segments);
@@ -212,7 +210,7 @@
 	    baseGlobe.rotation.y = Math.PI;
 	    baseGlobe.name = "globe";
 	    baseGlobe.addEventListener('click', onGlobeClick);
-	
+	    // Grab the outline textures and add it to the scene
 	    var outlineTexture = (0, _textureAdd.mapTexture)(countries);
 	    var worldOutline = new THREE.MeshPhongMaterial({
 	        map: outlineTexture,
@@ -232,7 +230,6 @@
 	            var tag = $("<span></span>").attr("class", "legendTag").css("background", color).appendTo(div);
 	            var span = $("<span>&nbsp;- " + colorDescription[i] + "</span>").attr("class", "legendSpan").appendTo(div);
 	            legend.append(div);
-	            console.log("hello");
 	        });
 	    }
 	
@@ -248,53 +245,65 @@
 	        $(".btn-3d").removeClass("activeButton");
 	        $(this).addClass("activeButton");
 	    });
-	
+	    // Country click events
 	    function onGlobeClick(event) {
 	        // Get pointc, convert to latitude/longitude
 	        var latlng = _helpers.getEventCenter.call(this, event);
 	        var country = geo.search(latlng[0], latlng[1]);
 	        console.log(country.code);
+	        // Validate whether a country is a recipient/donater/not affected
 	        if (_.includes(receivingAid, country.code) && receivingAidActivated) {
+	            // Update the area graph
 	            (0, _receivingD.changeCountryLine)(country.code, aidReceivedAll, "aid-received");
+	            // Hide the stack graph
 	            d3.select("#donaterSvg").style("display", "none");
+	            // Wikipedia data
 	            var url = "https://en.wikipedia.org/w/api.php?action=opensearch&search=" + country.code + "&limit=1&namespace=0&format=json&callback=?";
 	            $.getJSON(url, function (data) {
+	                // Add wiki text
 	                d3.select("#d3stuff .countryInfo").text(data[2][0]).style("display", "inline-block");
 	            });
 	            d3.select("#msg").text(country.code);
-	            d3.select("#stats").text("Funds Recieved: " + country["recieved"] + "$");
+	            d3.select("#stats").text("Funds Recieved: $" + country["recieved"]);
 	            d3.select(".countryRank").style("display", "block");
+	            // Grap the rank of the country or ? if no data present
 	            var rank = countryRanking.filter(function (item) {
 	                return item.country === country.code;
 	            });
 	            rank.length > 0 ? rank = rank[0].ranking : rank = "?";
 	            d3.select(".countryRank").text(rank + "/96");
 	        } else if (_.includes(donating, country.code) && donatersActivated) {
+	            // Update the area graph
 	            (0, _receivingD.changeCountryLine)(country.code, items, "aid-given");
+	            // Update the stack graph and display it if hidden
 	            (0, _donatingD.displayNewStack)(country.code, crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
+	            d3.select("#donaterSvg").style("display", "inline");
+	            // Hide the rank and info
 	            d3.select(".countryRank").style("display", "none");
 	            d3.select("#d3stuff .countryInfo").style("display", "none");
-	            d3.select("#donaterSvg").style("display", "inline");
 	            d3.select("#msg").text(country.code);
 	            d3.select("#stats").text("Funds Donated: " + country["aid"][2006]);
+	            // else Helpful message
 	        } else if (receivingAidActivated) {
 	            d3.select("#msg").text("select a reciever");
 	        } else if (donatersActivated) {
 	            d3.select("#msg").text("select a donator");
 	        }
 	    }
-	
+	    // Add event listeners to the globe
 	    (0, _events.setEvents)(_scene.camera, [baseGlobe], 'click');
 	    (0, _events.setEvents)(_scene.camera, [baseGlobe], 'mousemove', 10);
-	
+	    // Allow the globe to be dragged around
 	    var controls = new OrbitControls(_scene.camera, _scene.renderer.domElement);
-	
+	    // Texture layer load
 	    var donaters = (0, _textureAdd.addMaps)(new THREE.Group(), countries.features, "aid-given");
 	    var aidLayers = (0, _textureAdd.addMaps)(new THREE.Group(), countries.features, "aid-received");
 	
 	    (0, _scene.animate)();
 	    // requestAnimationFrame(frameA);
 	
+	    // LAYER TOGGLES
+	    // AID RECEIVE LAYERS
 	    var receivingAidActivated = false;
 	    document.querySelector(".clearMap").addEventListener("click", function () {
 	        (0, _scene.addSelected)(aidLayers);
@@ -306,7 +315,7 @@
 	            $(".rangeBarRecieving").addClass("active");
 	        }
 	    });
-	
+	    // AID DONATE LAYERS
 	    var donatersActivated = false;
 	    document.querySelector(".showDonate").addEventListener("click", function () {
 	        (0, _scene.addSelected)(donaters);
@@ -319,81 +328,24 @@
 	        }
 	    });
 	
-	    var desCountry = (0, _receivingD.findLineInfo)("Germany", items, "aid-given");
-	    // Scale the range of the data
-	    _receivingD.x.domain(d3.extent(desCountry, function (d) {
-	        return d.year;
+	    // Add the data to the scales
+	    _textureAdd.scaleColor.domain(d3.extent(items, function (d) {
+	        return +d[2006];
 	    }));
-	    _receivingD.y.domain([0, d3.max(desCountry, function (d) {
-	        return d.aid / 1000000;
-	    })]);
 	
-	    var path = _receivingD.svgRecieve.data([desCountry]).append("path").attr("class", "area usa").attr("d", function (d) {
-	        return (0, _receivingD.areaReceive)(d);
-	    }).attr("fill", "rgba(50, 195, 182, 0)").attr("stroke", "none");
-	
-	    var totalLength = path.node().getTotalLength();
-	    path.attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).transition().duration(500).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", "rgba(50, 195, 182, 1)");
-	
-	    // Add the X Axis
-	    _receivingD.svgRecieve.append("g").attr("class", "x axis").attr("transform", "translate(0," + _receivingD.height + ")").call(_receivingD.xAxisReceive);
-	
-	    // Add the Y Axis
-	    _receivingD.svgRecieve.append("g").attr("class", "y axis").call(_receivingD.yAxisReceive);
-	
-	    var dataset = (0, _donatingD.findStackedData)("Germany", crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
-	
-	    //New array with all the years, for referencing later
-	    var yearsDonate = ["1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007"];
-	    //Now that the data is ready, we can check its
-	    //min and max values to set our scales' domains!
-	    _donatingD.xScaleDonate.domain([d3.min(yearsDonate, function (d) {
-	        return _donatingD.dateFormat.parse(d);
-	    }), d3.max(yearsDonate, function (d) {
-	        return _donatingD.dateFormat.parse(d);
-	    })]);
-	
-	    //Loop once for each year, and get the total value
-	    //of All aid given for that year.
-	    var totals = [];
-	
-	    for (var i = 0; i < yearsDonate.length; i++) {
-	        totals[i] = 0;
-	        for (var j = 0; j < dataset.length; j++) {
-	            totals[i] += dataset[j].aid[i].y;
+	    _textureAdd.scaleInNeed.domain(d3.extent(inNeed, function (d) {
+	        if (+d[2006] > 916590000) {
+	            return +d[2006];
 	        }
-	    }
-	
-	    _donatingD.yScaleDonate.domain([d3.max(totals), 0]);
-	    //Areas
-	    //
-	    //Now that we are creating multiple paths, we can use the
-	    //selectAll/data/co2/enter/append pattern to generate as many
-	    //as needed.
-	
-	    //Make a path for each country
-	    var selection = _donatingD.svgDonate.selectAll("path").data(dataset);
-	
-	    var paths = selection.enter().append("path").attr("class", "area").attr("stroke", function (d, i) {
-	        return (0, _donatingD.colorDonate)(i);
-	    }).attr("fill", "#fff").attr("d", function (d) {
-	        return (0, _donatingD.areaDonate)(d.aid);
-	    });
-	
-	    var totalLength = paths.node().getTotalLength();
-	    paths.attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).transition().duration(300).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", function (d, i) {
-	        return (0, _donatingD.colorDonate)(i);
-	    });
-	
-	    //Append a title with the country name (so we get easy tooltips)
-	    paths.append("title").text(function (d) {
-	        return d.aidType;
-	    });
-	
-	    //Create axes
-	    _donatingD.svgDonate.append("g").attr("class", "x axis").attr("transform", "translate(0," + (_donatingD.h - _donatingD.padding[2]) + ")").call(_donatingD.xAxisDonate);
-	
-	    _donatingD.svgDonate.append("g").attr("class", "y axis").attr("transform", "translate(" + _donatingD.padding[3] + ",0)").call(_donatingD.yAxisDonate);
+	    }));
+	    // Find the area data needed for the line area graph
+	    var desCountry = (0, _receivingD.findLineInfo)("Germany", items, "aid-given");
+	    // Display the initial single area Graph
+	    (0, _receivingD.showLine)(desCountry);
+	    // Grab the data for the initial setup stack graph
+	    var dataset = (0, _donatingD.findStackedData)("Germany", crossSector, ecoInfraStruct, eduAid, govAndCivil, health, policies, prodSectorAid, socialServ, waterAndSanitize);
+	    // Display the stacked graph using the data
+	    (0, _donatingD.showStack)(dataset);
 	}
 	// Load the data
 	d3_queue.queue().defer(d3.csv, "../assets/data/aidGiven.csv").defer(d3.csv, "../assets/data/aidReceivedShort.csv").defer(d3.json, "../assets/data/world.json").defer(d3.csv, "../assets/data/crossSector.csv").defer(d3.csv, "../assets/data/ecoInfraStruct.csv").defer(d3.csv, "../assets/data/eduAid.csv").defer(d3.csv, "../assets/data/govAndCivil.csv").defer(d3.csv, "../assets/data/health.csv").defer(d3.csv, "../assets/data/policiesAid.csv").defer(d3.csv, "../assets/data/prodSectorAid.csv").defer(d3.csv, "../assets/data/socialServ.csv").defer(d3.csv, "../assets/data/waterAndSanitize.csv").defer(d3.csv, "../assets/data/countryRanking.csv").defer(d3.csv, "../assets/data/aidReceivedLong.csv").awaitAll(ready);
@@ -53668,6 +53620,7 @@
 	    var result = void 0;
 	    if (country["aid-given"]) {
 	        console.log(country["aid-given"][2006]);
+	        debugger;
 	        result = scaleColor(country["aid-given"][2006]);
 	    }
 	    return result;
@@ -53761,114 +53714,22 @@
 	"use strict";
 	
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
-	
-	exports.countryYearsAndAid = countryYearsAndAid;
-	exports.findLineInfo = findLineInfo;
-	exports.changeCountryLine = changeCountryLine;
-	var d3 = __webpack_require__(4);
-	// Set the dimensions and padding of the canvas / graph
-	// var paddingDonate = [ 20, 10, 50, 100 ];
-	var margin = exports.margin = { top: 20, right: 20, bottom: 20, left: 50 },
-	    width = exports.width = window.innerWidth * 0.22,
-	    height = exports.height = window.innerHeight * 0.38;
-	
-	// Parse the date / time
-	var parseDate = exports.parseDate = d3.time.format("%Y").parse;
-	
-	// Set the ranges
-	var x = exports.x = d3.time.scale().range([0, width]);
-	var y = exports.y = d3.scale.linear().range([height, 0]);
-	
-	// Define the axes
-	var xAxisReceive = exports.xAxisReceive = d3.svg.axis().scale(x).orient("bottom").ticks(10).tickSize(0);
-	
-	var yAxisReceive = exports.yAxisReceive = d3.svg.axis().scale(y).orient("left").ticks(5);
-	
-	// Set the area graph
-	var areaReceive = exports.areaReceive = d3.svg.area().x(function (d) {
-	  return x(d.year);
-	}).y0(height - margin.bottom + 20).y1(function (d) {
-	  return y(d.aid / 1000000);
-	});
-	// Adds the svg canvas
-	var svgRecieve = exports.svgRecieve = d3.select("#d3stuff").append("svg").attr("id", "recieverSvg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-	
-	// Function recieves country and data
-	// returns two array being years and aid given/received
-	function countryYearsAndAid(country, dataType, aidingType) {
-	  var res = dataType.filter(function (d) {
-	    return d[aidingType] === country;
-	  });
-	  var money = Object.values(res[0]).map(function (d) {
-	    return +d || 1;
-	  });
-	  var years = Object.keys(res[0]).map(function (d) {
-	    return parseDate(d);
-	  });
-	  var yearsComp = years.splice(0, years.length - 1);
-	  return [yearsComp, _.compact(money)];
-	}
-	
-	// Get the two arrays
-	function findLineInfo(country, data, aidType) {
-	  var _countryYearsAndAid = countryYearsAndAid(country, data, aidType),
-	      _countryYearsAndAid2 = _slicedToArray(_countryYearsAndAid, 2),
-	      years = _countryYearsAndAid2[0],
-	      aid = _countryYearsAndAid2[1];
-	
-	  var countryData = years.map(function (year, i) {
-	    var item = {
-	      year: year,
-	      aid: aid[i]
-	    };
-	    return item;
-	  });
-	  return countryData;
-	}
-	
-	function changeCountryLine(country, data, aidType) {
-	  var thisData = findLineInfo(country, data, aidType);
-	  y.domain([0, d3.max(thisData, function (d) {
-	    return d.aid / 1000000;
-	  })]);
-	  yAxisReceive.scale(y);
-	  var path = d3.selectAll("#recieverSvg path").data([thisData]).attr("fill", "rgba(50, 195, 182, 0)").attr("stroke", "black").attr("d", function (d) {
-	    return areaReceive(d);
-	  });
-	
-	  var pathReceive = path.node().getTotalLength();
-	  path.attr("stroke-dasharray", pathReceive + " " + pathReceive).attr("stroke-dashoffset", pathReceive).transition().duration(300).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", function (d, i) {
-	    return "rgba(50, 195, 182, 1)";
-	  }).attr("stroke", "rgba(50, 195, 182, 1)");
-	  svgRecieve.selectAll("g.y.axis").remove();
-	  svgRecieve.append("g").attr("class", "y axis").call(yAxisReceive);
-	}
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
 	exports.findStackedData = findStackedData;
 	exports.displayNewStack = displayNewStack;
+	exports.showStack = showStack;
 	var d3 = __webpack_require__(4);
+	var _ = __webpack_require__(10);
 	//Set up stack method
 	var stack = exports.stack = d3.layout.stack().values(function (d) {
-	  return d.aid;
+	    return d.aid;
 	}).order("reverse");
 	
 	//Width, height, padding
-	var w = exports.w = window.innerWidth / 2.7;
+	var w = exports.w = window.innerWidth * 0.38;
 	var h = exports.h = window.innerHeight * 0.47;
-	var padding = exports.padding = [20, 10, 50, 100]; //Top, right, bottom, left
+	var padding = exports.padding = [20, 10, 50, 110]; //Top, right, bottom, left
 	
 	//Set up date format function (years)
 	var dateFormat = exports.dateFormat = d3.time.format("%Y");
@@ -53882,18 +53743,18 @@
 	
 	//Define axes
 	var xAxisDonate = exports.xAxisDonate = d3.svg.axis().scale(xScaleDonate).orient("bottom").ticks(10).tickFormat(function (d) {
-	  return dateFormat(d);
+	    return dateFormat(d);
 	});
 	
 	var yAxisDonate = exports.yAxisDonate = d3.svg.axis().scale(yScaleDonate).orient("left").ticks(5);
 	
 	//Define area generator
 	var areaDonate = exports.areaDonate = d3.svg.area().interpolate("basis").x(function (d) {
-	  return xScaleDonate(dateFormat.parse(d.x)); //Updated
+	    return xScaleDonate(dateFormat.parse(d.x)); //Updated
 	}).y0(function (d) {
-	  return yScaleDonate(d.y0); //Updated
+	    return yScaleDonate(d.y0); //Updated
 	}).y1(function (d) {
-	  return yScaleDonate(d.y0 + d.y); //Updated
+	    return yScaleDonate(d.y0 + d.y); //Updated
 	});
 	
 	var domain = exports.domain = ["crossSectorAid", "economicalInfastructure", "educationalAid", "govAndCivil", "healthAid", "populationPoliciesAid", "productionSectorAid", "socialServicesAid", "waterAndSanitationAid"];
@@ -53904,64 +53765,120 @@
 	//Easy colors accessible via a 10-step ordinal scale
 	var colorDonate = exports.colorDonate = d3.scale.ordinal().domain(domain).range(colorScheme);
 	//Create the SVG
-	var svgDonate = exports.svgDonate = d3.select("#d3stuff").append("svg").attr("id", "donaterSvg").attr("width", w).attr("height", h);
+	var svgDonate = exports.svgDonate = d3.select("#donaterSvg").attr("width", w).attr("height", h);
 	
 	function findStackedData(country) {
-	  // Get all the data for a country and store in an array
-	  var countryData = [];
+	    // Get all the data for a country and store in an array
+	    var countryData = [];
 	
-	  for (var _len = arguments.length, allData = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	    allData[_key - 1] = arguments[_key];
-	  }
+	    for (var _len = arguments.length, allData = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        allData[_key - 1] = arguments[_key];
+	    }
 	
-	  allData.forEach(function (indArray) {
-	    countryData.push(indArray.filter(function (item) {
-	      return Object.values(item)[Object.values(item).length - 1] === country;
-	    })[0]);
-	  });
-	  // Setup the returned data-structure
-	  var dataResult = [{ aid: [] }, { aid: [] }, { aid: [] }, { aid: [] }, { aid: [] }, { aid: [] }, { aid: [] }, { aid: [] }, { aid: [] }];
-	  // iterate over the countries data
-	  countryData.forEach(function (item, i) {
-	    // Get the values and keys arrays of each
-	    var years = Object.keys(item);
-	    var money = Object.values(item);
-	    // Set the name of the aid-type
-	    dataResult[i]["aidType"] = years[years.length - 1];
-	    // Zip the arrays together
-	    var yearsMoney = _.zip(years, money);
-	    // iterate over the joined array and push the first and second value
-	    yearsMoney.forEach(function (miniArray, y) {
-	      // Don't add the last value
-	      if (!(yearsMoney.length - 1 === y)) {
-	        dataResult[i]["aid"].push({ x: miniArray[0], y: +miniArray[1] || 1 });
-	      }
+	    allData.forEach(function (indArray) {
+	        countryData.push(indArray.filter(function (item) {
+	            return _.values(item)[_.values(item).length - 1] === country;
+	        })[0]);
 	    });
-	  });
-	  return stack(dataResult);
+	    // Setup the returned data-structure
+	    var dataResult = [{ aid: [] }, { aid: [] }, { aid: [] }, { aid: [] }, { aid: [] }, { aid: [] }, { aid: [] }, { aid: [] }, { aid: [] }];
+	    // iterate over the countries data
+	    countryData.forEach(function (item, i) {
+	        // Get the values and keys arrays of each
+	        var years = _.keys(item);
+	        var money = _.values(item);
+	        // Set the name of the aid-type
+	        dataResult[i]["aidType"] = years[years.length - 1];
+	        // Zip the arrays together
+	        var yearsMoney = _.zip(years, money);
+	        // iterate over the joined array and push the first and second value
+	        yearsMoney.forEach(function (miniArray, y) {
+	            // Don't add the last value
+	            if (!(yearsMoney.length - 1 === y)) {
+	                dataResult[i]["aid"].push({ x: miniArray[0], y: +miniArray[1] || 1 });
+	            }
+	        });
+	    });
+	    return stack(dataResult);
 	}
 	
 	function displayNewStack(country) {
-	  for (var _len2 = arguments.length, dataSources = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-	    dataSources[_key2 - 1] = arguments[_key2];
-	  }
+	    for (var _len2 = arguments.length, dataSources = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+	        dataSources[_key2 - 1] = arguments[_key2];
+	    }
 	
-	  var dataset2 = findStackedData.apply(undefined, [country].concat(dataSources));
+	    var dataset2 = findStackedData.apply(undefined, [country].concat(dataSources));
 	
-	  var path = d3.selectAll("#donaterSvg path").data(dataset2).attr("stroke", function (d, i) {
-	    return colorDonate(i);
-	  }).attr("fill", "#fff").attr("d", function (d) {
-	    return areaDonate(d.aid);
-	  });
+	    var path = d3.selectAll("#donaterSvg path").data(dataset2).attr("stroke", function (d, i) {
+	        return colorDonate(i);
+	    }).attr("fill", "#fff").attr("d", function (d) {
+	        return areaDonate(d.aid);
+	    });
 	
-	  var pathLength = path.node().getTotalLength();
-	  path.attr("stroke-dasharray", pathLength + " " + pathLength).attr("stroke-dashoffset", pathLength).transition().duration(300).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", function (d, i) {
-	    return colorDonate(i);
-	  });
+	    var pathLength = path.node().getTotalLength();
+	    path.attr("stroke-dasharray", pathLength + " " + pathLength).attr("stroke-dashoffset", pathLength).transition().duration(300).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", function (d, i) {
+	        return colorDonate(i);
+	    });
+	}
+	
+	function showStack(stackData) {
+	    //New array with all the years, for referencing later
+	    var yearsDonate = ["1971", "1972", "1973", "1974", "1975", "1976", "1977", "1978", "1979", "1980", "1981", "1982", "1983", "1984", "1985", "1986", "1987", "1988", "1989", "1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007"];
+	    //Now that the data is ready, we can check its
+	    //min and max values to set our scales' domains!
+	    xScaleDonate.domain([d3.min(yearsDonate, function (d) {
+	        return dateFormat.parse(d);
+	    }), d3.max(yearsDonate, function (d) {
+	        return dateFormat.parse(d);
+	    })]);
+	
+	    //Loop once for each year, and get the total value
+	    //of All aid given for that year.
+	    var totals = [];
+	
+	    for (var i = 0; i < yearsDonate.length; i++) {
+	        totals[i] = 0;
+	        for (var j = 0; j < stackData.length; j++) {
+	            totals[i] += stackData[j].aid[i].y;
+	        }
+	    }
+	
+	    yScaleDonate.domain([d3.max(totals), 0]);
+	    //Areas
+	    //
+	    //Now that we are creating multiple paths, we can use the
+	    //selectAll/data/co2/enter/append pattern to generate as many
+	    //as needed.
+	
+	    //Make a path for each country
+	    var selection = svgDonate.selectAll("path").data(stackData);
+	
+	    var paths = selection.enter().append("path").attr("class", "area").attr("stroke", function (d, i) {
+	        return colorDonate(i);
+	    }).attr("fill", "#fff").attr("d", function (d) {
+	        return areaDonate(d.aid);
+	    });
+	
+	    var totalLength = paths.node().getTotalLength();
+	    paths.attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).transition().duration(300).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", function (d, i) {
+	        return colorDonate(i);
+	    });
+	
+	    //Append a title with the country name (so we get easy tooltips)
+	    paths.append("title").text(function (d) {
+	        return d.aidType;
+	    });
+	
+	    //Create axes
+	    svgDonate.append("g").attr("class", "x axis").attr("transform", "translate(0," + (h - padding[2]) + ")").call(xAxisDonate);
+	
+	    svgDonate.append("g").attr("class", "y axis").attr("transform", "translate(" + padding[3] + ",0)").call(yAxisDonate);
+	
+	    svgDonate.append("text").attr("text-anchor", "end").attr("x", 80).attr("y", h - 45).text("%");
 	}
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(global, module) {/**
@@ -71049,10 +70966,10 @@
 	  }
 	}.call(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(12)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(11)(module)))
 
 /***/ },
-/* 12 */
+/* 11 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -71066,6 +70983,127 @@
 		return module;
 	}
 
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+	
+	exports.countryYearsAndAid = countryYearsAndAid;
+	exports.findLineInfo = findLineInfo;
+	exports.changeCountryLine = changeCountryLine;
+	exports.showLine = showLine;
+	var d3 = __webpack_require__(4);
+	var _ = __webpack_require__(10);
+	// Set the dimensions and padding of the canvas / graph
+	// var paddingDonate = [ 20, 10, 50, 100 ];
+	var margin = exports.margin = { top: 20, right: 20, bottom: 20, left: 60 },
+	    width = exports.width = window.innerWidth * 0.22,
+	    height = exports.height = window.innerHeight * 0.38;
+	
+	// Parse the date / time
+	var parseDate = exports.parseDate = d3.time.format("%Y").parse;
+	
+	// Set the ranges
+	var x = exports.x = d3.time.scale().range([0, width]);
+	var y = exports.y = d3.scale.linear().range([height, 0]);
+	
+	// Define the axes
+	var xAxisReceive = exports.xAxisReceive = d3.svg.axis().scale(x).orient("bottom").ticks(10).tickSize(0);
+	
+	var yAxisReceive = exports.yAxisReceive = d3.svg.axis().scale(y).orient("left").ticks(5);
+	
+	// Set the area graph
+	var areaReceive = exports.areaReceive = d3.svg.area().x(function (d) {
+	  return x(d.year);
+	}).y0(height - margin.bottom + 20).y1(function (d) {
+	  return y(d.aid / 1000000);
+	});
+	// Adds the svg canvas
+	var svgRecieve = exports.svgRecieve = d3.select("#recieverSvg").attr("width", width + margin.left + margin.right).attr("height", height + margin.top + margin.bottom).append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	
+	// Function recieves country and data
+	// returns two array being years and aid given/received
+	function countryYearsAndAid(country, dataType, aidingType) {
+	  var res = dataType.filter(function (d) {
+	    return d[aidingType] === country;
+	  });
+	  var money = _.values(res[0]).map(function (d) {
+	    return +d || 1;
+	  });
+	  var years = _.keys(res[0]).map(function (d) {
+	    return parseDate(d);
+	  });
+	  var yearsComp = years.splice(0, years.length - 1);
+	  return [yearsComp, _.compact(money)];
+	}
+	
+	// Get the two arrays
+	function findLineInfo(country, data, aidType) {
+	  var _countryYearsAndAid = countryYearsAndAid(country, data, aidType),
+	      _countryYearsAndAid2 = _slicedToArray(_countryYearsAndAid, 2),
+	      years = _countryYearsAndAid2[0],
+	      aid = _countryYearsAndAid2[1];
+	
+	  var countryData = years.map(function (year, i) {
+	    var item = {
+	      year: year,
+	      aid: aid[i]
+	    };
+	    return item;
+	  });
+	  return countryData;
+	}
+	
+	function changeCountryLine(country, data, aidType) {
+	  var thisData = findLineInfo(country, data, aidType);
+	  y.domain([0, d3.max(thisData, function (d) {
+	    return d.aid / 1000000;
+	  })]);
+	  yAxisReceive.scale(y);
+	  var path = d3.selectAll("#recieverSvg path").data([thisData]).attr("fill", "rgba(50, 195, 182, 0)").attr("stroke", "black").attr("d", function (d) {
+	    return areaReceive(d);
+	  });
+	
+	  var pathReceive = path.node().getTotalLength();
+	  path.attr("stroke-dasharray", pathReceive + " " + pathReceive).attr("stroke-dashoffset", pathReceive).transition().duration(300).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", function (d, i) {
+	    return "rgba(50, 195, 182, 1)";
+	  }).attr("stroke", "rgba(50, 195, 182, 1)");
+	  svgRecieve.selectAll("g.y.axis").remove();
+	  svgRecieve.append("g").attr("class", "y axis").call(yAxisReceive);
+	}
+	
+	function showLine(countryData) {
+	  // Scale the range of the datas
+	  x.domain(d3.extent(countryData, function (d) {
+	    return d.year;
+	  }));
+	  y.domain([0, d3.max(countryData, function (d) {
+	    return d.aid / 1000000;
+	  })]);
+	
+	  var path = svgRecieve.data([countryData]).append("path").attr("class", "area usa").attr("d", function (d) {
+	    return areaReceive(d);
+	  }).attr("fill", "rgba(50, 195, 182, 0)").attr("stroke", "none");
+	
+	  var totalLength = path.node().getTotalLength();
+	  path.attr("stroke-dasharray", totalLength + " " + totalLength).attr("stroke-dashoffset", totalLength).transition().duration(500).ease("linear").attr("stroke-dashoffset", 0).transition().duration(200).attr("fill", "rgba(50, 195, 182, 1)");
+	
+	  // Add the X Axis
+	  svgRecieve.append("g").attr("class", "x axis").attr("transform", "translate(0," + height + ")").call(xAxisReceive);
+	
+	  // Add the Y Axis
+	  svgRecieve.append("g").attr("class", "y axis").call(yAxisReceive);
+	
+	  svgRecieve.append("text").attr("text-anchor", "end").attr("x", -25).attr("y", height + 5).text("MIL");
+	}
 
 /***/ },
 /* 13 */
