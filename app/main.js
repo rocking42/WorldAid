@@ -94,7 +94,24 @@ function ready(error, results) {
 
     const donating = ["Australia","Austria","Belgium","Canada","Denmark","Finland","France","Germany","Greece","Ireland","Italy","Japan","Luxembourg","Netherlands","New Zealand","Norway","Portugal","Spain","Sweden","Switzerland","United Kingdom","United States"];
 
-    let segments = 40;
+// <<<<<<< HEAD
+    let segments = 155;
+    // Add the data to the scales
+    scaleColor.domain(d3.extent(items, (d) => {
+      return +d[2006];
+    }));
+
+    scaleInNeed.domain(d3.extent(inNeed, (d) => {
+      if (+d[2006] > 916590000) {
+        return +d[2006];
+      }
+    }));
+    // Loading screen
+    d3.select("#loading").transition().duration(500)
+        .style("opacity", 0).remove();
+// =======
+    // let segments = 40;
+// >>>>>>> 7b4e17345c7a8315307822aa49e9e689393185c9
 
 
     // Setup cache for country textures
@@ -250,16 +267,6 @@ function ready(error, results) {
         }
     });
 
-  // Add the data to the scales
-  scaleColor.domain(d3.extent(items, (d) => {
-      return +d[2006];
-  }));
-
-  scaleInNeed.domain(d3.extent(inNeed, (d) => {
-      if (+d[2006] > 916590000) {
-          return +d[2006];
-      }
-  }));
   // Find the area data needed for the line area graph
   const desCountry = findLineInfo("Germany", items, "aid-given")
   // Display the initial single area Graph
