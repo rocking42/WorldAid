@@ -117,8 +117,6 @@ function ready(error, results) {
     // Loading screen
     d3.select("#loading").transition().duration(500)
         .style("opacity", 0).remove();
-
-
     // Setup cache for country textures
     const countries = topojson.feature(dataWorld, dataWorld.objects.countries);
     const geo = geodecoder(countries.features);
@@ -235,8 +233,11 @@ function ready(error, results) {
         renderer.domElement
     );
     // Texture layer load
-    const donaters =  addMaps(new THREE.Group(), countries.features, "aid-given");
-    const aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received");
+    // Test browser
+    if(!navigator.userAgent.match(/Chrome/)) {
+      var donaters =  addMaps(new THREE.Group(), countries.features, "aid-given");
+      var aidLayers = addMaps(new THREE.Group(), countries.features, "aid-received");
+    }
     // Fire event listener as all textures are loaded
     $.event.trigger({
       type: "CanvasOnLoad"
@@ -248,7 +249,9 @@ function ready(error, results) {
     // AID RECEIVE LAYERS
     let receivingAidActivated = false;
     document.querySelector(".clearMap").addEventListener("click", function() {
+        if(!navigator.userAgent.match(/Chrome/)) {
           addSelected(aidLayers);
+        }
         if (!receivingAidActivated) {
             $("#legendMenu").html("");
             receivingAidActivated = true;
@@ -264,7 +267,9 @@ function ready(error, results) {
     // AID DONATE LAYERS
     let donatersActivated = false;
     document.querySelector(".showDonate").addEventListener("click", function() {
+        if(!navigator.userAgent.match(/Chrome/)) {
           addSelected(donaters);
+        }
         if (!donatersActivated) {
             legend(colorDescription, colorScheme);
             receivingAidActivated = false;

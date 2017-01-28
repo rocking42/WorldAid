@@ -28,9 +28,6 @@ export function mapTexture(geojson, color) {
 
     context.stroke();
 
-    // DEBUGGING - Really expensive, disable when done.
-    // console.log(canvas.node().toDataURL());
-
     texture = new THREE.Texture(canvas.node());
     texture.needsUpdate = true;
 
