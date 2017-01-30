@@ -97,7 +97,7 @@ export function findStackedData(country, ...allData) {
   return stack(dataResult);
 }
 
-
+// Update stack data
 export function displayNewStack(country, ...dataSources) {
     const dataset2 = findStackedData(country, ...dataSources);
 
@@ -116,7 +116,7 @@ export function displayNewStack(country, ...dataSources) {
         .attr("fill", (d, i) => colorDonate(i) )
 }
 
-
+// Set up and display the stack
 export function showStack(stackData) {
     //New array with all the years, for referencing later
     const yearsDonate = ["1971","1972","1973","1974","1975","1976","1977","1978","1979","1980","1981","1982","1983","1984","1985","1986","1987","1988","1989","1990","1991","1992","1993","1994","1995","1996","1997","1998","1999","2000","2001","2002","2003","2004","2005","2006","2007"];
@@ -152,7 +152,7 @@ export function showStack(stackData) {
     //Make a path for each country
     var selection = svgDonate.selectAll("path")
         .data(stackData)
-
+    // Create Stack paths
     var paths = selection.enter()
         .append("path")
         .attr("class", "area")
@@ -191,7 +191,7 @@ export function showStack(stackData) {
         .attr("class", "y axis")
         .attr("transform", "translate(" + padding[3] + ",0)")
         .call(yAxisDonate);
-
+    // Append stack title
     svgDonate.append("text")
               .attr("text-anchor", "end")
               .attr("x", w - 180)

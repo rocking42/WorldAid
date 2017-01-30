@@ -232,6 +232,7 @@ function ready(error, results) {
         camera,
         renderer.domElement
     );
+    // TODO: Need to reduce the size of the layers
     // Texture layer load
     // Test browser
     if(!navigator.userAgent.match(/Chrome/)) {

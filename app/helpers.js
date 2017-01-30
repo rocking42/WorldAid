@@ -55,7 +55,7 @@ export function convertToXYZ(point, radius) {
         z: z
     };
 }
-
+// Get geographic information from country features
 export var geodecoder = function(features) {
 
     let store = {};

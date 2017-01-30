@@ -59,7 +59,7 @@ export function findLineInfo(country, data, aidType) {
       });
       return countryData
   }
-
+// Display new data given to the line graph
 export function changeCountryLine(country, data, aidType) {
       const thisData = findLineInfo(country, data, aidType);
       y.domain([0, d3.max(thisData, function(d) { return d.aid / 1000000; })]);
@@ -82,7 +82,7 @@ export function changeCountryLine(country, data, aidType) {
       svgRecieve.selectAll("g.y.axis").remove();
       svgRecieve.append("g").attr("class", "y axis").call(yAxisReceive);
   }
-
+// Set-up and display the initial line graph
 export function showLine(countryData) {
     // Scale the range of the datas
     x.domain(d3.extent(countryData, function(d) {

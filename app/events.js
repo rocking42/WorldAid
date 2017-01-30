@@ -2,7 +2,7 @@ const THREE = require("three");
 import { debounce } from './utils';
 
 export let raycaster = new THREE.Raycaster();
-
+// Function that adds event listeners to the globe
 export function setEvents(camera, items, type, wait) {
 
   let listener = function(event) {
